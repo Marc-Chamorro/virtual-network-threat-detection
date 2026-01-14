@@ -24,7 +24,7 @@ topology:
 
     attacker:
       kind: linux
-      image: kali-custom:latest
+      image: kali_vntd:latest
       exec:
         - ip addr add 10.10.10.2/24 dev eth1
         - ip link set eth1 up
