@@ -27,4 +27,5 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # https://kodekloud.com/blog/keep-docker-container-running/
-CMD ["sleep", "infinity"]
+# Here, or in the entrypoint file if exists
+# CMD ["sleep", "infinity"]

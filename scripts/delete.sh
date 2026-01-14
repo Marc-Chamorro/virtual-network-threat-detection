@@ -1,1 +1,0 @@
-delete all images and containers
