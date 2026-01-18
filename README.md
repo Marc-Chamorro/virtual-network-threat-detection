@@ -95,7 +95,7 @@ This section describes how to set up the environment required to run the project
 The project assumes a **Linux-based environment**.
 
 Required software:
-- Bash (which minimum version?)
+- Bash? (which minimum version?)
 
 ## Installation
 
@@ -103,6 +103,14 @@ Required software:
 2. Ensure it works
 3. Clone Git
 4. chmod +x run.sh
+5. Download the required images (hyperlink to the other readme maybe?)
+6. Del projecte no copiar tot el vrnetlab, sino nomes le directori concret que necessitem per juniper
+git submodule add https://github.com/vrnetlab/vrnetlab docker/vrnetlab
+cd docker/vrnetlab
+git sparse-checkout init --cone
+git sparse-checkout set juniper/vjunosswitch common
+git submodule update --remote
+7. all teh scripts
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

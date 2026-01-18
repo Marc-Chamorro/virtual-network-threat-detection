@@ -1,0 +1,25 @@
+hostname switch-vlan10
+
+vlan 10
+   name VLAN10
+
+interface eth1
+    switchport mode access
+    switchport access vlan 10
+    no shutdown
+
+interface eth2
+    switchport mode access
+    switchport access vlan 10
+    no shutdown
+
+interface eth3
+    switchport mode access
+    switchport access vlan 10
+    no shutdown
+
+interface eth4
+    switchport mode access
+    switchport access vlan 10
+    no shutdown
+

@@ -1,0 +1,56 @@
+hostname mls-enterprise
+
+vlan 10
+   name VLAN10
+vlan 20
+   name VLAN20
+vlan 30
+   name VLAN30
+
+
+interface Vlan10
+   ip address 192.168.10.1/24
+   no shutdown
+
+interface Vlan20
+   ip address 192.168.20.1/24
+   no shutdown
+
+interface Vlan30
+   ip address 192.168.30.1/24
+   no shutdown
+
+
+interface eth1
+   no switchport
+   ip address 192.168.0.2/30
+   no shutdown
+
+
+interface eth2
+   switchport mode access
+   switchport access vlan 10
+   no shutdown
+
+interface eth3
+   switchport mode access
+   switchport access vlan 20
+   no shutdown
+
+interface eth4
+   switchport mode access
+   switchport access vlan 30
+   no shutdown
+
+
+ip routing
+ip route 0.0.0.0/0 192.168.0.1
+
+! NOT WORKING, NEED TO BE FIXED
+!ip access-list extended VLAN30
+!   permit ip 192.168.30.0 0.0.0.255 any
+!   permit tcp any 192.168.30.0 0.0.0.255 established
+!   deny ip any 192.168.30.0 0.0.0.255
+
+!interface Vlan30
+!   ip access-group VLAN30 in
