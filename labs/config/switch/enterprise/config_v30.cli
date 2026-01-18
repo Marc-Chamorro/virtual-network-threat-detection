@@ -1,0 +1,25 @@
+hostname switch-vlan30
+
+vlan 30
+   name VLAN30
+
+interface eth1
+    switchport mode access
+    switchport access vlan 30
+    no shutdown
+
+interface eth2
+    switchport mode access
+    switchport access vlan 30
+    no shutdown
+
+interface eth3
+    switchport mode access
+    switchport access vlan 30
+    no shutdown
+
+interface eth4
+    switchport mode access
+    switchport access vlan 30
+    no shutdown
+

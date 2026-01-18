@@ -1,77 +1,93 @@
-# Custom Docker Images
+<a id="readme-top"></a>
 
-This directory contains the **custom Docker images** required to run the project environment.  Each image is built from a dedicated subdirectory and is intended to provide a consistent and reproducible environment for the labs.
+# Docker Images for Virtual Environment
 
-New images can be added by creating a **new subdirectory** under this folder.
+This directory contains the **custom Docker images** required to run the project environment. Each image is built from a dedicated subdirectory and is intended to provide a consistent and reproducible environment for the labs.
+
+## Table of Contents
+
+UPDATE THE TABLE
+
+- [New Images](#new-images)
+- [Directory Structure](#directory-structure)
+- [Image Management](#image-management)
+   - [Build](#build)
+   - [Import](#import)
+- [Managing Docker Images Manually](#managing-docker-images-manually)
+   - [Manual Build](#manual-build)
+   - [Manual Delete](#manual-delete)
+- [Dockerfiles](#dockerfiles)
+   - [Considerations](#considerations)
+   - [Entrypoint](#entrypoint)
+- [Best Practices](#best-practices)
+- [Additional Resources](#additional-resources)
+
+## New Images
+
+New images can either be:
+- **Imported**: Images such as Arista cEOS in `.xz` format can be imported by using the `docker/import` directory.
+- **Built**: Custom images (e.g. Kali, Alpine) can be created using the existing `Dockerfile` files as templates.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Directory Structure
-Each image must follow this structure:
+Each image pending to be built must follow this structure:
 ```
-docker
+docker/build/
 └─ <image-name>/
    ├─ Dockerfile
-   ├─ entrypoint.sh # optional
-   └─ additional files # optional
+   ├─ entrypoint.sh     # optional
+   └─ additional files  # optional
+```
+
+Images pending to be imported must be copied into:
+```
+docker/import/
 ```
 
 ### Example
 ```
-docker
-├─ kali/
-│  ├─ Dockerfile
-│  └─ entrypoint.sh
+docker/
+├─ build/
+│  └─ kali/
+│     ├─ Dockerfile
+│     └─ entrypoint.sh
+├─ import/
+│  └─ cEOS-lab-4.32.0F.tar.xz
 └─ README.md
 ```
 
-The name of the directory is used as the **base image name**, with **`_vntd`** appended when building using the provided `run.sh` script.
+The name of the directory or name of the imported file (trimed at the first `-`) is used as the **base image name**, with **`_vntd`** appended when building/importing using the provided `run.sh` script.
 
-## Dockerfile
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-The provided `Dockerfile` defines a **custom image** (e.g. Linux-based) with commonly used networking and diagnostic tools. The provided Kali image provides the following:
-- `iproute2`, `net-tools`
-- `ping`, `traceroute`
-- `curl`
-- `tcpdump`
-- `nmap`
+## Image Management
 
-### Consideration: Non-interactive Package Installation
-```
-ENV DEBIAN_FRONTEND=noninteractive
-```
-Prevents interactive prompts during package installation, ensuring reliable builds and automated environments.
+The provided `run.sh` script simplify managing the Docker images. If you want to automate building, deleting, or displaying images, the following are available:
+- Build images
+- Import images
+- Delete images
+- Display images
 
-### Image Cleanup
-The Dockerfile should remove cached packages after installation to keep disk usage low and improve manageability.
+The build and import operations apppend **`_vntd`** to ease the managing, displaying and deletion process.
 
-### Behaviour
-```
-CMD ["sleep", "infinity"]
-```
-When **no custom entrypoint is defined**, this command should be placed at the end of the `Dockerfile`.  
-It ensures the container remains running after startup instead of exiting immediately.
+### Build
+For each directory in the `docker/build/` directory, an image is built. The name used for building the image is the directory name. All files related to the image creation should be found within that directory to ease the build process and management.
 
-## Entrypoint
+### Import
+Some external images are provided in compressed formats. These can be imported by placing them in the `docker/import/` directory. The import process builds images in the format:
+- `.xz`
 
-Some containers use a custom `entrypoint.sh` script that **runs every time the container starts**. This is useful for:
-- Starting services
-- Initializing environment variables
-- Performing any initialitzation required
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Behaviour
-When an `entrypoint.sh` file is used, it typically contains a `sleep infinity` instruction.  
-This keeps the container alive until it is manually stopped.
-
-In this case, the `CMD ["sleep", "infinity"]` instruction in the `Dockerfile` is not required.
-
-# Image management
+## Managing Docker Images Manually
 
 Refer to `run.sh` for simplified image management.
+
 See [README](../README.md) for build, delete and view lab images.
 
-## Build an Image
-If an image is modified or newly added, it must be rebuilt.
-
-### Manual build
+### Manual Build
+If an image is modified or newly added, it must be rebuilt. To manually build Docker images, follow these steps:
 
 1. Navigate to the image directory:
 ```
@@ -88,24 +104,90 @@ docker build -t <image_name> .
 docker image ls
 ```
 
-## Delete an Image
+### Manual Delete
 To remove an image:
 ```
 docker rmi <image-name>
 ```
 
-Tom force deletion (e.g. if the image is in referenced by stopped containers):
+To force deletion (e.g. if the image is in referenced by stopped containers):
 ```
 docker rmi -f <image-name>
 ```
 
-# Notes
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Dockerfiles
+
+These files define **custom images**. They are created to include additional packages, automate configurations, and eliminate manual repetition. By using these, we can ensure consistency across environments.
+
+Such images include packages necessay to deploy and run the environment, such as:
+
+#### Network Diagnostic Tools:
+- `iproute2`, `net-tools`: Interface and route inspection.
+- `iputils-ping`, `traceroute`: Connectivity testing.
+- `curl`: Application-level connectivity testing.
+- `tcpdump`: Packet capture and traffic analysis.
+- `nmap`: Network discovery and port scanning.
+
+#### Network connectivity and security:
+- `frr`, `frr-pythontools`: Routing and network control.
+- `iptables`: Firewall and packet filtering.
+
+### Considerations
+
+#### Non-interactive Package Installation
+```
+ENV DEBIAN_FRONTEND=noninteractive
+```
+Prevents interactive prompts during package installation, ensuring reliable builds and automated environments.
+
+#### Image Cleanup
+The Dockerfile should remove cached packages after installation to keep disk usage low and improve manageability.
+
+#### Behaviour
+```
+CMD ["sleep", "infinity"]
+```
+When **no custom entrypoint is defined**, this command should be placed at the end of the `Dockerfile`.  
+It ensures the container remains running after startup instead of exiting immediately.
+
+### Entrypoint
+Some containers use a custom `entrypoint.sh` script that **runs every time the container starts**. This is useful for:
+- Starting services
+- Initializing environment variables
+- Performing any initialitzation required
+
+#### Behaviour
+When an `entrypoint.sh` file is used, it typically contains a `sleep infinity` instruction.  
+This keeps the container alive until it is manually stopped.
+
+In this case, the `CMD ["sleep", "infinity"]` instruction in the `Dockerfile` is not required.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Best Practices
 - Each image should be **independent** from one another
 - Keep images **minimal** to reduce build time and disk usage
 - Use **clear and consistent naming**, e.g. `*_vntd`
 - **Rebuild** images after modifying the `Dockerfile` or `entrypoint.sh`
 
-More images at: https://hub.docker.com/r/praqma/network-multitool
+For more pre-built images, check the official [Docker hub](https://hub.docker.com/search) or other community sources.
 
-## Reference
-Additional Docker images can be found at: https://hub.docker.com/search.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Additional Resources
+
+All images can be obtained freely. The following will require to register to download the image: Arista cEOS.
+
+- Alpine extra: [Docker hub](https://hub.docker.com/r/wbitt/network-multitool)
+
+- Arista cEOS: [Arista Software Downloads](https://www.arista.com/en/support/software-download)
+
+- FRR Router: [FRRouting Releases](https://frrouting.org/release/10.5.0/)
+
+- Debian slim: [Docker hub](https://hub.docker.com/layers/library/debian/12-slim/images)
+
+- Kali Linux: [Docker hub](https://hub.docker.com/r/kalilinux/kali-rolling)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>

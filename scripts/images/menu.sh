@@ -10,7 +10,9 @@ menu() {
     echo "1) > Create images"
     echo "2) > Delete images"
     echo "3) > Display images"
-    echo "4) > Back"
+    echo "4) > Import vjunos switch"
+    echo "5) > Import .xz images"
+    echo "6) > Back"
     echo "=============================="
     printf "Choose an option: "
 }
@@ -32,7 +34,9 @@ while true; do
         1) run_script create.sh ;;
         2) run_script delete.sh ;;
         3) run_script display.sh ;;
-        4) exit 0 ;;
+        4) run_script imports/import-vjunos.sh ;;
+        5) run_script imports/import-xz.sh ;;
+        6) exit 0 ;;
         *)
             echo "Invalid option."
             ;;

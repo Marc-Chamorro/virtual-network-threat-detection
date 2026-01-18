@@ -7,7 +7,7 @@ set -e
 # PRJ_DIR="$($PARENT_DIR && pwd)"
 
 PRJ_DIR="$(cd "$(dirname "$(readlink -f "$0")")/../.."  && pwd)"
-IMAGES_DIR="$PRJ_DIR/docker"
+IMAGES_DIR="$PRJ_DIR/docker/build"
 
 # Get all the directories in 'docker'
 for directory in $IMAGES_DIR/* ; do

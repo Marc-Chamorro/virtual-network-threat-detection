@@ -1,5 +1,3 @@
-# https://hub.docker.com/r/wbitt/network-multitool
-
 FROM wbitt/network-multitool:alpine-extra
 
 RUN apk update && apk add --no-cache \
