@@ -6,8 +6,6 @@ This directory contains the **custom Docker images** required to run the project
 
 ## Table of Contents
 
-UPDATE THE TABLE
-
 - [New Images](#new-images)
 - [Directory Structure](#directory-structure)
 - [Image Management](#image-management)
@@ -133,6 +131,7 @@ Such images include packages necessay to deploy and run the environment, such as
 #### Network connectivity and security:
 - `frr`, `frr-pythontools`: Routing and network control.
 - `iptables`: Firewall and packet filtering.
+- `procps`: Enable IP forwarding.
 
 ### Considerations
 

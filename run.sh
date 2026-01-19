@@ -3,7 +3,7 @@
 # Stop the script on error, do not proceed with the execution
 set -e
 
-PRJ_DIR=$(dirname "$(readlink -f "$0")")         # https://dev.to/bobbyiliev/how-to-get-the-directory-where-a-bash-script-is-located-em3#:~:text=The%20simplest%20way%20to%20get,or%20just%20the%20script%20name.
+PRJ_DIR=$(dirname "$(readlink -f "$0")")
 SCRIPTS_DIR="$PRJ_DIR/scripts"
 
 S_MENU_IMAGES="$SCRIPTS_DIR/images/menu.sh"
@@ -19,19 +19,18 @@ menu() {
     printf "Choose an option: "
 }
 
+handle_input() {
+    case "$1" in
+        1) sh "$S_MENU_IMAGES" "$PRJ_DIR" ;;
+        2) sh "$S_MENU_CLAB" "$PRJ_DIR" ;;
+        3) echo "Exiting."
+           exit 0 ;;
+        *) echo "Invalid option." ;;
+    esac
+}
+
 while true; do
     menu
     read choice
-
-    case "$choice" in
-        1) sh $S_MENU_IMAGES ;;
-        2) sh $S_MENU_CLAB ;;
-        3)
-            echo "Exiting."
-            exit 0
-            ;;
-        *)
-            echo "Invalid option."
-            ;;
-    esac
+    handle_input "$choice"    
 done

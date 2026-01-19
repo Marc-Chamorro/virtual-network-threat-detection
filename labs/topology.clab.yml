@@ -93,6 +93,7 @@ topology:
         - ip link set eth1 up
         - ip link set eth2 up
 
+        - ip route del default
         - ip route add 192.168.10.0/24 via 192.168.0.2
         - ip route add 192.168.20.0/24 via 192.168.0.2
         - ip route add 192.168.30.0/24 via 192.168.0.2
@@ -101,9 +102,6 @@ topology:
         # NAT
         #- iptables -t nat -A POSTROUTING -s 192.168.0.0/16 -o eth1 -j MASQUERADE
         - iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
-
-        # Default route
-        - ip route add default via 172.16.30.1
 
         # Start FRR
         - /usr/lib/frr/frrinit.sh start

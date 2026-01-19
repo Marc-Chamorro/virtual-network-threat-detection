@@ -2,7 +2,9 @@
 
 set -e
 
-TOPO_SCRIPTS_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+PRJ_DIR="$1"
+CURRENT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+TOPOLOGY_DIR="$PRJ_DIR/labs"
 
 menu() {
     echo ""
@@ -19,7 +21,7 @@ run_script() {
     echo ""
     echo ">>> Running: $1"
     echo "--------------------------------"
-    sh "$TOPO_SCRIPTS_DIR/$1"
+    sh "$CURRENT_DIR/$1" "$TOPOLOGY_DIR"
     echo "--------------------------------"
     echo ">>> Finished: $1"
 }
@@ -33,8 +35,6 @@ while true; do
         2) run_script destroy.sh ;;
         3) run_script display.sh ;;
         4) exit 0 ;;
-        *)
-            echo "Invalid option."
-            ;;
+        *) echo "Invalid option." ;;
     esac
 done

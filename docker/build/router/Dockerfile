@@ -8,6 +8,7 @@ RUN apt update && apt -y install \
     iptables \
     net-tools \
     tcpdump \
+    procps \
     frr \
     frr-pythontools \
     && apt clean \
@@ -15,5 +16,7 @@ RUN apt update && apt -y install \
 
 # enable OSPF
 RUN sed -i 's/ospfd=no/ospfd=yes/' /etc/frr/daemons
+
+RUN echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 
 CMD ["sleep", "infinity"]

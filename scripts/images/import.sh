@@ -2,14 +2,14 @@
 
 set -e
 
-PRJ_DIR="$(cd "$(dirname "$(readlink -f "$0")")/../../.." && pwd)"
+PRJ_DIR="$1"
 IMPORT_DIR="$PRJ_DIR/docker/import"
 
 # https://containerlab.dev/manual/kinds/ceos/
 # can for .xz files
 for file in $IMPORT_DIR/*.xz; do
     if [ -f "$file" ]; then
-        # extract the name until _ # https://stackoverflow.com/questions/20348097/bash-extract-string-before-a-colon
+        # extract the name until - # https://stackoverflow.com/questions/20348097/bash-extract-string-before-a-colon
         IMAGE_NAME=$(basename "$file" | cut -d'-' -f1)
 
         # https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash

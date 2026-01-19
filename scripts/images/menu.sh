@@ -2,17 +2,17 @@
 
 set -e
 
-IMAGES_SCRIPTS_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+PRJ_DIR="$1"
+CURRENT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 
 menu() {
     echo ""
     echo "===== Image Control Menu ====="
     echo "1) > Create images"
-    echo "2) > Delete images"
-    echo "3) > Display images"
-    echo "4) > Import vjunos switch"
-    echo "5) > Import .xz images"
-    echo "6) > Back"
+    echo "2) > Import images (.xz)"
+    echo "3) > Delete images"
+    echo "4) > Display images"
+    echo "5) > Back"
     echo "=============================="
     printf "Choose an option: "
 }
@@ -21,7 +21,7 @@ run_script() {
     echo ""
     echo ">>> Running: $1"
     echo "--------------------------------"
-    sh "$IMAGES_SCRIPTS_DIR/$1"
+    sh "$CURRENT_DIR/$1" "$PRJ_DIR"
     echo "--------------------------------"
     echo ">>> Finished: $1"
 }
@@ -32,13 +32,10 @@ while true; do
 
     case "$choice" in
         1) run_script create.sh ;;
-        2) run_script delete.sh ;;
-        3) run_script display.sh ;;
-        4) run_script imports/import-vjunos.sh ;;
-        5) run_script imports/import-xz.sh ;;
-        6) exit 0 ;;
-        *)
-            echo "Invalid option."
-            ;;
+        2) run_script import.sh ;;
+        3) run_script delete.sh ;;
+        4) run_script display.sh ;;
+        5) exit 0 ;;
+        *) echo "Invalid option." ;;
     esac
 done
