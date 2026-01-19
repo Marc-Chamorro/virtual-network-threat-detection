@@ -6,7 +6,7 @@ set -e
 # PARENT_DIR="$(cd $CRRNT_DIR/.. )"
 # PRJ_DIR="$($PARENT_DIR && pwd)"
 
-PRJ_DIR="$(cd "$(dirname "$(readlink -f "$0")")/../.."  && pwd)"
+PRJ_DIR="$1"
 IMAGES_DIR="$PRJ_DIR/docker/build"
 
 # Get all the directories in 'docker'
