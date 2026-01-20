@@ -6,6 +6,12 @@ vlan 20
    name VLAN20
 vlan 30
    name VLAN30
+vlan 40
+   name VLAN30
+vlan 50
+   name VLAN30
+vlan 60
+   name VLAN30
 
 
 interface Vlan10
@@ -18,6 +24,18 @@ interface Vlan20
 
 interface Vlan30
    ip address 192.168.30.1/24
+   no shutdown
+
+interface Vlan40
+   ip address 192.168.40.1/24
+   no shutdown
+
+interface Vlan50
+   ip address 192.168.50.1/24
+   no shutdown
+
+interface Vlan60
+   ip address 192.168.60.1/24
    no shutdown
 
 
@@ -40,6 +58,21 @@ interface eth3
 interface eth4
    switchport mode access
    switchport access vlan 30
+   no shutdown
+
+interface eth5
+   switchport mode access
+   switchport access vlan 40
+   no shutdown
+
+interface eth6
+   switchport mode access
+   switchport access vlan 50
+   no shutdown
+
+interface eth7
+   switchport mode access
+   switchport access vlan 60
    no shutdown
 
 

@@ -131,7 +131,7 @@ Such images include packages necessay to deploy and run the environment, such as
 #### Network connectivity and security:
 - `frr`, `frr-pythontools`: Routing and network control.
 - `iptables`: Firewall and packet filtering.
-- `procps`: Enable IP forwarding.
+- `procps`: Enable IP forwarding and system tools.
 
 ### Considerations
 

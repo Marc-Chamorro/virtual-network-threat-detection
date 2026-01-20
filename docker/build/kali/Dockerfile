@@ -13,6 +13,7 @@ RUN apt update && apt -y install \
     curl \
     tcpdump \
     nmap \
+    openssh-client \
     # Clean cache
     && apt clean \
     # Remove temporal data

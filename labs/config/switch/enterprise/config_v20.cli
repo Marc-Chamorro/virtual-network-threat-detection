@@ -12,14 +12,3 @@ interface eth2
     switchport mode access
     switchport access vlan 20
     no shutdown
-
-interface eth3
-    switchport mode access
-    switchport access vlan 20
-    no shutdown
-
-interface eth4
-    switchport mode access
-    switchport access vlan 20
-    no shutdown
-
