@@ -1,0 +1,20 @@
+hostname switch-vlan50
+
+vlan 50
+   name VLAN50
+
+interface eth1
+    switchport mode access
+    switchport access vlan 50
+    no shutdown
+
+interface eth2
+    switchport mode access
+    switchport access vlan 50
+    no shutdown
+
+interface eth3
+    switchport mode access
+    switchport access vlan 50
+    no shutdown
+    
