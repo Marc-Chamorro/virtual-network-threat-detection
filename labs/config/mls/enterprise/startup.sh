@@ -40,6 +40,10 @@ ip route add default via 192.168.0.1
 # VLAN10 - DMZ
 iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT # Accept responses
 iptables -A FORWARD -s 192.168.0.0/24 -d 192.168.10.0/24 -j ACCEPT
+# Not tested yet, first ensure communication (replaced by the line underneath)
+# iptables -A FORWARD -d 192.168.10.0/24 -p tcp -m multiport --dports 22,80 -j ACCEPT
+# iptables -A FORWARD -d 192.168.10.0/24 -j DROP
+iptables -A FORWARD -d 192.168.10.0/24 -j ACCEPT
 iptables -A FORWARD -s 192.168.10.0/24 -j DROP
 
 # VLAN20 - IDS
