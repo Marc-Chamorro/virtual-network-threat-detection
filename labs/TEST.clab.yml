@@ -1,0 +1,135 @@
+name: firewall-lab
+
+topology:
+  nodes:
+    firewall:
+      kind: linux
+      image: firewall_vntd:latest
+      env:
+        STATEFULL: "0"
+        STATELESS: "0"
+      binds:
+        - ./config/firewall/enterprise/startup.sh:/startup.sh
+      exec:
+        - sh /startup.sh
+      #sysctls:
+        #net.ipv4.ip_forward: "1"
+
+WORKING ON THIS:
+des de ids no tinc ping a dins (hauria de tindre) 
+des de vlan 20 puc conectarme al servidor de internet i al ids (perfecte) 
+des de la vlan 30 puc conectarme al ids (perfecte) 
+des de per exemple attacker, no em puc conectar a la xarxa interna (DMZ) (hauria de poder) 
+
+UPDATED
+la primera segueix sense funcionar 
+la segona, ja no puc fer ping al ids 
+la tercera com a minim funciona la quarta s
+egueix sense funcionar
+
+
+UPDATED
+1. FUNCIONA !
+2. FUNCIONA !
+3. FUNCIONA !
+4. FUNCIONA !
+
+com a minim el ping, no he probat curl ni tal encara
+
+POSSIBLE SOLUTION -> linux firewall, how to mirror all traffic from one direction to another one
+
+PROBLEMES PENDENTS
+EL PING UNA MICA DUPLICAT
+marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ docker exec -it clab-virtual-env-pc_vlan30 bash
+pc_vlan30:/# ping 192.168.10.10
+PING 192.168.10.10 (192.168.10.10) 56(84) bytes of data.
+64 bytes from 192.168.10.10: icmp_seq=1 ttl=63 time=2.53 ms
+^C
+--- 192.168.10.10 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 2.527/2.527/2.527/0.000 ms
+pc_vlan30:/# ping 192.168.100.2
+PING 192.168.100.2 (192.168.100.2) 56(84) bytes of data.
+64 bytes from 192.168.100.2: icmp_seq=1 ttl=61 time=0.848 ms
+64 bytes from 192.168.100.2: icmp_seq=2 ttl=61 time=0.780 ms
+^C
+--- 192.168.100.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1035ms
+rtt min/avg/max/mdev = 0.780/0.814/0.848/0.034 ms
+pc_vlan30:/# ping 172.16.100.100
+PING 172.16.100.100 (172.16.100.100) 56(84) bytes of data.
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=11.5 ms
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=11.8 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=12.2 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=12.8 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=13.1 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=13.3 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=13.5 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=13.7 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=13.8 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=14.1 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=14.3 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=14.5 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=14.7 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=14.9 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=15.2 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=54 time=15.4 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=54 time=15.6 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=54 time=15.9 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=16.1 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=16.3 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=16.6 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=54 time=16.9 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=52 time=17.2 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=52 time=17.5 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=52 time=17.8 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=18.1 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=18.5 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=18.8 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=54 time=19.1 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=52 time=19.4 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=50 time=19.8 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=50 time=20.2 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=50 time=20.6 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=21.0 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=21.3 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=21.7 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=54 time=21.9 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=52 time=22.2 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=50 time=22.5 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=48 time=22.7 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=48 time=23.0 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=48 time=23.3 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=23.5 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=23.8 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=24.0 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=54 time=24.3 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=52 time=24.5 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=50 time=24.8 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=48 time=25.0 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=46 time=25.2 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=46 time=25.5 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=46 time=25.7 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=26.0 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=26.2 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=26.5 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=54 time=26.8 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=52 time=27.1 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=50 time=27.4 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=48 time=27.7 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=46 time=28.0 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=44 time=28.3 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=44 time=28.6 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=44 time=28.9 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=60 time=29.2 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=58 time=29.4 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=56 time=29.7 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=54 time=29.9 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=52 time=30.2 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=50 time=30.4 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=48 time=30.7 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=46 time=31.0 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=44 time=31.4 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=42 time=31.7 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=42 time=32.1 ms (DUP!)
+64 bytes from 172.16.100.100: icmp_seq=1 ttl=42 time=32.4 ms (DUP!)
