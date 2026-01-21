@@ -18,4 +18,15 @@ ip route add default via 172.16.30.1
 
 iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 
+# Port forwarding to DMZ server
+# PREROUTING - incoming packets
+# DNAT - change destination address/port
+# --to-destination - new address/port
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to-destination 192.168.10.10:80
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 22 -j DNAT --to-destination 192.168.10.10:22
+
+# Allow responses from DMZ to Internet
+iptables -A FORWARD -d 192.168.10.10/32 -p tcp -m multiport --dports 80,22 -j ACCEPT
+iptables -A FORWARD -s 192.168.10.10/32 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
 /usr/lib/frr/frrinit.sh start

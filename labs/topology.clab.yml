@@ -80,6 +80,8 @@ topology:
     # Network core
     #----------------------------------------------------------------------------------------------
 
+    # https://wiki.archlinux.org/title/Simple_stateful_firewall
+
     router_enterprise:
       kind: linux
       image: router_vntd:latest
@@ -120,6 +122,12 @@ topology:
       # cpu: 2
       # memory: 4GB
 
+    # ┌──(root㉿attacker)-[/]
+    # └─# curl 172.16.30.2
+    # Hello from Nginx on the web server
+
+
+
     multilayer_switch:
       kind: linux
       image: mls_vntd:latest
@@ -139,7 +147,6 @@ topology:
     # Cli
     # enable
     # configure terminal
-
 
     # VLAN 10 - DMZ
     #----------------------------------------------------------------------------------------------

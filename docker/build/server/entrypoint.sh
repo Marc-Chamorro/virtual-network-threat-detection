@@ -12,6 +12,7 @@ if [[ "$SSH_SERVER" == "1" ]]; then
     useradd $SSH_USER -s /bin/bash -M
     echo "$SSH_USER:$SSH_PASS" | chpasswd
 
+    # Replace SSH config to allow password authentication
     sed -i '/PasswordAuthentication/c\PasswordAuthentication yes' /etc/ssh/sshd_config
     sed -i '/PermitRootLogin/c\PermitRootLogin yes' /etc/ssh/sshd_config
 
