@@ -4,8 +4,8 @@ vlan 60
    name VLAN60
 
 interface eth1
-    switchport mode access
-    switchport access vlan 60
+    switchport mode trunk
+    switchport trunk allowed vlan 60
     no shutdown
 
 interface eth2

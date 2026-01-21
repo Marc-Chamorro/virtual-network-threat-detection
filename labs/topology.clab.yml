@@ -121,9 +121,25 @@ topology:
       # memory: 4GB
 
     multilayer_switch:
-      kind: arista_ceos
-      image: ceos_vntd:latest
-      startup-config: ./config/mls/enterprise/mls_arista.cli
+      kind: linux
+      image: mls_vntd:latest
+      binds:
+        - ./config/mls/enterprise/startup.sh:/startup.sh
+      exec:
+        - sh /startup.sh
+
+    # Does not support package filtering
+    #multilayer_switch:
+      #kind: arista_ceos
+      #image: ceos_vntd:latest
+      #startup-config: ./config/mls/enterprise/mls_arista.cli
+      #startup-config: /home/marc/Documents/containerlab/virtual-network-threat-detection/labs/config/mls/enterprise/mls_arista.cli
+      #exec:
+      #  - bash -c "rm -f /mnt/flash/startup-config /mnt/flash/running-config"
+    # Cli
+    # enable
+    # configure terminal
+
 
     # VLAN 10 - DMZ
     #----------------------------------------------------------------------------------------------
