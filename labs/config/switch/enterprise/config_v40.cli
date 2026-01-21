@@ -4,8 +4,8 @@ vlan 40
    name VLAN40
 
 interface eth1
-    switchport mode access
-    switchport access vlan 40
+    switchport mode trunk
+    switchport trunk allowed vlan 40
     no shutdown
 
 interface eth2

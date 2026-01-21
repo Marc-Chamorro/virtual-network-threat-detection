@@ -4,8 +4,8 @@ vlan 20
    name VLAN20
 
 interface eth1
-    switchport mode access
-    switchport access vlan 20
+    switchport mode trunk
+    switchport trunk allowed vlan 20
     no shutdown
 
 interface eth2

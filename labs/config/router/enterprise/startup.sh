@@ -11,6 +11,9 @@ ip route del default
 ip route add 192.168.10.0/24 via 192.168.0.2
 ip route add 192.168.20.0/24 via 192.168.0.2
 ip route add 192.168.30.0/24 via 192.168.0.2
+ip route add 192.168.40.0/24 via 192.168.0.2
+ip route add 192.168.50.0/24 via 192.168.0.2
+ip route add 192.168.60.0/24 via 192.168.0.2
 ip route add default via 172.16.30.1
 
 iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE

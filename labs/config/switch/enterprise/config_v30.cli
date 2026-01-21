@@ -4,8 +4,8 @@ vlan 30
    name VLAN30
 
 interface eth1
-    switchport mode access
-    switchport access vlan 30
+    switchport mode trunk
+    switchport trunk allowed vlan 30
     no shutdown
 
 interface eth2
