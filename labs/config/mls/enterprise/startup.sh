@@ -2,8 +2,6 @@
 
 set -e
 
-echo "TEST: Starting startup.sh script for MLS configuration..."
-
 # VLAN trunk interfaces
 ip link add link eth2 name eth2.10 type vlan id 10
 ip link add link eth3 name eth3.20 type vlan id 20
@@ -31,25 +29,35 @@ ip link set dev eth7.60 up
 
 # IP to go out to Internet
 ip addr add 192.168.0.2/30 dev eth1
-
-# Default route
 ip route del default
 ip route add default via 192.168.0.1
 
+
 # Rules
-# VLAN10 - DMZ
 iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT # Accept responses
+
+# VLAN10 - DMZ
 iptables -A FORWARD -s 192.168.0.0/24 -d 192.168.10.0/24 -j ACCEPT
 # Not tested yet, first ensure communication (replaced by the line underneath)
 # iptables -A FORWARD -d 192.168.10.0/24 -p tcp -m multiport --dports 22,80 -j ACCEPT
 # iptables -A FORWARD -d 192.168.10.0/24 -j DROP
 iptables -A FORWARD -d 192.168.10.0/24 -j ACCEPT
+iptables -A FORWARD -s 192.168.10.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 iptables -A FORWARD -s 192.168.10.0/24 -j DROP
-
 # VLAN20 - IDS
+
+iptables -A FORWARD -s 192.168.100.0/24 -d 192.168.20.0/24 -j ACCEPT
+iptables -A FORWARD -s 192.168.20.0/24 -d 192.168.100.0/24 -j ACCEPT
 iptables -A FORWARD -s 192.168.20.0/24 -o eth1 -j ACCEPT
-iptables -A FORWARD -s 192.168.20.0/24 -d 192.168.10.0/24 -j ACCEPT
 iptables -A FORWARD -s 192.168.20.0/24 -j DROP
+
+
+#iptables -A FORWARD -s 192.168.20.0/24 -o eth1 -j ACCEPT
+#iptables -A FORWARD -s 192.168.20.0/24 -d 192.168.10.0/24 -j ACCEPT
+    # IDS -> VLAN 20
+#iptables -A FORWARD -s 192.168.100.0/24 -d 192.168.20.0/24 -j ACCEPT
+#iptables -A FORWARD -s 192.168.20.0/24 -d 192.168.100.0/24 -j ACCEPT
+#iptables -A FORWARD -s 192.168.20.0/24 -j DROP
 #iptables -A FORWARD -s 192.168.20.0/24 -j ACCEPT
 #iptables -A FORWARD -d 192.168.20.0/24 -j ACCEPT
 

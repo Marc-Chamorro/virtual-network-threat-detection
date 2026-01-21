@@ -82,6 +82,29 @@ topology:
 
     # https://wiki.archlinux.org/title/Simple_stateful_firewall
 
+    firewall:
+      kind: linux
+      image: firewall_vntd:latest
+      env:
+        STATEFULL: 1
+        STATELESS: 1
+      binds:
+        - ./config/firewall/enterprise/startup.sh:/startup.sh
+      exec:
+        - sh /startup.sh
+      #sysctls:
+        #net.ipv4.ip_forward: "1"
+
+    ids:
+      kind: linux
+      image: ids_vntd:latest
+      exec:
+        - ip addr add 192.168.100.2/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 192.168.100.1
+        - ip link set eth1 promisc on
+
     router_enterprise:
       kind: linux
       image: router_vntd:latest
@@ -282,7 +305,10 @@ topology:
 
     # Enterprise network
       # Network core
-    - endpoints: ["router_enterprise:eth1", "router_internet:eth3"]
+    # NO - endpoints: ["router_enterprise:eth1", "router_internet:eth3"]
+    - endpoints: ["router_internet:eth3", "firewall:eth1"]
+    - endpoints: ["firewall:eth2", "router_enterprise:eth1"]
+    - endpoints: ["firewall:eth3", "ids:eth1"]
     - endpoints: ["router_enterprise:eth2", "multilayer_switch:eth1"]
 
       # VLAN 10
