@@ -5,7 +5,7 @@ Welcome to the **Virtual Network Threat Detection** documentation.
 This project provides a **container-based virtual lab** for experimenting with
 network threat detection techniques using modern open-source tools.
 
-![Network Design](../images/NET%20Design.svg)
+![Network Design](assets/NET%20Design.svg)
 
 ---
 
