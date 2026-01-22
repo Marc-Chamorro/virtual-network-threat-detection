@@ -49,9 +49,6 @@ theme:
     - navigation.sections
     - navigation.top
     - navigation.footer
-    - navigation.sections
-    - navigation.tracking
-    - navigation.instant
     - toc.follow
     - content.code.copy
     - content.action.edit
