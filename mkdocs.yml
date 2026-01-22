@@ -1,6 +1,11 @@
 site_name: Virtual Network Threat Detection
-site_description: Containerlab-based network threat detection lab
+site_description: Containerlab-based network threat detection
 site_author: Marc Chamorro
+site_url: https://marc-chamorro.github.io/virtual-network-threat-detection/
+
+repo_url: https://github.com/Marc-Chamorro/virtual-network-threat-detection
+repo_name: Marc-Chamorro/virtual-network-threat-detection
+edit_uri: edit/main/docs/
 
 nav:
   - Home: index.md
@@ -9,25 +14,68 @@ nav:
       - Basic Lab: topologies/basic-lab.md
   - Services:
       - Suricata: services/suricata.md
-      - Zeek: services/zeek.md
   - Deployment: deployment.md
 
 theme:
   name: material
+  language: en
+  #logo: assets/logo.png
+  #favicon: assets/favicon.png
+
   palette:
     - scheme: default
       primary: indigo
       accent: indigo
       toggle:
-        icon: material/toggle-switch-off-outline
+        icon: material/weather-night
         name: Switch to dark mode
     - scheme: slate
       primary: indigo
       accent: indigo
       toggle:
-        icon: material/toggle-switch
+        icon: material/weather-sunny
         name: Switch to light mode
+
   font:
     text: Roboto
     code: Roboto Mono
-    
+
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - content.code.copy
+    - content.action.edit
+    - content.action.view
+    - search.highlight
+    - search.suggest
+
+plugins:
+  - search
+  - with-pdf:
+      author: Marc Chamorro
+      cover_subtitle: Virtual Network Threat Detection Lab
+      output_path: assets/pdf/vntd-docs.pdf
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Marc-Chamorro
