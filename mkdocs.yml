@@ -1,0 +1,33 @@
+site_name: Virtual Network Threat Detection
+site_description: Containerlab-based network threat detection lab
+site_author: Marc Chamorro
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Topologies:
+      - Basic Lab: topologies/basic-lab.md
+  - Services:
+      - Suricata: services/suricata.md
+      - Zeek: services/zeek.md
+  - Deployment: deployment.md
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+    
