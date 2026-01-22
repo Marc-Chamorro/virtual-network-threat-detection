@@ -42,4 +42,4 @@ network threat detection techniques using modern open-source tools.
     This documentation evolves together with the code.  
     Use the **Edit** button to propose improvements directly on GitHub.
 
-📄 [Download full documentation (PDF)](pdf/combined.pdf)
+📄 [Download full documentation (PDF)](assets/pdf/vntd-docs.pdf)

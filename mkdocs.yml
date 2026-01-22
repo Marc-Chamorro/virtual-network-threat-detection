@@ -11,8 +11,10 @@ nav:
   - Home: index.md
   - Architecture: architecture.md
   - Topologies:
+      - Overview: topologies/index.md
       - Basic Lab: topologies/basic-lab.md
   - Services:
+      - Overview: services/index.md
       - Suricata: services/suricata.md
   - Deployment: deployment.md
 
@@ -23,13 +25,13 @@ theme:
   #favicon: assets/favicon.png
 
   palette:
-    - scheme: default
+    - scheme: slate
       primary: indigo
       accent: indigo
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
-    - scheme: slate
+    - scheme: default
       primary: indigo
       accent: indigo
       toggle:
