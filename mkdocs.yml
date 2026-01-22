@@ -47,7 +47,7 @@ theme:
     - navigation.instant
     - navigation.instant.progress
     - navigation.tracking
-    - navigation.sections
+    #- navigation.sections
     - navigation.top
     - navigation.footer
     - navigation.indexes
