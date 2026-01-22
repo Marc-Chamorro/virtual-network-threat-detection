@@ -11,7 +11,7 @@ nav:
   - Home: index.md
   - Architecture: architecture.md
   - Topologies:
-      - topologies/index.md
+      - index.md
       - Basic Lab: topologies/basic-lab.md
       - Devices: topologies/devices.md
   - Services:
