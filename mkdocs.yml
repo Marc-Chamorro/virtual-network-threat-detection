@@ -11,8 +11,9 @@ nav:
   - Home: index.md
   - Architecture: architecture.md
   - Topologies:
-      - Overview: topologies/index.md
+      - topologies/index.md
       - Basic Lab: topologies/basic-lab.md
+      - Devices: topologies/devices.md
   - Services:
       - Overview: services/index.md
       - Suricata: services/suricata.md
@@ -51,9 +52,9 @@ theme:
     - navigation.footer
     - navigation.indexes
 
-    - toc.integrate
+    #- toc.integrate
     - toc.follow
-    
+
     - content.code.copy
     - content.action.edit
     - content.action.view
