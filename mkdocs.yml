@@ -47,9 +47,11 @@ theme:
     - navigation.instant.progress
     - navigation.tracking
     - navigation.sections
-    - navigation.expand
     - navigation.top
     - navigation.footer
+    - navigation.sections
+    - navigation.tracking
+    - navigation.instant
     - toc.follow
     - content.code.copy
     - content.action.edit
