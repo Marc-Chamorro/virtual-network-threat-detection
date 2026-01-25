@@ -11,10 +11,12 @@ IMAGES_DIR="$PRJ_DIR/docker/build"
 
 # Get all the directories in 'docker'
 for directory in $IMAGES_DIR/* ; do
-    # If such is a file and not a directory, skip it
-    if [ -d "$directory" ]; then
+    BASENAME="$(basename "$directory")"
 
-        IMAGE_NAME="$(basename $directory)_vntd"
+    # If such is a file and not a directory, skip it
+    if [ -d "$directory" ] && [ "$(echo "$BASENAME" | cut -c1)" != "_" ]; then
+
+        IMAGE_NAME="${BASENAME}_vntd"
 
         echo "Building image: $IMAGE_NAME"
 

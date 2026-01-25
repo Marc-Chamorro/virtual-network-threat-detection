@@ -1,20 +1,23 @@
-hostname switch-vlan60
+hostname switch-FLOOR-2
 
+vlan 50
+   name VLAN50
 vlan 60
    name VLAN60
 
 interface eth1
     switchport mode trunk
-    switchport trunk allowed vlan 60
+    switchport trunk allowed vlan 50,60
     no shutdown
 
 interface eth2
     switchport mode access
-    switchport access vlan 60
+    switchport access vlan 50
     no shutdown
 
 interface eth3
     switchport mode access
     switchport access vlan 60
     no shutdown
+    
     

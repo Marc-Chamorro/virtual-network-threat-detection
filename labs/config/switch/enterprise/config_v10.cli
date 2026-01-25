@@ -1,14 +1,16 @@
-hostname switch-vlan10
-
+hostname switch-DMZ
+!
 vlan 10
    name VLAN10
-
+!
 interface eth1
-    switchport mode trunk
-    switchport trunk allowed vlan 10
+    description Link_to_Firewall
+    switchport mode access
+    switchport access vlan 10
     no shutdown
-
+!
 interface eth2
+    description Link_to_Server
     switchport mode access
     switchport access vlan 10
     no shutdown
