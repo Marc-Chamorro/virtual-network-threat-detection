@@ -8,16 +8,54 @@ repo_name: Marc-Chamorro/virtual-network-threat-detection
 edit_uri: edit/main/docs/
 
 nav:
+  # Welcome users with a homepage that provides an overview of the project. This page should set the tone and context for the documentation.
   - Home: index.md
-  - Architecture: architecture.md
-  - Topologies:
-      - topologies/index.md
-      - Basic Lab: topologies/basic-lab.md
-      - Devices: topologies/devices.md
+  # A brief description of the project's purpose, key features, and goals. Understand what the project is and what it aims to solve or achieve.
+  - Introduction: introduction.md
+  # Outline any requirements or dependencies needed before getting started, such as system requirements, tools, or libraries. This lets users know if they need anything installed beforehand.
+  # Provide a simple set of steps or commands for getting the project up and running. This might include installation commands, running the project, or testing basic functionality to get the user started quickly.
+  # For example prerequisites, downloading the image
+  - Getting Started: getting-started.md
+  # A detailed guide on how to install and set up the project. This section should cover all necessary steps, configurations, and options available during installation.
+  - Installation: installation.md
+  - Architecture:
+      # Topology design and components used, devices, rules applied, communication, data flow, etc.
+      - Overview: architecture/index.md
+      - Network Design: architecture/network-design.md
+      #- Components: architecture/components.md
+      #- Data Flow: architecture/data-flow.md
+  - Deployment:
+      # Instructions on how to deploy the project. And connect to the devices and so on.
+      - Overview: deployment/index.md
+      - Requirements: deployment/requirements.md
+      - Lifecycle: deployment/lifecycle.md
+  - Docker & Containerlab:
+      # General overview of Docker and its relevance to the project. 
+      - Overview: docker/index.md
+      # Provided images, how to build them
+      - Image Catalog: docker/images.md
+      - Building Dockerfiles: docker/dockerfiles.md
+      - Entrypoints & Behavior: docker/entrypoints.md
+      - Importing Images: docker/supported-images.md
+  - Labs:
+      # Detailes information about topology files and lab configurations.
+      - Overview: labs/index.md
+      - Topology File: labs/topologies.md
+      - Lab Configuration: labs/configuration.md
+      #- Running the Labs: labs/running-the-labs.md
+  - Scripts & Automation:
+      # Information about any scripts or automation tools included in the project.
+      - Overview: scripts/index.md
+      #- Automation Workflows: scripts/automation-workflows.md
+      - Images Management: scripts/images-management.md
+      - Lab Management: scripts/lab-management.md
+  # TO BE DEFINED AT ESTABLISHED LATER
   - Services:
+      # Overview of the services used in the project, their purpose, and how they interact with each other.
       - Overview: services/index.md
-      - Suricata: services/suricata.md
-  - Deployment: deployment.md
+      - Suricata: services/suricata.md # Mayber here or somewhere else?
+      - Monitoring: services/monitoring.md
+  - Cool Examples: example_elements.md
 
 theme:
   name: material

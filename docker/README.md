@@ -1,192 +1,156 @@
 <a id="readme-top"></a>
 
-# Docker Images for Virtual Environment
+# Docker Environment Images
 
-This directory contains the **custom Docker images** required to run the project environment. Each image is built from a dedicated subdirectory and is intended to provide a consistent and reproducible environment for the labs.
+This directory contains the **custom Docker images** required to run the project environment. Each image is either imported or built from a dedicated subdirectory and is intended to provide a **consistent** and **reproducible** environment for the labs.
+
+The content allows:
+1. **Building** custom images from Dockerfiles.
+2. **Importing** vendor-provided images (e.g., Arista cEOS).
+3. **Standardizing** the labs environment.
 
 ## Table of Contents
 
-- [New Images](#new-images)
 - [Directory Structure](#directory-structure)
+- [Workflow & Naming Format](#workflow--naming-format)
+   - [Build Directory](#build-directory)
+   - [Import Directory](#import-directory)
+   - [Ignored Directories](#ignored-directories)
 - [Image Management](#image-management)
-   - [Build](#build)
-   - [Import](#import)
-- [Managing Docker Images Manually](#managing-docker-images-manually)
-   - [Manual Build](#manual-build)
-   - [Manual Delete](#manual-delete)
-- [Dockerfiles](#dockerfiles)
-   - [Considerations](#considerations)
-   - [Entrypoint](#entrypoint)
-- [Best Practices](#best-practices)
-- [Additional Resources](#additional-resources)
+   - [Automated Management](#automated-management)
+   - [Manual Build & Debug](#manual-build--debug)
+- [Dockerfile Guidelines](#dockerfile-guidelines)
+- [External Resources](#external-resources)
 
-## New Images
+## Directory Structure
 
-New images can either be:
-- **Imported**: Images such as Arista cEOS in `.xz` format can be imported by using the `docker/import` directory.
-- **Built**: Custom images (e.g. Kali, Alpine) can be created using the existing `Dockerfile` files as templates.
+The directory is organized to separate source files (buildable) from external elements (importable).
+
+```
+docker/
+├── build/                 # Source code for custom images
+│   ├── kali/              # Example: kali_vntd
+│   │   ├── Dockerfile
+│   │   └── entrypoint.sh
+│   ├── alpine/            # Example: alpine_vntd
+│   │   └── Dockerfile
+│   └── _template/         # IGNORED: Starts with underscore
+│       └── Dockerfile
+├── import/                # Files for external images
+│   └── cEOS-lab.tar.xz    # Example: ceos_vntd
+└── README.md
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Directory Structure
-Each image pending to be built must follow this structure:
-```
-docker/build/
-└─ <image-name>/
-   ├─ Dockerfile
-   ├─ entrypoint.sh     # optional
-   └─ additional files  # optional
-```
+## Workflow & Naming Format
 
-Images pending to be imported must be copied into:
-```
-docker/import/
-```
+The project scripts rely on a consistent naming format. When images are processed (built or imported) through the automation scripts (`run.sh`), the suffix **`_vntd`** is automatically appended to the resulting image tag to prevent conflicts with other local images.
 
-### Example
-```
-docker/
-├─ build/
-│  └─ kali/
-│     ├─ Dockerfile
-│     └─ entrypoint.sh
-├─ import/
-│  └─ cEOS-lab-4.32.0F.tar.xz
-└─ README.md
-```
+### Build Directory
 
-The name of the directory or name of the imported file (trimed at the first `-`) is used as the **base image name**, with **`_vntd`** appended when building/importing using the provided `run.sh` script.
+Location: `docker/build/`
+
+Each directory represents a unique image. The name of the directory is used as the base name for the image.
+
+- **Requirement:** Contains at least a `Dockerfile`.
+- **Optional:** Can contain `entrypoint.sh` or other configuration files needed during the build.
+
+### Import Directory
+
+Location: `docker/import/`
+
+Compressed image files are dropped here. The filename (trimmed at the first `-` character) is used as the base name.
+
+- **Supported formats:** `.tar.xz` (only ensured for Arista cEOS).
+
+### Ignored Directories
+
+Any directory within `docker/build/` that starts with an underscore (`_`) will be **ignored** by the automation scripts.
+
+- **Use case:** Useful for testing, keeping templates, or storing deprecated image sources without deleting them.
+- **Example:** `docker/build/_mls` will not trigger a build process.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Image Management
 
-The provided `run.sh` script simplify managing the Docker images. If you want to automate building, deleting, or displaying images, the following are available:
-- Build images
-- Import images
-- Delete images
-- Display images
+### Automated Management
 
-The build and import operations apppend **`_vntd`** to ease the managing, displaying and deletion process.
+The primary way to interact with these images is through the project's main control script (`run.sh`), located in the project root. It handles:
 
-### Build
-For each directory in the `docker/build/` directory, an image is built. The name used for building the image is the directory name. All files related to the image creation should be found within that directory to ease the build process and management.
+- Building all valid directories in `docker/build/`.
+- Importing all valid files in `docker/import/`.
+- Applying the `_vntd` suffix automatically.
 
-### Import
-Some external images are provided in compressed formats. These can be imported by placing them in the `docker/import/` directory. The import process builds images in the format:
-- `.xz`
+Please refer to the root [README](../README.md) for usage instructions on the automation scripts.
+
+### Manual Build & Debug
+
+For development purposes (e.g., testing a new `Dockerfile` before integrating it), you may need to build or remove images manually.
+
+1. **Build an image manually:** Navigate to the specific image directory and build it. Consider the tag must be manually added if you want it to match the project convention.
+
+```bash
+cd docker/build/<image_directory>
+docker build -t <image_name>_vntd .
+```
+
+2. **Verify the image:**
+```bash
+docker image ls --filter "reference=*_vntd"
+```
+
+3. **Remove an image:**
+```bash
+docker rmi <image_name>_vntd
+```
+
+*Use `-f` to force removal if the image is being used by a stopped container.*
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Managing Docker Images Manually
+## Dockerfile Guidelines
 
-Refer to `run.sh` for simplified image management.
+When creating a new image in `docker/build/`, follow these standards to ensure compatibility with the lab environment.
 
-See [README](../README.md) for build, delete and view lab images.
-
-### Manual Build
-If an image is modified or newly added, it must be rebuilt. To manually build Docker images, follow these steps:
-
-1. Navigate to the image directory:
-```
-cd docker/<new-image>
-```
-
-2. Build the image:
-```
-docker build -t <image_name> .
-```
-
-3. Verify the image:
-```
-docker image ls
-```
-
-### Manual Delete
-To remove an image:
-```
-docker rmi <image-name>
-```
-
-To force deletion (e.g. if the image is in referenced by stopped containers):
-```
-docker rmi -f <image-name>
-```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Dockerfiles
-
-These files define **custom images**. They are created to include additional packages, automate configurations, and eliminate manual repetition. By using these, we can ensure consistency across environments.
-
-Such images include packages necessay to deploy and run the environment, such as:
-
-#### Network Diagnostic Tools:
-- `iproute2`, `net-tools`: Interface and route inspection.
-- `iputils-ping`, `traceroute`: Connectivity testing.
-- `curl`: Application-level connectivity testing.
-- `tcpdump`: Packet capture and traffic analysis.
-- `nmap`: Network discovery and port scanning.
-
-#### Network connectivity and security:
-- `frr`, `frr-pythontools`: Routing and network control.
-- `iptables`: Firewall and packet filtering.
-- `procps`: Enable IP forwarding and system tools.
-
-### Considerations
-
-#### Non-interactive Package Installation
-```
+1. **Non-interactive Installation**
+Always prevent interactive prompts during package installation to avoid build failures.
+```Dockerfile
 ENV DEBIAN_FRONTEND=noninteractive
 ```
-Prevents interactive prompts during package installation, ensuring reliable builds and automated environments.
 
-#### Image Cleanup
-The Dockerfile should remove cached packages after installation to keep disk usage low and improve manageability.
-
-#### Behaviour
-```
+2. **Service Persistence**
+Containers in this environment function as virtual network devices. They must not exit immediately after booting.
+   - **With Entrypoint:** If you use an `entrypoint.sh` script, end it with `sleep infinity`.
+   - **Without Entrypoint:** Add this CMD to the end of your `Dockerfile`:
+```Dockerfile
 CMD ["sleep", "infinity"]
 ```
-When **no custom entrypoint is defined**, this command should be placed at the end of the `Dockerfile`.  
-It ensures the container remains running after startup instead of exiting immediately.
 
-### Entrypoint
-Some containers use a custom `entrypoint.sh` script that **runs every time the container starts**. This is useful for:
-- Starting services
-- Initializing environment variables
-- Performing any initialitzation required
-
-#### Behaviour
-When an `entrypoint.sh` file is used, it typically contains a `sleep infinity` instruction.  
-This keeps the container alive until it is manually stopped.
-
-In this case, the `CMD ["sleep", "infinity"]` instruction in the `Dockerfile` is not required.
+3. **Cleanup**
+To minimize image size, clean up cached package lists in the same layer as the installation:
+```
+RUN apt update && apt -y install \
+    <packages> |
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Best Practices
-- Each image should be **independent** from one another
-- Keep images **minimal** to reduce build time and disk usage
-- Use **clear and consistent naming**, e.g. `*_vntd`
-- **Rebuild** images after modifying the `Dockerfile` or `entrypoint.sh`
+## External Resources
 
-For more pre-built images, check the official [Docker hub](https://hub.docker.com/search) or other community sources.
+All images can be obtained freely. The following will require registration to download the image: Arista cEOS.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Additional Resources
-
-All images can be obtained freely. The following will require to register to download the image: Arista cEOS.
-
-- Alpine extra: [Docker hub](https://hub.docker.com/r/wbitt/network-multitool)
+- Alpine extra: [Docker Hub](https://hub.docker.com/r/wbitt/network-multitool)
 
 - Arista cEOS: [Arista Software Downloads](https://www.arista.com/en/support/software-download)
 
 - FRR Router: [FRRouting Releases](https://frrouting.org/release/10.5.0/)
 
-- Debian slim: [Docker hub](https://hub.docker.com/layers/library/debian/12-slim/images)
+- Debian Slim: [Docker Hub](https://hub.docker.com/layers/library/debian/12-slim/images)
 
-- Kali Linux: [Docker hub](https://hub.docker.com/r/kalilinux/kali-rolling)
+- Kali Linux: [Docker Hub](https://hub.docker.com/r/kalilinux/kali-rolling)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

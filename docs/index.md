@@ -1,45 +1,38 @@
-# Virtual Network Threat Detection
+docs/
+├── index.md                  # Landing page de la documentació
+│
+├── architecture/
+│   ├── index.md              # Visió global de l’arquitectura
+│   └── network-design.md     # Disseny de xarxa (diagrames, fluxos)
+│
+├── deployment/
+│   ├── index.md              # Com desplegar el projecte
+│   ├── requirements.md       # Requisits (Docker, containerlab, etc.)
+│   └── lifecycle.md          # Deploy / destroy / reset
+│
+├── docker/
+│   ├── index.md              # Visió general de Docker al projecte
+│   ├── images.md             # Imatges custom (build / import)
+│   ├── dockerfiles.md        # Estructura i bones pràctiques Dockerfile
+│   ├── entrypoint.md         # Entrypoint: comportament i usos
+│   └── supported-images.md   # Imatges suportades i fonts
+│
+├── labs/
+│   ├── index.md              # Concepte de labs
+│   ├── topologies.md         # Fitxers .clab.yml
+│   └── configuration.md     # Configs de routers, firewalls, switches
+│
+├── services/
+│   ├── index.md
+│   ├── suricata.md
+│   └── monitoring.md
+│
+├── scripts/
+│   ├── index.md              # Automatització (run.sh, clab, images)
+│   └── behaviour.md          # Decisions de disseny (ex: carpetes _*)
+│
+└── assets/
+    └── net-design.svg
 
-Welcome to the **Virtual Network Threat Detection** documentation.
 
-This project provides a **container-based virtual lab** for experimenting with
-network threat detection techniques using modern open-source tools.
 
-![Network Design](assets/NET%20Design.svg)
-
----
-
-## 🎯 Project Goals
-
-- Simulate realistic network traffic
-- Detect malicious activity at the network level
-- Learn how IDS tools work in practice
-- Keep everything reproducible using containers
-
----
-
-## 🧠 What you will find here
-
-- Architecture overview of the lab
-- Network topologies used for testing
-- Documentation for each security service
-- Deployment and execution instructions
-
----
-
-## 📦 Technologies used
-
-| Component      | Purpose |
-|----------------|--------|
-| Containerlab   | Network topology orchestration |
-| Suricata       | Intrusion Detection System |
-| Zeek           | Network traffic analysis |
-| Docker         | Container runtime |
-
----
-
-!!! tip
-    This documentation evolves together with the code.  
-    Use the **Edit** button to propose improvements directly on GitHub.
-
-📄 [Download full documentation (PDF)](assets/pdf/vntd-docs.pdf)
