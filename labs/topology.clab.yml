@@ -80,31 +80,6 @@ topology:
     # Network core
     #----------------------------------------------------------------------------------------------
 
-    # https://wiki.archlinux.org/title/Simple_stateful_firewall
-
-    firewall:
-      kind: linux
-      image: firewall_vntd:latest
-      env:
-        STATEFULL: 1
-        STATELESS: 1
-      binds:
-        - ./config/firewall/enterprise/startup.sh:/startup.sh
-      exec:
-        - sh /startup.sh
-      #sysctls:
-        #net.ipv4.ip_forward: "1"
-
-    ids:
-      kind: linux
-      image: ids_vntd:latest
-      exec:
-        - ip addr add 192.168.100.2/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.100.1
-        - ip link set eth1 promisc on
-
     router_enterprise:
       kind: linux
       image: router_vntd:latest
@@ -112,7 +87,17 @@ topology:
         - ./config/router/enterprise/startup.sh:/startup.sh
       exec:
         - sh /startup.sh
-     
+
+    # https://wiki.archlinux.org/title/Simple_stateful_firewall
+
+    firewall:
+      kind: linux
+      image: firewall_vntd:latest
+      binds:
+        - ./config/firewall/enterprise/startup.sh:/startup.sh
+      exec:
+        - sh /startup.sh
+
     # Firewlll should go here
     #VyOS, pfSense, OPNSense, etc.
     # VyOS seems to be a good idea, to check later
@@ -151,13 +136,13 @@ topology:
 
 
 
-    multilayer_switch:
-      kind: linux
-      image: mls_vntd:latest
-      binds:
-        - ./config/mls/enterprise/startup.sh:/startup.sh
-      exec:
-        - sh /startup.sh
+    #multilayer_switch:
+    #  kind: linux
+    #  image: mls_vntd:latest
+    #  binds:
+    #    - ./config/mls/enterprise/startup.sh:/startup.sh
+    #  exec:
+    #    - sh /startup.sh
 
     # Does not support package filtering
     #multilayer_switch:
@@ -197,11 +182,21 @@ topology:
       image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v20.cli
 
+    ids:
+      kind: linux
+      image: ids_vntd:latest
+      exec:
+        - ip addr add 192.168.20.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 192.168.20.1
+        - ip link set eth1 promisc on
+
     monitoring_server:
       kind: linux
       image: monitoring_vntd:latest
       exec:
-        - ip addr add 192.168.20.10/24 dev eth1
+        - ip addr add 192.168.20.11/24 dev eth1
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.20.1
@@ -233,7 +228,7 @@ topology:
       kind: linux
       image: server_vntd:latest
       env: 
-        WEB_SERVER: 1
+        # WEB_SERVER: 1
         SSH_SERVER: 1
       exec:
         - ip addr add 192.168.40.10/24 dev eth1
@@ -243,7 +238,7 @@ topology:
 
     # VLAN 50
     #----------------------------------------------------------------------------------------------
-    switch_vlan50:
+    switch_floor1:
       kind: arista_ceos
       image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v50.cli
@@ -257,22 +252,6 @@ topology:
         - ip route del default
         - ip route add default via 192.168.50.1
 
-    pc_vlan50_2:
-      kind: linux
-      image: alpine_vntd:latest
-      exec:
-        - ip addr add 192.168.50.11/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.50.1
-
-    # VLAN 60
-    #----------------------------------------------------------------------------------------------
-    switch_vlan60:
-      kind: arista_ceos
-      image: ceos_vntd:latest
-      startup-config: ./config/switch/enterprise/config_v60.cli
-
     pc_vlan60_1:
       kind: linux
       image: alpine_vntd:latest
@@ -281,6 +260,22 @@ topology:
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.60.1
+
+    # VLAN 60
+    #----------------------------------------------------------------------------------------------
+    switch_floor2:
+      kind: arista_ceos
+      image: ceos_vntd:latest
+      startup-config: ./config/switch/enterprise/config_v60.cli
+
+    pc_vlan50_2:
+      kind: linux
+      image: alpine_vntd:latest
+      exec:
+        - ip addr add 192.168.50.11/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 192.168.50.1
 
     pc_vlan60_2:
       kind: linux
@@ -305,34 +300,32 @@ topology:
 
     # Enterprise network
       # Network core
-    # NO - endpoints: ["router_enterprise:eth1", "router_internet:eth3"]
-    - endpoints: ["router_internet:eth3", "firewall:eth1"]
-    - endpoints: ["firewall:eth2", "router_enterprise:eth1"]
-    - endpoints: ["firewall:eth3", "ids:eth1"]
-    - endpoints: ["router_enterprise:eth2", "multilayer_switch:eth1"]
+    - endpoints: ["router_internet:eth3", "router_enterprise:eth1"]
+    - endpoints: ["router_enterprise:eth2", "firewall:eth1"]
 
       # VLAN 10
-    - endpoints: ["multilayer_switch:eth2", "switch_vlan10:eth1"]
+    - endpoints: ["firewall:eth2", "switch_vlan10:eth1"]
     - endpoints: ["switch_vlan10:eth2", "dmz_server:eth1"]
 
       # VLAN 20
-    - endpoints: ["multilayer_switch:eth3", "switch_vlan20:eth1"]
-    - endpoints: ["switch_vlan20:eth2", "monitoring_server:eth1"]
+    - endpoints: ["firewall:eth3", "switch_vlan20:eth1"]
+    - endpoints: ["switch_vlan20:eth2", "ids:eth1"]
+    - endpoints: ["switch_vlan20:eth3", "monitoring_server:eth1"]
 
       # VLAN 30
-    - endpoints: ["multilayer_switch:eth4", "switch_vlan30:eth1"]
+    - endpoints: ["firewall:eth4", "switch_vlan30:eth1"]
     - endpoints: ["switch_vlan30:eth2", "pc_vlan30:eth1"]
 
       # VLAN 40
-    - endpoints: ["multilayer_switch:eth5", "switch_vlan40:eth1"]
+    - endpoints: ["firewall:eth5", "switch_vlan40:eth1"]
     - endpoints: ["switch_vlan40:eth2", "internal_server:eth1"]
 
       # VLAN 50
-    - endpoints: ["multilayer_switch:eth6", "switch_vlan50:eth1"]
-    - endpoints: ["switch_vlan50:eth2", "pc_vlan50_1:eth1"]
-    - endpoints: ["switch_vlan50:eth3", "pc_vlan50_2:eth1"]
+    - endpoints: ["firewall:eth6", "switch_floor1:eth1"]
+    - endpoints: ["switch_floor1:eth2", "pc_vlan50_1:eth1"]
+    - endpoints: ["switch_floor1:eth3", "pc_vlan60_1:eth1"]
 
       # VLAN 60
-    - endpoints: ["multilayer_switch:eth7", "switch_vlan60:eth1"]
-    - endpoints: ["switch_vlan60:eth2", "pc_vlan60_1:eth1"]
-    - endpoints: ["switch_vlan60:eth3", "pc_vlan60_2:eth1"]
+    - endpoints: ["firewall:eth7", "switch_floor2:eth1"]
+    - endpoints: ["switch_floor2:eth2", "pc_vlan50_2:eth1"]
+    - endpoints: ["switch_floor2:eth3", "pc_vlan60_2:eth1"]
