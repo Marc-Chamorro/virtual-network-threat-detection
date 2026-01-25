@@ -7,7 +7,7 @@ IMPORT_DIR="$PRJ_DIR/docker/import"
 
 # https://containerlab.dev/manual/kinds/ceos/
 # can for .xz files
-for file in $IMPORT_DIR/*.xz; do
+for file in $IMPORT_DIR/*.tar.xz; do
     if [ -f "$file" ]; then
         # extract the name until - # https://stackoverflow.com/questions/20348097/bash-extract-string-before-a-colon
         IMAGE_NAME=$(basename "$file" | cut -d'-' -f1)
