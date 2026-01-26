@@ -9,7 +9,7 @@ menu() {
     echo ""
     echo "===== Image Control Menu ====="
     echo "1) > Create images"
-    echo "2) > Import images (.xz)"
+    echo "2) > Import images (.tar.xz)"
     echo "3) > Delete images"
     echo "4) > Display images"
     echo "5) > Back"

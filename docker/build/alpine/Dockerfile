@@ -1,10 +1,10 @@
+# Base image specific for network tasks
 FROM wbitt/network-multitool:alpine-extra
 
+# Install additional tools if necessary (keeping it minimal)
 RUN apk update && apk add --no-cache \
     net-tools \
     && rm -rf /var/cache/apk/*
 
-COPY entrypoint.sh /
-RUN chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+# Default command to keep the container running
+CMD ["sleep", "infinity"]

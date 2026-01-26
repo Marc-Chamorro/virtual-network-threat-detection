@@ -25,5 +25,5 @@ While Docker manages the individual nodes (images and containers), **Containerla
 
 * [**Image Catalog**](./images.md): Detailed breakdown of every custom image available (Kali, Server, Router, etc.).
 * [**Building Dockerfiles**](./dockerfiles.md): Understanding how images are constructed and the standards used.
-* [**Entrypoints & Behavior**](./entrypoints.md): How containers initialize, handle startupt, and manage service startups.
+* [**Entrypoints & Behavior**](./entrypoint.md): How containers initialize, handle startup, and manage service startups.
 * [**Importing Images**](./supported-images.md): How to use vendor-proprietary images like Arista cEOS.

@@ -6,14 +6,14 @@
   <h3 align="center">Intelligent Threat Detection in Virtual Networks Using Containerlab and AI</h3>
 
   <p align="center">
-    Final Degree Project (Treball de Fi de Grau)
+    <strong>Final Degree Project (Treball de Fi de Grau)</strong>
     <br />
     Degree in Computer Engineering in Management and Information Systems
     <br />
     TecnoCampus, affiliated with Pompeu Fabra University
     <br />
     <br />
-    <a href="#getting-started"><strong>Getting Started »</strong></a>
+    <a href="https://marc-chamorro.github.io/virtual-network-threat-detection/"><strong>Explore the Full Docs »</strong></a>
     <br />
   </p>
 </div>
@@ -39,21 +39,20 @@
 </details>
 
 ---
+
 # About
 
-TO REWRITE THIS PART
-
 This repository contains the implementation developed as part of a **Final Degree Project (TFG)**.  
-The objective of the project is to **provide a working environment where others can simulate a simple enterprise environment to safely test a network and analyze generate malicious traffic and detect**.
+The objective of the project is to **provide a modular and scalable virtualized environment to simulate enterprise network infrastructures for cybersecurity research**.
 
-The repository is organized to clearly separate:
-- Core execution logic
-- Configuration and topology definitions
-- Supporting scripts and utilities
-- Extended documentation per module
+The main goal of this project is to connect network simulation with smart security analysis. By using Containerlab and Docker, the system lets users:
 
-This `README.md` provides **general instructions** to set up and run the project.  
-Each major directory contains its own `README.md` with **detailed technical explanations**.
+- Simulate complex, segmented networks.
+- Generate both normal and malicious traffic in a safe, isolated environment.
+- Monitor network traffic with real IDS tools like Suricata.
+- Analyze logs with Elastic tools and Machine Learning (Isolation Forest) to find unusual activity and threats.
+
+This repository is designed to be reproducible, allowing students and researchers to deploy a complete security lab with a single command.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -61,75 +60,78 @@ Each major directory contains its own `README.md` with **detailed technical expl
 
 ```
 .
-├─ config/
-│  └─ ...
 ├─ docker/
 │  ├─ README.md
 │  └─ ...
-├─ images/
+├─ docs/
 │  └─ ...
 ├─ labs/
+│  ├─ README.md
 │  └─ ...
 ├─ scripts/
+│  ├─ README.md
 │  └─ ...
 ├─ run.sh
 └─ README.md
 ```
-### Description
-- `run.sh` Main entry point for executing the project.
-REMOVE THIS, AS OF RIGHT NOW, INSIDE THE LABS FOLDER
-- `config/` Configuration files used on the network devices. (MAYBE NOT NECESSARY / MOVE TO LABS)
-- `images/` Figures used.
-- `docker/` Image templates for customized containers.
-- `labs/` Definitions of the provided network topologies.
-- `scripts/` Additional scripts for environment and resource management.
+
+### Key Components
+
+- `run.sh`: Main entry point for executing, building and deploying the lab.
+- `docker/`: Contains the source code for the custom nodes (Routers, Kali, Servers, etc.).
+- `docs/`: Documentation files, also available compiled at: [Documentation](https://marc-chamorro.github.io/virtual-network-threat-detection/)
+- `labs/`: Contains the topology design and configuration files for individual network devices.
+- `scripts/`: Internal logic used by the environment resource management.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 # Getting Started
 
-This section describes how to set up the environment required to run the project locally.
-
 ## Prerequisites
 
-The project assumes a **Linux-based environment**.
+The project is designed for Linux (Ubuntu 22.04+ recommended). Use a dedicated VM with at least 12GB of RAM if you plan to run the full environment.
 
-Required software:
-- Bash? (which minimum version?)
+For detailed requirements, see: [Prerequisites Documentation](./docs/getting-started.md) ([Docs](https://marc-chamorro.github.io/virtual-network-threat-detection/))
 
-## Installation
+### Installation
 
-1. Containerlab installation
-2. Ensure it works
-3. Clone Git
-4. chmod +x run.sh
-5. Download the required images (hyperlink to the other readme maybe?)
-6. Del projecte no copiar tot el vrnetlab, sino nomes le directori concret que necessitem per juniper
-git submodule add https://github.com/vrnetlab/vrnetlab docker/vrnetlab
-cd docker/vrnetlab
-git sparse-checkout init --cone
-git sparse-checkout set juniper/vjunosswitch common
-git submodule update --remote
-7. all teh scripts
+1. **Install Core Tools:** Follow the [Installation Guide](./docs/installation.md) ([Docs](https://marc-chamorro.github.io/virtual-network-threat-detection/)) to set up Docker and Containerlab.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+2. **Clone the Repo:**
+```bash
+git clone https://github.com/marc-chamorro/virtual-network-threat-detection.git
+cd virtual-network-threat-detection
+chmod +x run.sh
+```
 
-# Execution
+## Execution
 
-The project is executed through the run.sh script.
+The project is managed via the `run.sh` interactive menu.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+```bash
+./run.sh
+```
 
-# Available Topologies
+### Typical Workflow:
+
+1. **Image Control:** Build your project images (*_vntd) and import external images.
+2. **Topology Control:** Select a lab from the labs/ directory and deploy it.
+3. **Analyze:** Once the network is up, traffic is automatically monitored by the IDS nodes.
+
+For a full walkthrough of the script options, see the [Usage Guide](./docs/usage.md) ([Docs](https://marc-chamorro.github.io/virtual-network-threat-detection/)).
+
+## Available Topology
 
 Allthe vaialable topologies provided can be found at:
 ```
 labs/
 ```
-## Topology 1
 
-The main provided topology...
-![Example Topology](images/topology.png)
+The primary scenario provided is an **Enterprise Network** featuring a DMZ, Internal Workstations, and a Security Management zones.
+
+**Enterprise Main Lab:** named `topology.clab.yml`, core environment used for the TFG research.
+
+![Example Topology](images/NET%20Design.svg)
 
 Additional topologies can be added by following the guidelines described in the topology documentation.
 
@@ -137,10 +139,13 @@ Additional topologies can be added by following the guidelines described in the 
 
 # Documentation
 
-Detailed documentation for each subsystem is provided in the corresponding directories:
+Detailed README documentation for each subsystem is provided in the corresponding directories:
 
 - Topologies: [lab/README.md](/labs/README.md)
 - Docker: [docker/README.md](/docker/README.md)
+- Scripts: [scripts/README.md](/scripts/README.md)
+
+Official documentation can be found at: [Docs](https://marc-chamorro.github.io/virtual-network-threat-detection/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

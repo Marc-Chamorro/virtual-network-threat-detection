@@ -1,11 +1,14 @@
-# https://docs.docker.com/build/building/base-images/
+# Base image for the Attacker Kali Linux setup
 FROM kalilinux/kali-rolling
 
-# https://stackoverflow.com/questions/70236670/debian-frontend-noninteractive-not-working-inside-shell-script-with-apt-get
+# Prevent interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 
-# https://circleci.com/docs/guides/execution-managed/custom-images/
-RUN apt update && apt -y install \
+# Install networking tools
+# nmap: Port scanning
+# openssh-client: For connecting to servers
+# iproute2/net-tools: Interface management
+RUN apt-get update && apt-get install -y \
     iproute2 \
     iputils-ping \
     traceroute \
@@ -14,19 +17,8 @@ RUN apt update && apt -y install \
     tcpdump \
     nmap \
     openssh-client \
-    # Clean cache
-    && apt clean \
-    # Remove temporal data
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# https://docs.docker.com/get-started/docker-concepts/building-images/writing-a-dockerfile/
-# https://refine.dev/blog/docker-entrypoint/#how-to-use-a-script-as-entrypoint
-COPY entrypoint.sh /
-RUN chmod +x /entrypoint.sh
-
-# https://stackoverflow.com/questions/54590798/docker-running-script-in-entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
-
-# https://kodekloud.com/blog/keep-docker-container-running/
-# Here, or in the entrypoint file if exists
-# CMD ["sleep", "infinity"]
+# Keep the container alive
+CMD ["sleep", "infinity"]

@@ -36,7 +36,7 @@ A direct import of the official FRRouting image.
 - **Use Case:** Pure routing between networks where realism and network tools are less critical.
 
 !!! important
-    This image does not support NAT, hence the creation of a dedicated router image.
+    This image does not support NAT; hence the creation of a dedicated router image.
 
 ### Firewall (`firewall_vntd`)
 
@@ -72,7 +72,7 @@ An image designed to simulate an endpoint server providing various network servi
 
 - **Base:** `debian:12-slim`
 - **Services Included:**
-    - **SSH:** `openssh-server` (Configured to allow password auth).
+    - **SSH:** `openssh-server` (Configured to allow password authentication).
     - **Web:** `nginx`.
     - **DHCP:** `isc-dhcp-server`.
 - **Environment Variables:**
@@ -83,7 +83,7 @@ An image designed to simulate an endpoint server providing various network servi
 
 ### Monitoring (`monitoring_vntd`)
 
-A management station based on Ubuntu, designed for network package processing.
+A management station based on Ubuntu, designed for network packet processing.
 
 - **Base:** `ubuntu:22.04`
 - **Key Packages:** `git`, `nmap`, `tcpdump`, `curl`.
