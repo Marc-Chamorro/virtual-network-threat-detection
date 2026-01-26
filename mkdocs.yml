@@ -18,6 +18,7 @@ nav:
   - Getting Started: getting-started.md
   # A detailed guide on how to install and set up the project. This section should cover all necessary steps, configurations, and options available during installation.
   - Installation: installation.md
+  - Usage: usage.md
   - Architecture:
       # Topology design and components used, devices, rules applied, communication, data flow, etc.
       - Overview: architecture/index.md

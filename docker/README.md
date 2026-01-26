@@ -130,7 +130,7 @@ CMD ["sleep", "infinity"]
 
 3. **Cleanup**
 To minimize image size, clean up cached package lists in the same layer as the installation:
-```
+```Dockerfile
 RUN apt update && apt -y install \
     <packages> |
     && apt clean \
