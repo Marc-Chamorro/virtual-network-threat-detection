@@ -1,3 +1,4 @@
+# Enable OSPF and Static routing daemons
 zebra=yes
 bgpd=no
 ospfd=yes
