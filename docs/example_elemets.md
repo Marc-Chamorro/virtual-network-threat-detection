@@ -36,6 +36,10 @@ docs/
 
 ---
 
+https://squidfunk.github.io/mkdocs-material/reference/admonitions/#inline-blocks-inline-end
+
+---
+
 # Virtual Network Threat Detection
 
 Welcome to the **Virtual Network Threat Detection** documentation.

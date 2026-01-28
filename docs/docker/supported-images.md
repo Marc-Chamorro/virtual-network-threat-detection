@@ -20,7 +20,7 @@ The primary use case for the import functionality is Arista's cEOS. This allows 
 - **Tagging:** The imported image will be tagged based on the previous recovered name and appended with `_vntd`.
     - *Example:* `cEOS-lab-4.32.0F.tar.xz` -> `ceos_vntd`.
 
-### Licensing,  Download & Import
+### Licensing, Download & Import
 
 !!! warning "Proprietary Software"
     Arista cEOS is **not** open source. It requires a valid account and acceptance of the EULA to download.
