@@ -21,7 +21,7 @@ Each lab is encapsulated in a `*.clab.yml` file, which describes the network nod
 
 The directory is organized to separate the topology definition files from the runtime configurations of the network devices.
 
-```text
+```
 labs/
 ├── topology.clab.yml       # The main topology definition file
 ├── config/                 # Configuration files mounted to containers
