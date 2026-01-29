@@ -3,9 +3,11 @@
 # Stop the script on error, do not proceed with the execution
 set -e
 
+# Get the absolute path of the project root directory
 PRJ_DIR=$(dirname "$(readlink -f "$0")")
 SCRIPTS_DIR="$PRJ_DIR/scripts"
 
+# Define paths to the sub-menus
 S_MENU_IMAGES="$SCRIPTS_DIR/images/menu.sh"
 S_MENU_CLAB="$SCRIPTS_DIR/clab/menu.sh"
 
@@ -29,6 +31,7 @@ handle_input() {
     esac
 }
 
+# Main application loop
 while true; do
     menu
     read choice

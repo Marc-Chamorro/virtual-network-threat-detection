@@ -4,6 +4,7 @@ set -e
 
 TOPOLOGY_DIR="$1"
 
+# Display all available topology files
 list_topologies() {
     echo "Available labs: "
 
@@ -16,6 +17,7 @@ list_topologies() {
     done
 }
 
+# Display running topologies if any
 list_running_topologies() {
     echo "Running labs: "
     RUNNING_JSON=$(clab inspect --all -f json)

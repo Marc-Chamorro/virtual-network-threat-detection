@@ -1,41 +1,34 @@
-# 0.0.2
-
-# https://containerlab.dev/lab-examples/frr01/
-# https://containerlab.dev/manual/config-mgmt/
-
-# KALI - connect with bash, not cli
-
 name: virtual-env
 
 topology:
   nodes:
 
-    ###############################################################################################
-    # Internet
-    ###############################################################################################
+    # =============================================================================================
+    # Internet - Simulates the ISP and public internet backbone
+    # =============================================================================================
     
     router_internet:
       kind: linux
       image: frr_vntd:latest
-      binds:
-        - ./config/router/daemons:/etc/frr/daemons
+      binds:                                                    # Bind configuration files to make them persisten and editable
+        - ./config/router/daemons:/etc/frr/daemons              
         - ./config/router/internet/frr.conf:/etc/frr/frr.conf
 
     internet_server:
       kind: linux
       image: server_vntd:latest
-      env: 
+      env:                                                      # Environment variables to trigger specific service startups in entrypoint.sh
         WEB_SERVER: 1
         SSH_SERVER: 1
-      exec:
-        - ip addr add 172.16.100.100/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 172.16.100.1
+      exec:                                                     # Commands to be executed inside the container after startup
+        - ip addr add 172.16.100.100/24 dev eth1                # Assign Public IP address
+        - ip link set eth1 up                                   # Enable interface
+        - ip route del default                                  # Remove Docker default gateway
+        - ip route add default via 172.16.100.1                 # Point to Internet Router as default gateway
 
-    ###############################################################################################
-    # Attacker network
-    ###############################################################################################
+    # =============================================================================================
+    # Attacker network - Simulates a hostile external actor
+    # =============================================================================================
     
     router_attacker:
       kind: linux
@@ -51,11 +44,11 @@ topology:
         - ip addr add 10.0.0.2/24 dev eth1
         - ip link set eth1 up
         - ip route del default
-        - ip route add default via 10.0.0.1
+        - ip route add default via 10.0.0.1                     # Gateway is the attacker router
     
-    ###############################################################################################
-    # Benign network
-    ###############################################################################################
+    # =============================================================================================
+    # Benign network - Simulates normal external traffic
+    # =============================================================================================
     
     router_benign:
       kind: linux
@@ -73,110 +66,45 @@ topology:
         - ip route del default
         - ip route add default via 20.0.0.1
 
-    ###############################################################################################
-    # Enterprise network
-    ###############################################################################################
+    # =============================================================================================
+    # Enterprise network - Main simulation target environment
+    # =============================================================================================
     
-    # Network core
+    # Network core & security
     #----------------------------------------------------------------------------------------------
-
-    # https://wiki.archlinux.org/title/Simple_stateful_firewall
+    router_enterprise:
+      kind: linux
+      image: router_vntd:latest
+      binds:                                                    # Mounts the startup script to handle NAT and IP assignment
+        - ./config/router/enterprise/startup.sh:/startup.sh
+      exec:
+        - sh /startup.sh
 
     firewall:
       kind: linux
       image: firewall_vntd:latest
-      env:
-        STATEFULL: 1
-        STATELESS: 1
-      binds:
+      binds:                                                    # Mounts the complex iptables logic script
         - ./config/firewall/enterprise/startup.sh:/startup.sh
       exec:
         - sh /startup.sh
-      #sysctls:
-        #net.ipv4.ip_forward: "1"
 
-    ids:
-      kind: linux
-      image: ids_vntd:latest
-      exec:
-        - ip addr add 192.168.100.2/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.100.1
-        - ip link set eth1 promisc on
-
-    router_enterprise:
-      kind: linux
-      image: router_vntd:latest
-      binds:
-        - ./config/router/enterprise/startup.sh:/startup.sh
-      exec:
-        - sh /startup.sh
-     
-    # Firewlll should go here
-    #VyOS, pfSense, OPNSense, etc.
-    # VyOS seems to be a good idea, to check later
-
-    # Firewall -> still searching
-    # https://containerlab.dev/lab-examples/ftdv01/
-    # https://github.com/srl-labs/containerlab/blob/main/lab-examples/ftdv01/ftdv01.yml
-    # https://containerlab.dev/manual/kinds/vr-pan/
-    # https://containerlab.dev/lab-examples/openbsd01/
-
-
-    # Multilayer switch -> Juniper vJunos-switch
-    # https://containerlab.dev/manual/kinds/vr-vjunosswitch/#lab-examples
-    # https://containerlab.dev/lab-examples/srl-vjunos-switch/
-
-    # Switch -> srlinux, molts mes exemples a seguir en la plana oficial de labs de containerlab
-    # https://containerlab.dev/manual/kinds/srl/
-    # https://containerlab.dev/lab-examples/srl-ceos/
-    # https://learn.srlinux.dev/get-started/lab/
-
-    # https://containerlab.dev/manual/kinds/ceos/#lab-examples
-
-    # Server -> to search
-
-    # https://containerlab.dev/manual/nodes/#cpu-set
-    # multilayer_switch:
-      # kind: juniper_vjunosswitch
-      # image: vrnetlab/juniper_vjunos-switch:23.2R1.14
-      # startup-config: ./config/mls/enterprise/mls.cfg
-      # cpu: 2
-      # memory: 4GB
-
-    # ┌──(root㉿attacker)-[/]
-    # └─# curl 172.16.30.2
-    # Hello from Nginx on the web server
-
-
-
-    multilayer_switch:
-      kind: linux
-      image: mls_vntd:latest
-      binds:
-        - ./config/mls/enterprise/startup.sh:/startup.sh
-      exec:
-        - sh /startup.sh
-
-    # Does not support package filtering
+    # Additional network device
     #multilayer_switch:
-      #kind: arista_ceos
-      #image: ceos_vntd:latest
-      #startup-config: ./config/mls/enterprise/mls_arista.cli
-      #startup-config: /home/marc/Documents/containerlab/virtual-network-threat-detection/labs/config/mls/enterprise/mls_arista.cli
-      #exec:
-      #  - bash -c "rm -f /mnt/flash/startup-config /mnt/flash/running-config"
-    # Cli
-    # enable
-    # configure terminal
+    #  kind: linux
+    #  image: mls_vntd:latest
+    #  cpu: 2
+    #  memory: 4GB
+    #  binds:
+    #    - ./config/mls/enterprise/startup.sh:/startup.sh
+    #  exec:
+    #    - sh /startup.sh
 
     # VLAN 10 - DMZ
     #----------------------------------------------------------------------------------------------
     switch_vlan10:
       kind: arista_ceos
       image: ceos_vntd:latest
-      startup-config: ./config/switch/enterprise/config_v10.cli
+      startup-config: ./config/switch/enterprise/config_v10.cli # Arista switches use startup-config file for persistent settings
 
     dmz_server:
       kind: linux
@@ -188,32 +116,42 @@ topology:
         - ip addr add 192.168.10.10/24 dev eth1
         - ip link set eth1 up
         - ip route del default
-        - ip route add default via 192.168.10.1
+        - ip route add default via 192.168.10.1                 # Gateway is Firewall
 
-    # VLAN 20 - Monitoring
+    # VLAN 20 - Monitoring & IDS
     #----------------------------------------------------------------------------------------------
     switch_vlan20:
       kind: arista_ceos
       image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v20.cli
 
-    monitoring_server:
+    ids:
       kind: linux
-      image: monitoring_vntd:latest
+      image: ids_vntd:latest
       exec:
         - ip addr add 192.168.20.10/24 dev eth1
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.20.1
+        - ip link set eth1 promisc on                           # Promiscuous mode to see traffic not addressed to it
 
-    # VLAN 30
+    monitoring_server:
+      kind: linux
+      image: monitoring_vntd:latest
+      exec:
+        - ip addr add 192.168.20.11/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 192.168.20.1
+
+    # VLAN 30 - Administration
     #----------------------------------------------------------------------------------------------
     switch_vlan30:
       kind: arista_ceos
       image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v30.cli
 
-    pc_vlan30:
+    pc_admin:
       kind: linux
       image: alpine_vntd:latest
       exec:
@@ -222,7 +160,7 @@ topology:
         - ip route del default
         - ip route add default via 192.168.30.1
 
-    # VLAN 40
+    # VLAN 40 - Internal services
     #----------------------------------------------------------------------------------------------
     switch_vlan40:
       kind: arista_ceos
@@ -233,7 +171,6 @@ topology:
       kind: linux
       image: server_vntd:latest
       env: 
-        WEB_SERVER: 1
         SSH_SERVER: 1
       exec:
         - ip addr add 192.168.40.10/24 dev eth1
@@ -241,9 +178,9 @@ topology:
         - ip route del default
         - ip route add default via 192.168.40.1
 
-    # VLAN 50
+    # VLAN 50 - User floor 1
     #----------------------------------------------------------------------------------------------
-    switch_vlan50:
+    switch_floor1:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
       kind: arista_ceos
       image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v50.cli
@@ -257,22 +194,6 @@ topology:
         - ip route del default
         - ip route add default via 192.168.50.1
 
-    pc_vlan50_2:
-      kind: linux
-      image: alpine_vntd:latest
-      exec:
-        - ip addr add 192.168.50.11/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.50.1
-
-    # VLAN 60
-    #----------------------------------------------------------------------------------------------
-    switch_vlan60:
-      kind: arista_ceos
-      image: ceos_vntd:latest
-      startup-config: ./config/switch/enterprise/config_v60.cli
-
     pc_vlan60_1:
       kind: linux
       image: alpine_vntd:latest
@@ -282,6 +203,22 @@ topology:
         - ip route del default
         - ip route add default via 192.168.60.1
 
+    # VLAN 60 - User floor 2
+    #----------------------------------------------------------------------------------------------
+    switch_floor2:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
+      kind: arista_ceos
+      image: ceos_vntd:latest
+      startup-config: ./config/switch/enterprise/config_v60.cli
+
+    pc_vlan50_2:
+      kind: linux
+      image: alpine_vntd:latest
+      exec:
+        - ip addr add 192.168.50.11/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 192.168.50.1
+
     pc_vlan60_2:
       kind: linux
       image: alpine_vntd:latest
@@ -290,6 +227,10 @@ topology:
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.60.1
+
+  # ===============================================================================================
+  # Physical links between nodes
+  # ===============================================================================================
 
   links:
     # Internet
@@ -305,34 +246,32 @@ topology:
 
     # Enterprise network
       # Network core
-    # NO - endpoints: ["router_enterprise:eth1", "router_internet:eth3"]
-    - endpoints: ["router_internet:eth3", "firewall:eth1"]
-    - endpoints: ["firewall:eth2", "router_enterprise:eth1"]
-    - endpoints: ["firewall:eth3", "ids:eth1"]
-    - endpoints: ["router_enterprise:eth2", "multilayer_switch:eth1"]
+    - endpoints: ["router_internet:eth3", "router_enterprise:eth1"]
+    - endpoints: ["router_enterprise:eth2", "firewall:eth1"]
 
       # VLAN 10
-    - endpoints: ["multilayer_switch:eth2", "switch_vlan10:eth1"]
+    - endpoints: ["firewall:eth2", "switch_vlan10:eth1"]
     - endpoints: ["switch_vlan10:eth2", "dmz_server:eth1"]
 
       # VLAN 20
-    - endpoints: ["multilayer_switch:eth3", "switch_vlan20:eth1"]
-    - endpoints: ["switch_vlan20:eth2", "monitoring_server:eth1"]
+    - endpoints: ["firewall:eth3", "switch_vlan20:eth1"]
+    - endpoints: ["switch_vlan20:eth2", "ids:eth1"]
+    - endpoints: ["switch_vlan20:eth3", "monitoring_server:eth1"]
 
       # VLAN 30
-    - endpoints: ["multilayer_switch:eth4", "switch_vlan30:eth1"]
-    - endpoints: ["switch_vlan30:eth2", "pc_vlan30:eth1"]
+    - endpoints: ["firewall:eth4", "switch_vlan30:eth1"]
+    - endpoints: ["switch_vlan30:eth2", "pc_admin:eth1"]
 
       # VLAN 40
-    - endpoints: ["multilayer_switch:eth5", "switch_vlan40:eth1"]
+    - endpoints: ["firewall:eth5", "switch_vlan40:eth1"]
     - endpoints: ["switch_vlan40:eth2", "internal_server:eth1"]
 
       # VLAN 50
-    - endpoints: ["multilayer_switch:eth6", "switch_vlan50:eth1"]
-    - endpoints: ["switch_vlan50:eth2", "pc_vlan50_1:eth1"]
-    - endpoints: ["switch_vlan50:eth3", "pc_vlan50_2:eth1"]
+    - endpoints: ["firewall:eth6", "switch_floor1:eth1"]
+    - endpoints: ["switch_floor1:eth2", "pc_vlan50_1:eth1"]
+    - endpoints: ["switch_floor1:eth3", "pc_vlan60_1:eth1"]
 
       # VLAN 60
-    - endpoints: ["multilayer_switch:eth7", "switch_vlan60:eth1"]
-    - endpoints: ["switch_vlan60:eth2", "pc_vlan60_1:eth1"]
-    - endpoints: ["switch_vlan60:eth3", "pc_vlan60_2:eth1"]
+    - endpoints: ["firewall:eth7", "switch_floor2:eth1"]
+    - endpoints: ["switch_floor2:eth2", "pc_vlan50_2:eth1"]
+    - endpoints: ["switch_floor2:eth3", "pc_vlan60_2:eth1"]

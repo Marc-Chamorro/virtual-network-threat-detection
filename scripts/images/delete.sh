@@ -2,7 +2,7 @@
 
 set -e
 
-# Get all the project images
+# Get all the project images filtering by the reference
 IMAGES=$(docker images --filter "reference=*_vntd" -q)
 
 # Force delete the found images
