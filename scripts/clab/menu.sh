@@ -2,8 +2,13 @@
 
 set -e
 
+# Recover the projects directory from the parent script
 PRJ_DIR="$1"
+
+# Find the current directory where this script is found at
 CURRENT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+
+# Find the location of the topology definition files
 TOPOLOGY_DIR="$PRJ_DIR/labs"
 
 menu() {
@@ -26,6 +31,7 @@ run_script() {
     echo ">>> Finished: $1"
 }
 
+# Menu loop
 while true; do
     menu
     read choice
@@ -34,7 +40,7 @@ while true; do
         1) run_script deploy.sh ;;
         2) run_script destroy.sh ;;
         3) run_script display.sh ;;
-        4) exit 0 ;;
+        4) exit 0 ;;    # Return to the main menu
         *) echo "Invalid option." ;;
     esac
 done

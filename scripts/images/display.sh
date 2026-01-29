@@ -2,6 +2,7 @@
 
 set -e
 
+# Filter images only created for this project
 IMAGES=$(docker images --filter "reference=*_vntd" -q)
 
 if [ -n "$IMAGES" ]; then

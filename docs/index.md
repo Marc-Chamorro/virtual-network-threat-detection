@@ -4,6 +4,8 @@ Welcome to the official documentation for the **Intelligent Threat Detection in 
 
 This platform is designed to deploy a modular, scalable, and fully virtualized cybersecurity laboratory. By simulating a segmented enterprise infrastructure, this project facilitates the generation of real network traffic, the execution of simulated attacks, and the analysis of security logs using Artificial Intelligence.
 
+[Download full documentation (PDF)](assets/pdf/vntd-docs.pdf)
+
 ## Project Context
 
 This project is developed as a **Final Degree Project (Treball de Final de Grau - TFG)** for the Degree in Computer Engineering in Information Systems and Management at **TecnoCampus (Pompeu Fabra University)**.

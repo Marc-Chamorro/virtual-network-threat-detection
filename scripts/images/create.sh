@@ -2,10 +2,6 @@
 
 set -e
 
-# CRRNT_DIR="$(dirname "$(readlink -f "$0")")"
-# PARENT_DIR="$(cd $CRRNT_DIR/.. )"
-# PRJ_DIR="$($PARENT_DIR && pwd)"
-
 PRJ_DIR="$1"
 IMAGES_DIR="$PRJ_DIR/docker/build"
 
@@ -13,15 +9,15 @@ IMAGES_DIR="$PRJ_DIR/docker/build"
 for directory in $IMAGES_DIR/* ; do
     BASENAME="$(basename "$directory")"
 
-    # If such is a file and not a directory, skip it
+    # If such element is a file and not a directory and does not start with the character "_", skip it
     if [ -d "$directory" ] && [ "$(echo "$BASENAME" | cut -c1)" != "_" ]; then
 
+        # Create the new image name
         IMAGE_NAME="${BASENAME}_vntd"
 
         echo "Building image: $IMAGE_NAME"
 
-        # Create the images
+        # Create the image
         docker build -t "$IMAGE_NAME" "$directory"
-
     fi
 done

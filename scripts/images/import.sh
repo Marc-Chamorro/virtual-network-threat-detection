@@ -5,18 +5,23 @@ set -e
 PRJ_DIR="$1"
 IMPORT_DIR="$PRJ_DIR/docker/import"
 
-# https://containerlab.dev/manual/kinds/ceos/
-# can for .xz files
+if [ ! -d "$IMPORT_DIR" ]; then
+    echo "Import directory not found."
+    exit 0
+fi
+
+# Check for all import files with specified format type
 for file in $IMPORT_DIR/*.tar.xz; do
     if [ -f "$file" ]; then
-        # extract the name until - # https://stackoverflow.com/questions/20348097/bash-extract-string-before-a-colon
+        # Extract the name until the first colon "-"
         IMAGE_NAME=$(basename "$file" | cut -d'-' -f1)
 
-        # https://stackoverflow.com/questions/2264428/how-to-convert-a-string-to-lower-case-in-bash
+        # Lowercase the name of the image
         IMAGE_NAME="$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')_vntd"
 
         echo "Importing image: $IMAGE_NAME from $file"
 
+        # Import the image into docker
         docker import "$file" "$IMAGE_NAME"
     fi
 done
