@@ -4,6 +4,7 @@ set -e
 
 TOPOLOGY_DIR="$1"
 
+# Check if there are actually labs to destroy
 check_running_topologies() {
     echo "Checking for running containerlab topologies..."
     RUNNING_JSON=$(clab inspect --all -f json)
@@ -17,6 +18,7 @@ check_running_topologies() {
     fi
 }
 
+# Check topology definition files to use as destroy target
 list_topologies_to_destroy() {
     echo "Available labs to destroy:"
     i=0
@@ -36,20 +38,22 @@ list_topologies_to_destroy() {
 
     i=$((i+1))
     echo "$i) > Back"
+
+    TOTAL_OPTIONS=$i
 }
 
 check_running_topologies
 while true; do
     list_topologies_to_destroy
 
-    echo "Select a lab to destroy (1-$i): " 
+    echo "Select a lab to destroy (1-$TOTAL_OPTIONS): " 
     read choice
 
     case "$choice" in
         $i) exit 0 ;;
         ''|*[!0-9]*) echo "Invalid option." ;;
         *)
-            if [ "$choice" -ge 1 ] && [ "$choice" -lt "$i" ]; then
+            if [ "$choice" -ge 1 ] && [ "$choice" -lt "$TOTAL_OPTIONS" ]; then
                 eval "selected_topo=\$topo_$choice"
                 break;
             else
@@ -60,4 +64,6 @@ done
 
 echo "Selected topology: $selected_topo"
 echo "Destroying topology..."
+
+# Removes containers and virtual wires defined in the selected topology
 clab destroy -t "$selected_topo"
