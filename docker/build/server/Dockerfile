@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     procps \
     openssh-server \
     nginx \
+    vim \
     isc-dhcp-server \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

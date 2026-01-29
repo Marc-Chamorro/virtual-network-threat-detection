@@ -75,16 +75,20 @@ topology:
     router_enterprise:
       kind: linux
       image: router_vntd:latest
-      binds:                                                    # Mounts the startup script to handle NAT and IP assignment
+      binds:                                                    # Mounts the startup script to handle NAT, IP assignment and FRR configuration
         - ./config/router/enterprise/startup.sh:/startup.sh
+        # - ./config/router/enterprise/frr.conf:/etc/frr/frr.conf
       exec:
         - sh /startup.sh
 
     firewall:
       kind: linux
       image: firewall_vntd:latest
+      # env:
+      #  DHCP_RELAY: 1
       binds:                                                    # Mounts the complex iptables logic script
         - ./config/firewall/enterprise/startup.sh:/startup.sh
+      #  - ./config/firewall/enterprise/isc-dhcp-relay.conf:/etc/default/isc-dhcp-relay # No format: https://www.fpgenred.es/DHCP/etcdefaultiscdhcprelay.html
       exec:
         - sh /startup.sh
 
@@ -172,6 +176,10 @@ topology:
       image: server_vntd:latest
       env: 
         SSH_SERVER: 1
+      #  DHCP_SERVER: 1
+      #binds:
+      # - ./config/server/dhcp/dhcpd.conf:/etc/dhcp/dhcpd.conf
+      # - ./config/server/dhcp/isc-dhcp-server:/etc/default/isc-dhcp-server
       exec:
         - ip addr add 192.168.40.10/24 dev eth1
         - ip link set eth1 up

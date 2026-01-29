@@ -16,5 +16,10 @@ iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT ACCEPT
 
+# DHCP Relay -> Allow DHCP requests transfer
+if [ "$DHCP_RELAY" == "1" ]; then
+    service isc-dhcp-relay start
+fi
+
 # Keep the container running
 sleep infinity

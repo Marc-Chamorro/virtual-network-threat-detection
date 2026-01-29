@@ -7,6 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install necessary firewall and network tools
 # conntrack is included for stateful firewall capabilities
 # iptables is the core package filtering
+# isc-dhcp-relay allows assigning IP addresses to other networks or VLANs
 RUN apt-get update && apt-get install -y \
     iptables \
     iproute2 \
@@ -16,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     procps \
     bridge-utils \
     conntrack \
+    #isc-dhcp-relay \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

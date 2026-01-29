@@ -50,7 +50,7 @@ iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to-destination
 # OSPF
 # =================================================================================================
 
-# Configure the FTT to advertise the network to the internet
+# Configure the FRR to advertise the network to the internet
 cat <<EOF > /etc/frr/frr.conf
 frr version 8
 frr defaults traditional

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-set -e
+# set -e
 
 # Default Credentials
 SSH_USER=vntd
 SSH_PASS=pswd
 
 # SSH Server
-if [[ "$SSH_SERVER" == "1" ]]; then
+if [ "$SSH_SERVER" == "1" ]; then
     # Create a new user for SSH access
     useradd $SSH_USER -s /bin/bash -M
     # Set the password for the new user
@@ -26,7 +26,7 @@ if [[ "$SSH_SERVER" == "1" ]]; then
 fi
 
 # Web Server
-if [[ "$WEB_SERVER" == "1" ]]; then
+if [ "$WEB_SERVER" == "1" ]; then
     # Add a simple web page
     echo 'Hello from Nginx on the web server' > /var/www/html/index.nginx-debian.html
     # Start Nginx in the foreground since we sleep at the end
@@ -34,10 +34,13 @@ if [[ "$WEB_SERVER" == "1" ]]; then
 fi
 
 # DHCP Server
-#if [[ "$ENABLE_DHCP" == "1" ]]; then
-#    echo "Starting DHCP"
-#    service isc-dhcp-server start
-#fi
+if [ "$DHCP_SERVER" == "1" ]; then
+    # Start the DHCP service
+    service isc-dhcp-server start
+fi
+
+# NFS | SMB | FTP - NAS
+
 
 # Keep the container alive
 sleep infinity
