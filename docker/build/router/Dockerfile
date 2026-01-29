@@ -25,3 +25,10 @@ RUN echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 
 # Keep the container alive
 CMD ["sleep", "infinity"]
+
+# Copy entrypoint script and set executable permissions
+# COPY entrypoint.sh /
+# RUN chmod +x /entrypoint.sh
+
+# Execute the entrypoint script
+# ENTRYPOINT ["/entrypoint.sh"]
