@@ -25,11 +25,6 @@ nav:
       - Network Design: architecture/network-design.md
       #- Components: architecture/components.md
       #- Data Flow: architecture/data-flow.md
-  - Deployment:
-      # Instructions on how to deploy the project. And connect to the devices and so on.
-      - Overview: deployment/index.md
-      - Requirements: deployment/requirements.md
-      - Lifecycle: deployment/lifecycle.md
   - Docker & Containerlab:
       # General overview of Docker and its relevance to the project. 
       - Overview: docker/index.md
