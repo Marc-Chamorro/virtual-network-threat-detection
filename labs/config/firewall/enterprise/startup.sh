@@ -93,10 +93,10 @@ iptables -A INPUT -p icmp -s 192.168.0.0/16 -j ACCEPT
 iptables -t nat -A PREROUTING -i eth1 -p tcp -m multiport --dports 80,22 -j DNAT --to-destination 192.168.10.10
 
 # Allow connections to the server
-iptables -A FORWARD -d 192.168.10.10 -p tcp -m multiport --dports 80,22 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -d 192.168.10.10 -p tcp -m multiport --dports 80,22 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
 
 # Allow server responses
-iptables -A FORWARD -s 192.168.10.10 -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -s 192.168.10.10 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # VLAN 20 - Monitoring & IDS
 #--------------------------------------------------------------------------------------------------
@@ -113,6 +113,9 @@ iptables -A FORWARD -s 192.168.20.10 -j DROP
 
 # Unrestricted access to all other subnets
 iptables -A FORWARD -s 192.168.30.0/24 -j ACCEPT
+
+# Allow responses to the device from the internet
+iptables -A FORWARD -d 192.168.30.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # VLAN 40 - Internal services
 #--------------------------------------------------------------------------------------------------
@@ -135,6 +138,9 @@ iptables -A FORWARD -i br-vlan50 -o eth1 -j ACCEPT
 iptables -A FORWARD -i br-vlan50 -d 192.168.10.0/24 -j ACCEPT
 iptables -A FORWARD -i br-vlan50 -d 192.168.40.0/24 -j ACCEPT
 
+# Allow responses to the device from the internet
+iptables -A FORWARD -d 192.168.50.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
 # DHCP Requests
 # iptables -A FORWARD -s 192.168.50.0/24 -d 192.168.40.10 -p udp --dport 67:68 -j ACCEPT
 
@@ -142,6 +148,9 @@ iptables -A FORWARD -i br-vlan50 -d 192.168.40.0/24 -j ACCEPT
 iptables -A FORWARD -i br-vlan60 -o eth1 -j ACCEPT
 iptables -A FORWARD -i br-vlan60 -d 192.168.10.0/24 -j ACCEPT
 iptables -A FORWARD -i br-vlan60 -d 192.168.40.0/24 -j ACCEPT
+
+# Allow responses to the device from the internet
+iptables -A FORWARD -d 192.168.60.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # DHCP Requests
 # iptables -A FORWARD -s 192.168.60.0/24 -d 192.168.40.10 -p udp --dport 67:68 -j ACCEPT

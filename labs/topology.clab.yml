@@ -77,7 +77,7 @@ topology:
       image: router_vntd:latest
       binds:                                                    # Mounts the startup script to handle NAT, IP assignment and FRR configuration
         - ./config/router/enterprise/startup.sh:/startup.sh
-        # - ./config/router/enterprise/frr.conf:/etc/frr/frr.conf
+        - ./config/router/enterprise/frr.conf:/etc/frr/frr.conf
       exec:
         - sh /startup.sh
 
