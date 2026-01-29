@@ -45,25 +45,3 @@ iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 
 # Forward incoming HTTP requests to the Firewall (which later forwards to  the DMZ)
 iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to-destination 192.168.0.2
-
-# =================================================================================================
-# OSPF
-# =================================================================================================
-
-# Configure the FRR to advertise the network to the internet
-cat <<EOF > /etc/frr/frr.conf
-frr version 8
-frr defaults traditional
-hostname router-enterprise
-log syslog informational
-no ipv6 forwarding
-
-router ospf
- passive-interface default
- no passive-interface eth1
- network 172.16.30.0/30 area 0
-EOF
-
-# Start the FRR service
-/usr/lib/frr/frrinit.sh start
-
