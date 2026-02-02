@@ -84,11 +84,9 @@ topology:
     firewall:
       kind: linux
       image: firewall_vntd:latest
-      # env:
-      #  DHCP_RELAY: 1
-      binds:                                                    # Mounts the complex iptables logic script
+      binds:                                                    # Mounts the iptables logic script
         - ./config/firewall/enterprise/startup.sh:/startup.sh
-      #  - ./config/firewall/enterprise/isc-dhcp-relay.conf:/etc/default/isc-dhcp-relay # No format: https://www.fpgenred.es/DHCP/etcdefaultiscdhcprelay.html
+        - ./config/firewall/enterprise/isc-dhcp-relay.conf:/etc/default/isc-dhcp-relay # No format: https://www.fpgenred.es/DHCP/etcdefaultiscdhcprelay.html
       exec:
         - sh /startup.sh
 
@@ -176,10 +174,10 @@ topology:
       image: server_vntd:latest
       env: 
         SSH_SERVER: 1
-      #  DHCP_SERVER: 1
-      #binds:
-      # - ./config/server/dhcp/dhcpd.conf:/etc/dhcp/dhcpd.conf
-      # - ./config/server/dhcp/isc-dhcp-server:/etc/default/isc-dhcp-server
+        DHCP_SERVER: 1
+      binds:
+       - ./config/server/dhcp/dhcpd.conf:/etc/dhcp/dhcpd.conf
+       - ./config/server/dhcp/isc-dhcp-server:/etc/default/isc-dhcp-server
       exec:
         - ip addr add 192.168.40.10/24 dev eth1
         - ip link set eth1 up
@@ -197,19 +195,21 @@ topology:
       kind: linux
       image: alpine_vntd:latest
       exec:
-        - ip addr add 192.168.50.10/24 dev eth1
+        # - ip addr add 192.168.50.10/24 dev eth1
         - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.50.1
+        - dhcpcd eth1
+        - ip route del default                                  # Delete the default route assigned by Containerlab
+        # - ip route add default via 192.168.50.1
 
     pc_vlan60_1:
       kind: linux
       image: alpine_vntd:latest
       exec:
-        - ip addr add 192.168.60.10/24 dev eth1
+        # - ip addr add 192.168.60.10/24 dev eth1
         - ip link set eth1 up
+        - dhcpcd eth1
         - ip route del default
-        - ip route add default via 192.168.60.1
+        # - ip route add default via 192.168.60.1
 
     # VLAN 60 - User floor 2
     #----------------------------------------------------------------------------------------------
@@ -222,19 +222,21 @@ topology:
       kind: linux
       image: alpine_vntd:latest
       exec:
-        - ip addr add 192.168.50.11/24 dev eth1
+        # - ip addr add 192.168.50.11/24 dev eth1
         - ip link set eth1 up
+        - dhcpcd eth1
         - ip route del default
-        - ip route add default via 192.168.50.1
+        # - ip route add default via 192.168.50.1
 
     pc_vlan60_2:
       kind: linux
       image: alpine_vntd:latest
       exec:
-        - ip addr add 192.168.60.11/24 dev eth1
+        # - ip addr add 192.168.60.11/24 dev eth1
         - ip link set eth1 up
+        - dhcpcd eth1
         - ip route del default
-        - ip route add default via 192.168.60.1
+        # - ip route add default via 192.168.60.1
 
   # ===============================================================================================
   # Physical links between nodes
