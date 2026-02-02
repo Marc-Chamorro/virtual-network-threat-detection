@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set -e
+set -e
 
 # Default Credentials
 SSH_USER=vntd

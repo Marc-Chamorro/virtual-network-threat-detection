@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     procps \
     bridge-utils \
     conntrack \
-    #isc-dhcp-relay \
+    isc-dhcp-relay \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
