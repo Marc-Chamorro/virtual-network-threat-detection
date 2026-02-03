@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     nginx \
     vim \
     isc-dhcp-server \
+    dnsmasq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

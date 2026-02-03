@@ -85,9 +85,6 @@ iptables -A INPUT -i lo -j ACCEPT
 # Allow ICMP (Ping) to the firewall, not through it
 iptables -A INPUT -p icmp -s 192.168.0.0/16 -j ACCEPT
 
-# Allow returnal of all traffic from an already established connection
-iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-
 # VLAN 10 - DMZ
 #--------------------------------------------------------------------------------------------------
 # Allow HTTP (80), SSH (22), DNS (53) from anywhere to the DMZ server
@@ -97,19 +94,23 @@ iptables -t nat -A PREROUTING -i eth1 -p tcp -m multiport --dports 80,22,53 -j D
 iptables -t nat -A PREROUTING -i eth1 -p udp --dport 53 -j DNAT --to-destination 192.168.10.10
 
 # Allow connections to the server
-iptables -A FORWARD -d 192.168.10.10 -p tcp -m multiport --dports 80,22,53 -m conntrack --ctstate NEW -j ACCEPT
-iptables -A FORWARD -d 192.168.10.10 -p udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
-
-# Allow ICMP (ping) to the server from inside the LAN
-iptables -A FORWARD -d 192.168.10.10 -p icmp -j ACCEPT
+iptables -A FORWARD -d 192.168.10.10 -p tcp -m multiport --dports 80,22,53 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -d 192.168.10.10 -p udp --dport 53 -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
 
 # Allow server responses
 #iptables -A FORWARD -s 192.168.10.10 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-#iptables -A FORWARD -s 192.168.10.10 -p tcp -m multiport --sports 80,22,53 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-#iptables -A FORWARD -s 192.168.10.10 -p udp --sport 53 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -s 192.168.10.10 -p tcp -m multiport --sports 80,22,53 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -s 192.168.10.10 -p udp --sport 53 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-iptables -A FORWARD -s 192.168.10.10 -o eth1 -p udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
-iptables -A FORWARD -s 192.168.10.10 -o eth1 -p tcp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+# Allow ICMP (ping) to the server from inside the LAN
+iptables -A FORWARD -d 192.168.10.10 -p icmp -m conntrack --ctstate NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -s 192.168.10.10 -p icmp -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+
+iptables -A FORWARD -s 192.168.10.10 -o eth1 -p udp --dport 53 -j ACCEPT
+iptables -A FORWARD -s 192.168.10.10 -o eth1 -p tcp --dport 53 -j ACCEPT
+iptables -A FORWARD -d 192.168.10.10 -i eth1 -p udp --sport 53 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -d 192.168.10.10 -i eth1 -p tcp --sport 53 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # VLAN 20 - Monitoring & IDS
 #--------------------------------------------------------------------------------------------------
@@ -128,7 +129,7 @@ iptables -A FORWARD -s 192.168.20.10 -j DROP
 iptables -A FORWARD -s 192.168.30.0/24 -j ACCEPT
 
 # Allow responses to the device from the internet
-#iptables -A FORWARD -i eth1 -d 192.168.30.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -i eth1 -d 192.168.30.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # VLAN 40 - Internal services
 #--------------------------------------------------------------------------------------------------
@@ -142,8 +143,7 @@ iptables -A FORWARD -s 192.168.40.0/24 -d 192.168.60.0/24 -j ACCEPT
 iptables -A OUTPUT -s 192.168.40.1 -d 192.168.40.10 -p udp --sport 68 --dport 67 -j ACCEPT
 
 # The DHCP Server can communicate with the DHCP Relay
-iptables -A INPUT -s 192.168.40.10 -d 192.168.40.1 -p udp --sport 67 --dport 68 -j ACCEPT
-
+iptables -A INPUT -s 192.168.40.10 -d 192.168.40.1 -p udp --sport 68 --sport 67 -j ACCEPT
 
 # VLAN 50 & 60 - User floor 1 & 2
 #--------------------------------------------------------------------------------------------------
@@ -155,7 +155,7 @@ iptables -A FORWARD -i br-vlan50 -d 192.168.10.0/24 -j ACCEPT
 iptables -A FORWARD -i br-vlan50 -d 192.168.40.0/24 -j ACCEPT
 
 # Allow responses to the device from the internet
-#iptables -A FORWARD -i eth1 -o br-vlan60 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -i eth1 -o br-vlan60 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # Acept incoming DHCP petitions coming from VLAN 50 (INPUT, DHCP relay needs to process the petitions)
 iptables -A INPUT -i br-vlan50 -p udp --sport 68 --dport 67 -j ACCEPT
@@ -169,7 +169,7 @@ iptables -A FORWARD -i br-vlan60 -d 192.168.10.0/24 -j ACCEPT
 iptables -A FORWARD -i br-vlan60 -d 192.168.40.0/24 -j ACCEPT
 
 # Allow responses to the device from the internet
-#iptables -A FORWARD -i eth1 -o br-vlan60 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -i eth1 -o br-vlan60 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # Acept incoming DHCP petitions coming from VLAN 60 (INPUT, DHCP relay needs to process the petitions)
 iptables -A INPUT -i br-vlan60 -p udp --sport 68 --dport 67 -j ACCEPT
