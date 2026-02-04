@@ -204,7 +204,7 @@ topology:
         - ip route del default
         - ip route add default via 192.168.40.1
 
-    # VLAN 50 - User floor 1
+    # VLAN 50 & 60 - User floor 1
     #----------------------------------------------------------------------------------------------
     switch_floor1:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
       kind: arista_ceos
@@ -237,7 +237,7 @@ topology:
         # - ip route del default
         # - ip route add default via 192.168.60.1
 
-    # VLAN 60 - User floor 2
+    # VLAN 50 & 60 - User floor 2
     #----------------------------------------------------------------------------------------------
     switch_floor2:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
       kind: arista_ceos
