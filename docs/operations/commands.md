@@ -1,3 +1,34 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Logs form device
 ```bash
 docker logs clab-virtual-env-internal_server
@@ -28,6 +59,8 @@ cat /etc/resolv.conf
 nslookup enterprise.local
 nslookup 192.168.10.10
 dig www.enterprise.local
+
+tcpdump -i eth1 -f 'port 67 or port 68'
 
 DNS INTERN  - 192.168.10.10
             - 192.168.40.10

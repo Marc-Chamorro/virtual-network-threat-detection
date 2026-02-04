@@ -19,12 +19,26 @@ nav:
   # A detailed guide on how to install and set up the project. This section should cover all necessary steps, configurations, and options available during installation.
   - Installation: installation.md
   - Usage: usage.md
+
   - Architecture:
       # Topology design and components used, devices, rules applied, communication, data flow, etc.
       - Overview: architecture/index.md
       - Network Design: architecture/network-design.md
-      #- Components: architecture/components.md
-      #- Data Flow: architecture/data-flow.md
+      - Addressing & VLANs: architecture/addressing.md
+      - Traffic Flows: architecture/traffic-flows.md
+
+  - Network Services:
+    - Overview: network-services/index.md
+    - DHCP:
+      - Design: network-services/dhcp/design.md
+      - Server Configuration: network-services/dhcp/server.md
+      - Relay Configuration: network-services/dhcp/relay.md
+      - Client Behavior: network-services/dhcp/clients.md
+    - DNS:
+      - Design: network-services/dns/design.md
+      - Configuration: network-services/dns/config.md
+      - Resolution Flow: network-services/dns/flow.md
+
   - Docker & Containerlab:
       # General overview of Docker and its relevance to the project. 
       - Overview: docker/index.md
@@ -33,25 +47,34 @@ nav:
       - Building Dockerfiles: docker/dockerfiles.md
       - Entrypoints & Behavior: docker/entrypoints.md
       - Importing Images: docker/supported-images.md
+
   - Labs:
       # Detailes information about topology files and lab configurations.
       - Overview: labs/index.md
       - Topology File: labs/topologies.md
       - Lab Configuration: labs/configuration.md
-      #- Running the Labs: labs/running-the-labs.md
+
   - Scripts & Automation:
       # Information about any scripts or automation tools included in the project.
       - Overview: scripts/index.md
       #- Automation Workflows: scripts/automation-workflows.md
       - Images Management: scripts/images-management.md
       - Lab Management: scripts/lab-management.md
+
+  # THE FOLLOWING HAVE NOT BEEN IMPLEMENTED
+
   # TO BE DEFINED AT ESTABLISHED LATER
-  - Services:
-      # Overview of the services used in the project, their purpose, and how they interact with each other.
-      - Overview: services/index.md
-      - Suricata: services/suricata.md # Mayber here or somewhere else?
-      - Monitoring: services/monitoring.md
-  - Cool Examples: example_elements.md
+  # - Services:
+    # Overview of the services used in the project, their purpose, and how they interact with each other.
+    # - Overview: services/index.md
+    # - Suricata: services/suricata.md # Mayber here or somewhere else?
+    # - Monitoring: services/monitoring.md
+
+  # - Operations & Troubleshooting:
+    # - Useful Commands: operations/commands.md
+    # - Debugging Network Issues: operations/debugging.md
+    
+  # - Cool Examples: example_elements.md
 
 theme:
   name: material
