@@ -93,6 +93,8 @@ topology:
     firewall:
       kind: linux
       image: firewall_vntd:latest
+      env:
+        DHCP_RELAY: 1
       binds:                                                    # Mounts the iptables logic script
         - ./config/firewall/enterprise/startup.sh:/startup.sh
         - ./config/firewall/enterprise/isc-dhcp-relay.conf:/etc/default/isc-dhcp-relay # No format: https://www.fpgenred.es/DHCP/etcdefaultiscdhcprelay.html
