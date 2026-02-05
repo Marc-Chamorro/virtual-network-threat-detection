@@ -138,13 +138,6 @@ iptables -A FORWARD -s 192.168.40.0/24 -d 192.168.30.0/24 -j ACCEPT
 iptables -A FORWARD -s 192.168.40.0/24 -d 192.168.50.0/24 -j ACCEPT
 iptables -A FORWARD -s 192.168.40.0/24 -d 192.168.60.0/24 -j ACCEPT
 
-# DHCP Relay can communicate with the DHCP Server
-iptables -A OUTPUT -s 192.168.40.1 -d 192.168.40.10 -p udp --sport 68 --dport 67 -j ACCEPT
-
-# The DHCP Server can communicate with the DHCP Relay
-iptables -A INPUT -s 192.168.40.10 -d 192.168.40.1 -p udp --sport 67 --dport 68 -j ACCEPT
-
-
 # VLAN 50 & 60 - User floor 1 & 2
 #--------------------------------------------------------------------------------------------------
 # Users can access the Internet, DMZ and Internal Services, but can not Admin or Monitoring networks
@@ -157,12 +150,6 @@ iptables -A FORWARD -i br-vlan50 -d 192.168.40.0/24 -j ACCEPT
 # Allow responses to the device from the internet
 #iptables -A FORWARD -i eth1 -o br-vlan60 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-# Acept incoming DHCP petitions coming from VLAN 50 (INPUT, DHCP relay needs to process the petitions)
-iptables -A INPUT -i br-vlan50 -p udp --sport 68 --dport 67 -j ACCEPT
-# Accept outgoing DHCP petitions going into VAN 50
-iptables -A OUTPUT -o br-vlan50 -p udp --sport 67 --dport 68 -j ACCEPT
-
-
 # VLAN 60 ---------------------------------------
 iptables -A FORWARD -i br-vlan60 -o eth1 -j ACCEPT
 iptables -A FORWARD -i br-vlan60 -d 192.168.10.0/24 -j ACCEPT
@@ -171,15 +158,34 @@ iptables -A FORWARD -i br-vlan60 -d 192.168.40.0/24 -j ACCEPT
 # Allow responses to the device from the internet
 #iptables -A FORWARD -i eth1 -o br-vlan60 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-# Acept incoming DHCP petitions coming from VLAN 60 (INPUT, DHCP relay needs to process the petitions)
-iptables -A INPUT -i br-vlan60 -p udp --sport 68 --dport 67 -j ACCEPT
-# Accept outgoing DHCP petitions going into VAN 60
-iptables -A OUTPUT -o br-vlan60 -p udp --sport 67 --dport 68 -j ACCEPT
-
-
 # Start the DHCP Relay service once all bridges have been built and configured
-service isc-dhcp-relay start
+if [ "$DHCP_RELAY" = "1" ]; then
 
+    # VLAN 40 - Internal services ---------------
+
+    # DHCP Relay can communicate with the DHCP Server
+    iptables -A OUTPUT -s 192.168.40.1 -d 192.168.40.10 -p udp --sport 68 --dport 67 -j ACCEPT
+
+    # The DHCP Server can communicate with the DHCP Relay
+    iptables -A INPUT -s 192.168.40.10 -d 192.168.40.1 -p udp --sport 67 --dport 68 -j ACCEPT
+
+    # VLAN 50 -----------------------------------
+
+    # Acept incoming DHCP petitions coming from VLAN 50 (INPUT, DHCP relay needs to process the petitions)
+    iptables -A INPUT -i br-vlan50 -p udp --sport 68 --dport 67 -j ACCEPT
+    # Accept outgoing DHCP petitions going into VAN 50
+    iptables -A OUTPUT -o br-vlan50 -p udp --sport 67 --dport 68 -j ACCEPT
+
+    # VLAN 60 -----------------------------------
+
+    # Acept incoming DHCP petitions coming from VLAN 60 (INPUT, DHCP relay needs to process the petitions)
+    iptables -A INPUT -i br-vlan60 -p udp --sport 68 --dport 67 -j ACCEPT
+    # Accept outgoing DHCP petitions going into VAN 60
+    iptables -A OUTPUT -o br-vlan60 -p udp --sport 67 --dport 68 -j ACCEPT
+
+    # Start the service
+    service isc-dhcp-relay start
+fi
 
 # By default, all Forward packets if not specified are dropped (set on the Firewall entrypoint script)
 # iptables -P FORWARD DROP
