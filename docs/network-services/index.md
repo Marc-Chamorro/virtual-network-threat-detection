@@ -19,7 +19,7 @@ Service behavior is described from a **network perspective**, not from an applic
 The following services are documented in this section:
 
 - **DHCP**  
-  Provides dynamic IP configuration to user across multiple VLANs.  
+  Provides dynamic IP configuration to users across multiple VLANs.  
 
   [DHCP Design](./dhcp/design.md)
 

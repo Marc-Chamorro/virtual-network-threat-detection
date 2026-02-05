@@ -22,7 +22,7 @@ The architecture is designed to:
 The architecture is built upon four main pillars:
 
 1. **Isolation:** The entire laboratory runs within an isolated Docker network, ensuring that simulated attacks do not affect the host machine or any real external networks.
-2. **Modularity:** Network devices (routers, firewalls, servers) are decoupled from their configurations. This allows the same container image to behave differently depending on which configuratino files are attached.
+2. **Modularity:** Network devices (routers, firewalls, servers) are decoupled from their configurations. This allows the same container image to behave differently depending on which configuration files are attached.
 3. **Observability:** All parts of the network are designed to be monitored, with dedicated zones for IDS (Intrusion Detection Systems) and centralized logging.
 4. **Explicit Configuration:** All IP addresses, routing capabilities, VLANs, and service behavior are explicitly defined to avoid hidden defaults.
 
@@ -47,7 +47,7 @@ The architecture is divided into four main functional zones:
 1. **Internet Core:** Acts as the central exchange point connecting all external and internal elements.
 2. **Attacker Network:** Represents external threats.
 3. **Benign Network:** Represents legitimate external users interacting with enterprise services.
-4. **Enterprise Infrastructure:** The core of the project, featuring a segmented architecture with a Firewall, DMZ, Internal Services, and User Floors.
+4. **Enterprise Infrastructure:** The core of the project, featuring a segmented architecture with a firewall, DMZ, internal services, and user floors.
 
 ## Scalability and Extensibility
 

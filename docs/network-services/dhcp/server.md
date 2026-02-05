@@ -8,7 +8,7 @@ The server provides address assignment and network parameters to all user endpoi
 
 To make use of the DHCP service included in the `server_vntd` container, proceed with the following steps:
 
-1. Set as `env` variables the following elements in the desired container using the `server_vntd` image: 
+1. Set as environment variables (`env`) the following elements in the desired container using the `server_vntd` image: 
 
     - DHCP_SERVER - Enable the DHCP service (any value other rather than 1 prevents the service from starting).
     - IFACE - Selected interface.
@@ -26,8 +26,8 @@ env:
 
 2. Bind both configuration files required for the service to work:
 
-    - `dhcpd.conf` - Address pools and service configuration
-    - `isc-dhcp-server` - Selected interface
+    - `dhcpd.conf` - Address pools and service configuration.
+    - `isc-dhcp-server` - Selected interface.
 
 ```yml
 binds:
@@ -51,14 +51,14 @@ The service is implemented using:
 
 - **ISC DHCP Server (`isc-dhcp-server`)**
 
-The server is to be explicitly bound to a single interface: `eth1`. This prevents the DHCP daemon from listening on unintended interfaces (even though in this scenario, all `internal_server` traffic is moved through the same interface).
+The server is to be explicitly bound to a single interface: `eth1`. This prevents the DHCP daemon from listening on unintended interfaces (even though in this scenario, all `internal_server` traffic is routed through the same interface).
 
 Configuration is defined in:
 
 - `/etc/default/isc-dhcp-server`
 - `/etc/dhcp/dhcpd.conf`
 
-All DHCP configuration files are stored under the project `config/` directory and mounted into the container at runtime
+All DHCP configuration files are stored under the project `config/` directory and mounted into the container at runtime.
 
 !!! warning
     Changes made directly inside the running container are **not persistent** and will be lost on redeployment.
@@ -97,7 +97,7 @@ option domain-name-servers 192.168.10.10, 192.168.40.10;
 ```
 
 !!! note
-    DNS settings can be applied globally, regardless of the VLAN receive the same DNS parameters.
+    DNS settings can be applied globally, regardless of the VLAN receiving the same DNS parameters.
 
 !!! important
     It is necessary to declare the address of the network the DHCP device belongs to, even if it does not offer any service; otherwise, the service will not work.
@@ -108,4 +108,4 @@ subnet 192.168.40.0 netmask 255.255.255.0 {
 }
 ```
 
-Clients receive as a part of their configurations the receival of a default gateway and a DNS server address. Such avoids manual client configuration and centralized configuration for ease of management.
+Clients receive as a part of their configurations the assignment of a default gateway and a DNS server address. This avoids manual client configuration and centralized configuration for ease of management.
