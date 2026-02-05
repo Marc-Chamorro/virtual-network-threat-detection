@@ -32,7 +32,7 @@ This router uses FRRouting (FRR) to provide realistic routing behavior.
 
 The attacker network simulates a hostile external actor:
 
-- Dedicated router (`router_attacker`).
+- A dedicated router (`router_attacker`).
 - A Kali Linux-based attacker node.
 
 This network is intentionally separated to allow controlled attack generation.
@@ -41,8 +41,8 @@ This network is intentionally separated to allow controlled attack generation.
 
 The benign network simulates legitimate external users:
 
-- Dedicated router (`router_benign`).
-- Lightweight client node.
+- A dedicated router (`router_benign`).
+- A lightweight client node.
 
 This allows differentiation between malicious and legitimate traffic.
 
@@ -53,7 +53,7 @@ This allows differentiation between malicious and legitimate traffic.
 The `router_enterprise` node connects the enterprise network to the Internet. Its responsibilities include:
 
 - Routing between enterprise and external networks.
-- Forwarding traffic towards the firewall.
+- Forwarding traffic toward the firewall.
 - Acting as a clear limit between external and internal domains.
 
 ### Firewall
@@ -70,13 +70,13 @@ The firewall is the **central enforcement point** of the enterprise:
 
 ## Layer 2 Segmentation
 
-VLANs are implemented using the custom Firewall images, but L2 package traffic is managed with **Arista cEOS switches**, providing realistic L2 behavior:
+VLANs are implemented using the custom firewall images, but L2 package traffic is managed with **Arista cEOS switches**, providing realistic L2 behavior:
 
 - Access ports for end devices.
 - Trunk ports for multi-VLAN floors.
 - Clear separation between zones.
 
-Each VLAN maps to a dedicated switch instance to keep configurations readable and handleable.
+Each VLAN maps to a dedicated switch instance to keep configurations readable and manageable.
 
 ## Monitoring Placement
 
@@ -85,4 +85,4 @@ Monitoring and IDS nodes are placed in a dedicated VLAN, reading all traffic out
 - Visibility into enterprise traffic.
 - Isolation from services and users.
 
-Traffic mirroring and promiscuous interfaces are used where required to capture relevant packages.
+Traffic mirroring and promiscuous interfaces are used where required to capture relevant packets.

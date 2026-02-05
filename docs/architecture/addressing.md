@@ -53,7 +53,7 @@ For all enterprise VLANs:
   - Monitoring devices
 
 - **Dynamic IPs (DHCP)** are used for:
-  - User workstations (VLAN 50 and 60)
+  - User workstations (VLANs 50 and 60)
 
 This hybrid solution reflects real-world enterprise environments. The DHCP device in charge of managing the DHCP service is `internal_server`.
 

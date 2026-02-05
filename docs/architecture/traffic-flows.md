@@ -63,8 +63,8 @@ Since the DHCP Server is in VLAN 40 and clients are in VLAN 50/60, the firewall 
 
 The DMZ server provides DNS service to individuals within the enterprise network. Devices using DHCP will receive the DNS address automatically upon IP assignment. This service responds to the name addresses referencing the internal server.
 
-Given the situation an unknown address is received, the DNS forwards the request to the DNS located on the Internet Server:
-1. **Client:** Requests address for a specific domain name.
+Given the situation that an unknown address is received, the DNS forwards the request to the DNS located on the Internet Server:
+1. **Client:** Requests an address for a specific domain name.
 2. **DMZ:** Either answers or redirects the response to the external DNS.
 3. **Internet Server:** Responds to the requested addresses.
 

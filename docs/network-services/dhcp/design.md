@@ -8,10 +8,10 @@ DHCP is a **core infrastructure service** that enables scalable client connectiv
 
 The DHCP service is responsible for:
 
-- Dynamically assigning IP configuration to user endpoints
-- Distributing network parameters consistently
-- Reducing manual configuration on client nodes
-- Simulating real enterprise endpoint behavior
+- Dynamically assigning IP configurations to user endpoints.
+- Distributing network parameters consistently.
+- Reducing manual configuration on client nodes.
+- Simulating real enterprise endpoint behavior.
 
 DHCP is intentionally limited to **user-facing VLANs** and is not used for infrastructure or service nodes.
 
@@ -19,10 +19,10 @@ DHCP is intentionally limited to **user-facing VLANs** and is not used for infra
 
 The DHCP design is constrained by the following architectural choices:
 
-- VLANs are fully isolated at Layer 3
-- The firewall is the default gateway for all enterprise VLANs
-- User devices are located in VLAN 50 and VLAN 60
-- Core services are centralized in the Internal Services VLAN (VLAN 40)
+- VLANs are fully isolated at Layer 3.
+- The firewall is the default gateway for all enterprise VLANs.
+- User devices are located in VLAN 50 and VLAN 60.
+- Core services are centralized in the Internal Services VLAN (VLAN 40).
 
 Because DHCP relies on broadcast-based discovery, a direct client–server model is not viable.
 
@@ -30,9 +30,9 @@ Because DHCP relies on broadcast-based discovery, a direct client–server model
 
 The lab implements a **centralized DHCP server model**, where:
 
-- A single DHCP server runs in VLAN 40
-- Multiple user VLANs are served by that server
-- All DHCP traffic traverses the firewall
+- A single DHCP server runs in VLAN 40.
+- Multiple user VLANs are served by that server.
+- All DHCP traffic traverses the firewall.
 
 This approach reflects common enterprise deployments and simplifies management, logging, and policy enforcement.
 
@@ -40,11 +40,11 @@ This approach reflects common enterprise deployments and simplifies management, 
 
 The firewall plays a critical role in the DHCP architecture:
 
-- Acts as default gateway for all VLANs
-- Hosts the DHCP **relay agent**
-- Enforces security policies on DHCP traffic
+- Acts as the default gateway for all VLANs.
+- Hosts the DHCP **relay agent**.
+- Enforces security policies on DHCP traffic.
 
-The Firewall forwards all DHCP traffic between the allowed VLANS requesting addresses and the DHCP server.
+The firewall forwards all DHCP traffic between the allowed VLANs requesting addresses and the DHCP server.
 
 ## Design Benefits
 
@@ -57,6 +57,6 @@ This design provides several advantages:
 
 The DHCP flows described align with the **Architecture → Traffic Flows** section:
 
-1. Broadcasts originate at the client
-2. Relayed as unicast traffic by the firewall
-3. Responses follow the reverse path
+1. Broadcasts originate at the client.
+2. Relayed as unicast traffic by the firewall.
+3. Responses follow the reverse path.
