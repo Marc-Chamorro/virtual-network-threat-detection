@@ -30,6 +30,7 @@ The `nodes` section defines every device in the network. Each entry specifies:
 - `binds` [O]: Files from the host's device that are mounted into the container to inject configurations.
 - `exec` [O]: Commands to run immediately after the container starts (useful for IP assignment).
 - `env` [O]: Environment variables (e.g., enabling `SSH_SERVER`).
+- `dns` [O]: Used to assign a DNS server address easily, accompanied usually of `servers` with a list of all addresses.
 
 !!! example
     `exec` and `binds` are commonly used together to inject configuration files into the container and then execute such scripts upon startup.
@@ -48,6 +49,41 @@ router_internet:
   binds:
     - ./config/router/daemons:/etc/frr/daemons
     - ./config/router/internet/frr.conf:/etc/frr/frr.conf
+```
+
+### Example: Internet Server
+
+```yaml
+internet_server:
+  kind: linux
+  image: server_vntd:latest
+  env:
+    WEB_SERVER: 1
+    SSH_SERVER: 1
+    DNS_SERVER: 1
+  binds:
+    - ./config/server/dns/internet/dnsmasq.conf:/etc/dnsmasq.conf
+  exec:
+    - ip addr add 172.16.100.100/24 dev eth1
+    - ip link set eth1 up
+    - ip route del default
+    - ip route add default via 172.16.100.1
+```
+
+### Example: Attacker
+
+```yml
+attacker:
+  kind: linux
+  image: kali_vntd:latest
+  exec:
+    - ip addr add 10.0.0.2/24 dev eth1
+    - ip link set eth1 up
+    - ip route del default
+    - ip route add default via 10.0.0.1
+  dns:
+    servers:
+      - 172.16.100.100
 ```
 
 ### Links

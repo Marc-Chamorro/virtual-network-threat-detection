@@ -59,8 +59,6 @@ Because the lab is built on Containerlab and containerized components:
 
 ## Scope
 
-The following pages on the architecture in detail:
-
 - [**Network Design**](./network-design.md): Topology structure and component roles.
 - [**Addressing & VLANs**](./addressing.md): IP planning and segmentation strategy.
 - [**Traffic Flows**](./traffic-flows.md): Expected communication paths and control points.

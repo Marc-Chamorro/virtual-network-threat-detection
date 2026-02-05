@@ -70,7 +70,7 @@ The firewall is the **central enforcement point** of the enterprise:
 
 ## Layer 2 Segmentation
 
-VLANs are implemented using **Arista cEOS switches**, providing realistic L2 behavior:
+VLANs are implemented using the custom Firewall images, but L2 package traffic is managed with **Arista cEOS switches**, providing realistic L2 behavior:
 
 - Access ports for end devices.
 - Trunk ports for multi-VLAN floors.
@@ -80,10 +80,9 @@ Each VLAN maps to a dedicated switch instance to keep configurations readable an
 
 ## Monitoring Placement
 
-Monitoring and IDS nodes are placed in a dedicated VLAN, ensuring:
+Monitoring and IDS nodes are placed in a dedicated VLAN, reading all traffic outgoing and incoming the enterprise network, ensuring:
 
 - Visibility into enterprise traffic.
 - Isolation from services and users.
-- Controlled analysis tools.
 
 Traffic mirroring and promiscuous interfaces are used where required to capture relevant packages.

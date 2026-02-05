@@ -25,14 +25,32 @@ The script performs:
 
 This ensures that clients are fully operational without manual intervention.
 
-## Lease Application
+## Usage
 
-Once a lease is obtained, the client automatically applies:
+To make use of the startup script in the `alpine_vntd` end users, proceed with the following steps:
 
-- Assigned IP address
-- Subnet configuration
-- Default gateway
-- DNS resolver
+1. Bind the startup script required for the machine to use DHCP.
+
+```yml
+binds:
+    - ./config/pc/startup.sh:/startup.sh
+```
+
+2. Execute the script:
+
+```yml
+exec:
+    - sh /startup.sh
+```
+
+## Making use of DHCP service
+
+Once by DHCP the service is obtained, the client automatically:
+
+- Assign IP address
+- Configures the subnet
+- Sets a default gateway
+- Assigns a DNS server
 
 This mirrors the behavior of real operating systems in enterprise environments.
 
@@ -48,10 +66,8 @@ If any of these components fail, clients will not obtain network access.
 
 ## Local Inspection Tools
 
-Although testing is documented elsewhere, clients can inspect their state using:
+Clients can inspect their state using:
 
-- `ip addr`
-- `ip route`
-- `dhcpcd`
+- `ifconfig`
 
-These tools are useful for understanding applied configuration.
+This tool is useful for understanding applied configuration.

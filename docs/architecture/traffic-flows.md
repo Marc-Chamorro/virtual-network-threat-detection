@@ -12,7 +12,7 @@ The `router_enterprise` uses OSPF to communicate with the Internet core.
 - **Advertisement:** It announces the public address (`172.16.30.2/30`).
 - **Static Routes:** To ensure traffic reaches internal VLANs, the router has static routes pointing all `192.168.0.0/16` traffic to the Firewall (`192.168.0.2`).
 
-### Internal Gateway
+### Internal Routing
 
 - **Firewall as Gateway:** The firewall acts as the gateway for all VLANs.
 - **Default Route:** The firewall sends all unknown traffic to the Enterprise Router (`192.168.0.1`).

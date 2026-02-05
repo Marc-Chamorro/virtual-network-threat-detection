@@ -22,6 +22,7 @@ External networks use distinct address spaces to avoid overlap.
 
 | VLAN | Name / Purpose          | Subnet              | Gateway           |
 |-----:|-------------------------|---------------------|-------------------|
+| —    | Router - Router         | 172.16.x.0/30       | —                 |
 | —    | Attacker Network        | 10.0.0.0/24         | 10.0.0.1          |
 | —    | Benign Network          | 20.0.0.0/24         | 20.0.0.1          |
 | —    | Internet Core           | 172.16.100.0/24     | 172.16.100.1      |
