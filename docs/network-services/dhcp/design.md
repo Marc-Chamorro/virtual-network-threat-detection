@@ -41,27 +41,22 @@ This approach reflects common enterprise deployments and simplifies management, 
 The firewall plays a critical role in the DHCP architecture:
 
 - Acts as default gateway for all VLANs
-- Hosts the DHCP relay agent
+- Hosts the DHCP **relay agent**
 - Enforces security policies on DHCP traffic
-- Provides visibility into address assignment flows
 
-By placing the relay on the firewall, DHCP becomes fully integrated into the network security model.
+The Firewall forwards all DHCP traffic between the allowed VLANS requesting addresses and the DHCP server.
 
 ## Design Benefits
 
 This design provides several advantages:
 
 - **Scalability:** New user VLANs can be added without deploying new DHCP servers.
-- **Security:** DHCP traffic is explicitly allowed and monitored.
+- **Security:** DHCP traffic is explicitly limited to a specific set of VLANs.
 - **Maintainability:** All address pools are defined in a single location.
-- **Realism:** Mirrors enterprise-grade DHCP deployments.
+- **Realism:** Mirrors enterprise DHCP deployments.
 
-## Relationship with Traffic Flows
+The DHCP flows described align with the **Architecture → Traffic Flows** section:
 
-The DHCP flows described here align with the **Architecture → Traffic Flows** section:
-
-- Broadcasts originate at the client
-- Relayed as unicast traffic by the firewall
-- Responses follow the reverse path
-
-Understanding this interaction is essential for debugging connectivity issues.
+1. Broadcasts originate at the client
+2. Relayed as unicast traffic by the firewall
+3. Responses follow the reverse path

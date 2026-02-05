@@ -1,10 +1,10 @@
 # DHCP Relay Configuration
 
-This document explains how DHCP requests are relayed across VLAN boundaries using the firewall.
+This document explains how DHCP requests are **relayed** across VLAN boundaries using the firewall.
 
 The relay mechanism is essential for enabling DHCP in a segmented network.
 
-## Why DHCP Relay Is Required
+## Why DHCP Relay
 
 DHCP clients use broadcast packets during address discovery.
 
@@ -13,9 +13,9 @@ In this architecture:
 - Broadcast traffic cannot cross VLAN boundaries
 - The DHCP server is located in a different subnet
 
-Without a relay, DHCP would fail by design.
+A device is needed to forward all DHCP communication between zones. Without a relay, DHCP would fail by design.
 
-## Relay Placement
+### Relay Placement
 
 The relay runs on the **firewall**, which:
 
@@ -24,6 +24,48 @@ The relay runs on the **firewall**, which:
 - Already enforces inter-VLAN policies
 
 This makes the firewall the optimal location for DHCP relaying.
+
+## Usage
+
+To make use of the DHCP Relay service included in the `firewall_vntd` container, proceed with the following steps:
+
+1. Set as `env` variables the following elements in the desired container using the `firewall_vntd` image: 
+
+    - DHCP_RELAY - Enable the DHCP Relay service (any value other rather than 1 prevents the service from starting).
+
+!!! note
+    This setting also sets the necessary firewall rules to allow DHCP traffic between VLANS.
+
+```yml
+env:
+    DHCP_RELAY: 1
+```
+
+2. Bind both configuration files required for the service to work:
+
+    - `startup.sh` - Required either way to start set all firewall rules.
+    - `isc-dhcp-relay` - Interfaces to offer service and interface connected with the DHCP service. Included the IP of the DHCP server.
+
+```yml
+binds:
+    - ./config/firewall/enterprise/startup.sh:/startup.sh
+    - ./config/firewall/enterprise/isc-dhcp-relay.conf:/etc/default/isc-dhcp-relay
+exec:
+    - sh /startup.sh
+```
+
+!!! note
+    The startup script always needs to be executed on the Firewall device to ensure traffic rules, VLANs and policies are enforced.
+
+## Service placement
+
+The DHCP Relay service runs on a dedicated internal service node:
+
+- **Node:** `firewall_vntd`
+- **VLAN:** Manages all VLANs.
+- **IP Address:** the Gateway for all the VLANs.
+
+Ensures all VLANs, if desired, have access to the DHCP service.
 
 ## Implementation
 
@@ -47,15 +89,21 @@ The DHCP relay flow is as follows:
 4. Server replies to the firewall
 5. Firewall relays the response to the client
 
-This behavior aligns with the documented traffic flows.
-
-## Security Enforcement
+## Security
 
 Firewall rules ensure that:
 
-- Only DHCP-related UDP traffic is allowed
+- Only DHCP-related UDP traffic is processed
 - Relay traffic is limited to known interfaces
 - No direct client-to-server communication occurs
 
 !!! important
-    The relay does not bypass firewall filtering. All DHCP traffic remains subject to policy enforcement.
+    The relay does not ignore firewall filtering. All DHCP traffic is subject to all policies enforced.
+
+## Local Inspection Tools
+
+The traffic can be inspected using:
+
+- `tcpdump -i <port> -f 'port 67 or port 68'`
+
+In which `port` is the physical port to analyze. This way, DHCP traffic can be viewed to detect any possible related issued given changes are made and the service is no longer working as intendeed.
