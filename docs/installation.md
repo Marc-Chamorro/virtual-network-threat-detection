@@ -1,8 +1,12 @@
 # Installation Guide
 
-This guide details the step-by-step process to set up the **Laboratory** environment. These instructions assume you are running a fresh installation of **Ubuntu 25.10** (or similar Debian-based OS) within a controlled environment.
+This guide details the **step-by-step process** to set up the **Laboratory** environment. 
+
+These instructions assume you are running a fresh installation of **Ubuntu 25.10** (or similar Debian-based OS) within a controlled environment.
 
 The official Containerlab installation process can be found at: [Containerlab Install](https://containerlab.dev/install/)
+
+---
 
 ## 1. Prepare the System
 
@@ -25,6 +29,8 @@ sudo apt install -y ssh
 
 !!! note
     Installing SSH independently is recommended as it is later utilized by Containerlab to manage virtual devices.
+
+---
 
 ## 2. Install Containerlab & Docker
 
@@ -58,8 +64,10 @@ By default, Docker requires root privileges. To run Docker commands as a standar
 sudo usermod -aG clab_admins $USER
 ```
 
-!!! important 
-    "Apply Changes" You must log out and log back in (or restart the VM) for the group membership to take effect.
+!!! warning "Apply Changes" 
+    You must log out and log back in (or restart the VM) for the group membership to take effect.
+
+---
 
 ## 3. Install Containerlab
 
@@ -77,6 +85,8 @@ To allow Containerlab to manage network interfaces without constant sudo prompts
 ```bash
 sudo usermod -aG clab_admins "$USER"
 ```
+
+---
 
 ## 4. Verify Installation
 
@@ -97,6 +107,8 @@ Check the installed version to ensure the binary is in your PATH.
 ```bash
 clab version
 ```
+
+---
 
 ## 5. Clone the Repository
 

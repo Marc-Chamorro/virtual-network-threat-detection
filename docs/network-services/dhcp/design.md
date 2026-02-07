@@ -4,6 +4,8 @@ This document describes the **design and architecture** of the DHCP service used
 
 DHCP is a **core infrastructure service** that enables scalable client connectivity while preserving strict VLAN isolation and centralized control.
 
+---
+
 ## Purpose of DHCP in the Lab
 
 The DHCP service is responsible for:
@@ -14,6 +16,8 @@ The DHCP service is responsible for:
 - Simulating real enterprise endpoint behavior.
 
 DHCP is intentionally limited to **user-facing VLANs** and is not used for infrastructure or service nodes.
+
+---
 
 ## Architectural Constraints
 
@@ -26,6 +30,8 @@ The DHCP design is constrained by the following architectural choices:
 
 Because DHCP relies on broadcast-based discovery, a direct client–server model is not viable.
 
+---
+
 ## Centralized DHCP Architecture
 
 The lab implements a **centralized DHCP server model**, where:
@@ -36,6 +42,18 @@ The lab implements a **centralized DHCP server model**, where:
 
 This approach reflects common enterprise deployments and simplifies management, logging, and policy enforcement.
 
+### Flow
+
+```mermaid
+flowchart LR
+    Client -->|DHCPDISCOVER| Relay
+    Relay -->|Unicast| DHCP_Server
+    DHCP_Server -->|DHCPOFFER| Relay
+    Relay -->|Broadcast| Client
+```
+
+---
+
 ## Role of the Firewall
 
 The firewall plays a critical role in the DHCP architecture:
@@ -45,6 +63,8 @@ The firewall plays a critical role in the DHCP architecture:
 - Enforces security policies on DHCP traffic.
 
 The firewall forwards all DHCP traffic between the allowed VLANs requesting addresses and the DHCP server.
+
+---
 
 ## Design Benefits
 
@@ -60,3 +80,6 @@ The DHCP flows described align with the **Architecture → Traffic Flows** secti
 1. Broadcasts originate at the client.
 2. Relayed as unicast traffic by the firewall.
 3. Responses follow the reverse path.
+
+!!! tip
+    The design makes it easy to add new devices to the domains without modifying the DHCP server logic.

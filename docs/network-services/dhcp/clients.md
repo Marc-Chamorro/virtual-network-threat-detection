@@ -4,6 +4,8 @@ This document describes how **client nodes** obtain and apply network configurat
 
 Clients are designed to be minimal, automated, and representative of real enterprise endpoints.
 
+---
+
 ## Client Scope
 
 DHCP clients include:
@@ -12,6 +14,8 @@ DHCP clients include:
 - User workstations in VLAN 60.
 
 These nodes simulate employee devices connecting to the enterprise network.
+
+---
 
 ## Startup Process
 
@@ -24,6 +28,8 @@ The script performs:
 - Automatic application of routing and DNS settings.
 
 This ensures that clients are fully operational without manual intervention.
+
+---
 
 ## Usage
 
@@ -43,6 +49,8 @@ exec:
     - sh /startup.sh
 ```
 
+---
+
 ## Making use of DHCP service
 
 Once the DHCP the service is obtained, the client automatically:
@@ -54,6 +62,8 @@ Once the DHCP the service is obtained, the client automatically:
 
 This mirrors the behavior of real operating systems in enterprise environments.
 
+---
+
 ## Network Dependency
 
 Client connectivity depends on:
@@ -63,6 +73,8 @@ Client connectivity depends on:
 - Allowed DHCP traffic in firewall policies.
 
 If any of these components fail, clients will not obtain network access.
+
+---
 
 ## Local Inspection Tools
 

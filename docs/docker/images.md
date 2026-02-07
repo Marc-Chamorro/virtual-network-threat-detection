@@ -2,11 +2,15 @@
 
 This page provides a comprehensive documentation of the custom Docker images maintained in this project. All images are built with the `_vntd` suffix to ensure local uniqueness.
 
+---
+
 ## Operating System Base Images
 
 ### Debian Slim (`debian:12-slim`)
 
 The majority of the network nodes are built with Debian 12 Slim. This provides a stable, modern Linux environment with a small footprint, ideal for simulating general-purpose Linux routers and servers.
+
+---
 
 ### Alpine Linux (`wbitt/network-multitool:alpine-extra`)
 
@@ -28,6 +32,8 @@ A general-purpose Linux router. Unlike the official FRR image, this image is bui
     - **IP Forwarding:** Enabled at build time by setting `net.ipv4.ip_forward=1` in `/etc/sysctl.conf`.
     - **OSPF:** Enabled at build time by setting `ospfd=yes` in `/etc/frr/daemons`.
 
+---
+
 ### FRR (`frr_vntd`)
 
 A direct import of the official FRRouting image.
@@ -38,6 +44,8 @@ A direct import of the official FRRouting image.
 !!! important
     This image does not support NAT; hence the creation of a dedicated router image.
 
+---
+
 ### Firewall (`firewall_vntd`)
 
 A dedicated node for simulating network security boundaries. Using a custom image helps it start faster, use fewer resources, and simplifies network rules management.
@@ -47,10 +55,16 @@ A dedicated node for simulating network security boundaries. Using a custom imag
     - `iptables`: The core packet filtering tool.
     - `conntrack`: Enables stateful inspection capabilities.
     - `bridge-utils`: For transparent bridging scenarios.
+    - `isc-dhcp-relay`: Relaying DHCP traffic between clients and the DHCP server.
 - **Startup Behavior:**
     - Flushes all existing `iptables` rules (NAT, Mangle, Filter) on boot.
     - Enables IP Forwarding.
     - Sets default policies (INPUT/FORWARD DROP, OUTPUT ACCEPT) 
+- **Environment Variables:**
+    You can control this container using the following variables in your topology file:
+    - `DHCP_RELAY=1`: Starts the DHCP relay service (configuration files are required to make this service work).
+
+---
 
 ### MLS (`mls_vntd`)
 
@@ -75,11 +89,17 @@ An image designed to simulate an endpoint server providing various network servi
     - **SSH:** `openssh-server` (Configured to allow password authentication).
     - **Web:** `nginx`.
     - **DHCP:** `isc-dhcp-server`.
+    - **DNS:** `dnsmasq`.
 - **Environment Variables:**
     You can control this container using the following variables in your topology file:
     - `SSH_SERVER=1`: Starts the SSH daemon. Creates user `vntd` with password `pswd`.
     - `WEB_SERVER=1`: Starts Nginx and serves a default HTML page.
-    - `ENABLE_DHCP=1`: (Commented out in source) Intended to start the DHCP service.
+    - `DHCP_SERVER=1`: Intended to start the DHCP service (configuration files are required to make this service work). Requires the following variables to be configured for the service to properly work (used for the system to wait for the parameters before starting the server; if not, the service would crash).
+        - `IFACE: "eth1"`: Define the interface used on the device.
+        - `IP_ADDR: "192.168.40.10"`: Define the IP address to be assigned to the interface.
+    - `DNS_SERVER=1`: Start the DNS service (configuration files are required to make this service work).
+
+---
 
 ### Monitoring (`monitoring_vntd`)
 
@@ -101,6 +121,8 @@ A simulation of an attacker machine.
     - `nmap`: Port scanning.
     - `openssh-client`: Remote connectivity.
     - Standard network tools: `iproute2`, `net-tools`, `curl`.
+
+---
 
 ### IDS (`ids_vntd`)
 

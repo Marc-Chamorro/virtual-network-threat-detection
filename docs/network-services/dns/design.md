@@ -4,6 +4,8 @@ This document describes the **design and placement** of the DNS service within t
 
 DNS is a critical infrastructure service that enables name-based communication while respecting network segmentation and security boundaries.
 
+---
+
 ## Purpose of DNS in the Lab
 
 The DNS service is responsible for:
@@ -14,6 +16,8 @@ The DNS service is responsible for:
 - Simulating realistic enterprise name resolution behavior
 
 DNS is required for both usability and realism, as most applications rely on name resolution rather than raw IP addresses.
+
+---
 
 ## Architectural Placement
 
@@ -26,6 +30,8 @@ This placement reflects a common enterprise pattern where:
 - Exposure is controlled through firewall policies
 
 The DNS service within the enterprise is not directly accessible from the Internet. However, the external one can be accessed by the internal one.
+
+---
 
 ## Design Constraints
 
@@ -45,13 +51,21 @@ This **hybrid DNS model** allows for the following:
 
 This allows internal services to be resolved, managed and optimized locally while still enabling Internet access.
 
+---
+
 ## Integration with DHCP
 
 DNS and DHCP are intentionally coupled:
 
 - DHCP provides the DNS server address to clients
 - Clients do not configure resolvers manually
-- DNS behavior is consistent across all user VLANs
+- DNS behavior is consistent across all 
+user VLANs
+
+!!! note
+    This dependency is intentional and mirrors common enterprise environments.
+
+---
 
 ## Security Considerations
 

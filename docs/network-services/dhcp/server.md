@@ -4,6 +4,8 @@ This document details the **configuration and behavior** of the DHCP server used
 
 The server provides address assignment and network parameters to all user endpoints via the **firewall relay**.
 
+---
+
 ## Usage
 
 To make use of the DHCP service included in the `server_vntd` container, proceed with the following steps:
@@ -35,6 +37,8 @@ binds:
     - ./config/server/dhcp/isc-dhcp-server:/etc/default/isc-dhcp-server
 ```
 
+---
+
 ## Service Placement
 
 The DHCP server runs on a dedicated internal service node:
@@ -44,6 +48,8 @@ The DHCP server runs on a dedicated internal service node:
 - **IP Address:** `192.168.40.10`
 
 This placement ensures controlled access and avoids exposure to other zones or undesired external networks.
+
+---
 
 ## DHCP Software
 
@@ -63,6 +69,8 @@ All DHCP configuration files are stored under the project `config/` directory an
 !!! warning
     Changes made directly inside the running container are **not persistent** and will be lost on redeployment.
 
+---
+
 ## Address Pools
 
 Dedicated address pools are defined for each user VLAN:
@@ -75,6 +83,8 @@ Each pool specifies a certain group of parameters, ensuring consistent behavior 
 - Subnet mask
 - Default gateway (firewall)
 - Broadcast address
+
+---
 
 ### Example
 ``` conf
@@ -89,6 +99,8 @@ subnet 192.168.50.0 netmask 255.255.255.0 {
 Additional DNS parameters:
 - DNS server(s)
 - Lease duration
+
+---
 
 ### Example
 ``` conf

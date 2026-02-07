@@ -8,6 +8,8 @@ The IP addressing is designed to be:
 - Easy to debug.
 - Aligned with common enterprise practices and expected behaviors.
 
+---
+
 ## Addressing
 
 The project uses **IPv4 addressing** throughout the enterprise environment, with clearly separated subnets for each function. Each subnet:
@@ -17,6 +19,11 @@ The project uses **IPv4 addressing** throughout the enterprise environment, with
 - Is documented explicitly in configuration files.
 
 External networks use distinct address spaces to avoid overlap.
+
+!!! note
+  IPv6 is intentionally out of scope for this project.
+
+---
 
 ## VLAN and Subnet Mapping
 
@@ -33,6 +40,8 @@ External networks use distinct address spaces to avoid overlap.
 | 50   | User Floor 1 & 2        | 192.168.50.0/24     | 192.168.50.1      |
 | 60   | User Floor 1 & 2        | 192.168.60.0/24     | 192.168.60.1      |
 
+---
+
 ## Gateway
 
 For all enterprise VLANs:
@@ -43,6 +52,8 @@ For all enterprise VLANs:
 
 !!! note
     This design simplifies troubleshooting and ensures all inter-zone traffic is visible from a single point.
+
+---
 
 ## Static vs Dynamic Addressing
 
@@ -55,7 +66,12 @@ For all enterprise VLANs:
 - **Dynamic IPs (DHCP)** are used for:
   - User workstations (VLANs 50 and 60)
 
+!!! info
+    DHCP is centrally managed and relayed across VLANs.
+
 This hybrid solution reflects real-world enterprise environments. The DHCP device in charge of managing the DHCP service is `internal_server`.
+
+---
 
 ## DNS Addressing Considerations
 
