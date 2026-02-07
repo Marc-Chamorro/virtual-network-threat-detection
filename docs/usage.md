@@ -1,15 +1,19 @@
 # Usage Guide
 
-This section provides a detailed explanation of the workflow required to operate the virtual laboratory.
+This section provides a detailed explanation of the workflow required to **operate and manage** the virtual laboratory.
+
+The project is designed to be controlled primarily through automation scripts.
+
+---
 
 ## Core Logic: The `run.sh` Script
 
-To simplify the complexity of managing multiple Docker builds, image imports, and network orchestrations, this project utilizes a centralized automation script: `run.sh`.
+To simplify the complexity of managing multiple Docker builds, image imports, and network orchestrations, this project utilizes a **centralized automation script**: `run.sh`.
 
 !!! note
     Change the scripts permissions with: `chmod +x run.sh`
 
-This script acts as a manager for both **Docker** and **Containerlab**, ensuring that all operations follow the project's naming conventions (like the `_vntd` suffix) and directory structures.
+This script acts as a manager for both **Docker** and **Containerlab**, ensuring that all operations follow the project's naming conventions (like the `_vntd` suffix) and directory structures, a correct directory usage and safe orchestration of Docker and Containerlab.
 
 To start the control menu, navigate to the project root and execute:
 
@@ -63,9 +67,6 @@ Access this menu to handle the lifecycle of the Docker containers that act as ne
 
 Once your images are ready, use the Topology Control menu to orchestrate the network simulation using Containerlab.
 
-!!! info "More topologies"
-        Additional topologies can be added to the `labs` directory. Configuration elements and machines can be reused across multiple nodes.
-
 ### Actions:
 
 - **Deploy Topology:** Displays available topologies within the labs/ directory and allows you to select one to launch. This command handles the creation of the virtual environment.
@@ -73,6 +74,9 @@ Once your images are ready, use the Topology Control menu to orchestrate the net
 - **Destroy Topology:** Stops all running containers from a specific lab and removes the network interfaces and bridges created by Containerlab. This should always be done before closing the machine to avoid future networking issues.
 
 - **Display Available Topologies:** Lists the lab scenarios currently defined in the labs/ folder and indicates on screen the active/running ones.
+
+!!! warning
+    Always destroy active topologies before shutting down the system to avoid networking or performance issues.
 
 ---
 
@@ -85,3 +89,14 @@ docker exec -it <container_name> bash
 ```
 
 The `bash` element opens an interactive shell inside the container; it can be replaced with any other CLI command.
+
+---
+
+## Extending the Lab
+
+New topologies can be added into the project and may reuse components, coexist with other scenarios while keeping changes at the core of the architecture minimal.
+
+!!! info "More topologies"
+        Additional topologies can be added to the `labs` directory. Configuration elements and machines can be reused across multiple nodes.
+
+

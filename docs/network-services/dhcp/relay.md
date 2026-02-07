@@ -4,6 +4,8 @@ This document explains how DHCP requests are **relayed** across VLAN boundaries 
 
 The relay mechanism is essential for enabling DHCP in a segmented network.
 
+---
+
 ## Why DHCP Relay
 
 DHCP clients use broadcast packets during address discovery.
@@ -15,6 +17,8 @@ In this architecture:
 
 A device is needed to forward all DHCP communication between zones. Without a relay, DHCP would fail by design.
 
+---
+
 ### Relay Placement
 
 The relay runs on the **firewall**, which:
@@ -24,6 +28,8 @@ The relay runs on the **firewall**, which:
 - Already enforces inter-VLAN policies.
 
 This makes the firewall the optimal location for DHCP relaying.
+
+---
 
 ## Usage
 
@@ -57,6 +63,8 @@ exec:
 !!! note
     The startup script always needs to be executed on the Firewall device to ensure traffic rules, VLANs and policies are enforced.
 
+---
+
 ## Service Placement
 
 The DHCP Relay service runs on a dedicated internal service node:
@@ -66,6 +74,8 @@ The DHCP Relay service runs on a dedicated internal service node:
 - **IP Address:** the Gateway for all the VLANs
 
 Ensures all VLANs, if desired, have access to the DHCP service.
+
+---
 
 ## Implementation
 
@@ -79,6 +89,8 @@ The service is configured to:
 - Forward requests to `192.168.40.10`.
 - Handle responses and forward them back to clients.
 
+---
+
 ## Packet Flow
 
 The DHCP relay flow is as follows:
@@ -88,6 +100,8 @@ The DHCP relay flow is as follows:
 3. Relay forwards it as unicast to the DHCP server.
 4. Server replies to the firewall.
 5. Firewall relays the response to the client.
+
+---
 
 ## Security
 
@@ -99,6 +113,8 @@ Firewall rules ensure that:
 
 !!! important
     The relay does not ignore firewall filtering. All DHCP traffic is subject to all policies enforced.
+
+---
 
 ## Local Inspection Tools
 

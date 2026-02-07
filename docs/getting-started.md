@@ -2,6 +2,8 @@
 
 This section outlines the prerequisites and requirements necessary to deploy the virtual laboratory. Ensure your system meets these criteria before proceeding to the installation.
 
+---
+
 ## System Requirements
 
 The environment is designed to be lightweight, but simulating a full enterprise topology requires moderate resources.
@@ -21,6 +23,8 @@ The project is built and tested on **Linux**.
 !!! warning "Virtualization"
     It is highly recommended to install this environment inside a **Virtual Machine** or a dedicated system, completely isolated from your personal host settings and system configurations to prevent attacks from leaking into the outside world.
 
+---
+
 ## Software Dependencies
 
 The following tools are required for the installation process and environment management:
@@ -30,6 +34,8 @@ The following tools are required for the installation process and environment ma
 3. **SSH Client:** Used to connect to the virtual network devices managed by Containerlab.
 4. **Docker:** The core container engine.
 5. **Containerlab:** The orchestration tool for the network topology.
+
+---
 
 ## Deployment Strategy
 

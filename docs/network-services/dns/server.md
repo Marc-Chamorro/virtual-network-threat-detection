@@ -4,6 +4,8 @@ This document describes the **configuration and behavior** of the DNS server use
 
 The configuration focuses on clarity, explicit behavior, and ease of debugging.
 
+---
+
 ## Usage
 
 To make use of the DNS service included in the `server_vntd` container, proceed with the following steps:
@@ -29,6 +31,8 @@ binds:
     - ./config/server/dns/enterprise/dnsmasq.conf:/etc/dnsmasq.conf
 ```
 
+---
+
 ## Service Placement
 
 The DNS server runs on two specific devices:
@@ -44,6 +48,8 @@ The DNS server runs on two specific devices:
 
 Such nodes may also host other services, but the DNS is isolated from others.
 
+---
+
 ## DNS Software
 
 The service is implemented using:
@@ -56,6 +62,8 @@ All DNS configuration files are stored under the project `config/` directory and
 
 !!! warning
     Changes made inside the running container are **not persistent** and will be lost on redeployment.
+
+---
 
 ## DNS Configuration (`internet_server`)
 
@@ -80,6 +88,8 @@ This configuration allows clients to communicate with the Internet Server and th
     Although the 172.16.30.2 address belongs to the router, all traffic is redirected to the DMZ server.
 
 **Forwarding:** The server does not forward DNS requests to any outside network. If the name or address is unknown, the service won't be able to respond.
+
+---
 
 ## DNS Configuration (`dmz_server`)
 

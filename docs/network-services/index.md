@@ -4,6 +4,8 @@ The **Network Services** section documents the core services that support basic 
 
 These services provide fundamental functionality such as address assignment and name resolution, and are required for user endpoints and internal systems to communicate correctly across the architecture.
 
+---
+
 ## Scope of This Section
 
 This directory focuses on **infrastructure-level network services**:
@@ -13,6 +15,8 @@ This directory focuses on **infrastructure-level network services**:
 - How service traffic flows across zones
 
 Service behavior is described from a **network perspective**, not from an application or performance view.
+
+---
 
 ## Available Services
 
@@ -27,6 +31,11 @@ The following services are documented in this section:
   Enables name resolution for internal services and external resources.  
 
   [DNS Design](./dns/design.md)
+
+!!! info
+    Application-level services (HTTP, SSH, etc.) are documented separately.
+
+---
 
 ## Relationship with Architecture
 
