@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     vim \
     isc-dhcp-server \
     dnsmasq \
+    vsftpd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
