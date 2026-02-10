@@ -67,3 +67,24 @@ SSH traffic:
 
 !!! tip
 Repeated failed SSH attempts are useful for simulating brute-force or credential abuse scenarios.
+
+## How to use
+
+The Alpine client images include a SSH Client, which is used to interact with the SSH service. To connect to the SSH service, use the following command:
+
+```bash
+ssh vntd@<name or address>
+```
+
+When prompted, enter the default password:
+
+```bash
+pswd
+```
+
+The available hostnames are defined in the DNS configuration:
+- [DNS Names Assignment](../network-services/dns/server.md)
+
+!!! info
+    From the provided topology, the SSH service is available on all `server_vntd` machines.
+    By default, all servers have a DNS-resolvable hostname.

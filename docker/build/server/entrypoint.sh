@@ -61,24 +61,10 @@ if [ "$DNS_SERVER" == "1" ]; then
 fi
 
 # NFS | SMB | FTP - NAS
-#
-#/ftp
-#├── shared
-#└── users
-#    ├── user5_1
-#    │   └── private
-#    ├── user5_2
-#    │   └── private
-#    ├── user6_1
-#    │   └── private
-#    └── user6_2
-#        └── private
 
 if [ "$FTP_SERVER" == "1" ]; then
     FTP_ROOT_DIR="/ftp"
-    FTP_USERS_DIR="$FTP_ROOT_DIR/users"
-    FTP_SHARED_DIR="$FTP_ROOT_DIR/shared"
-    FTP_GROUP="ftpusers"
+    #FTP_GROUP="ftpusers"
     FTP_PASS="pswd"
     FTP_USERS_FILE="/etc/vsftpd.chroot_list"
 
@@ -86,17 +72,17 @@ if [ "$FTP_SERVER" == "1" ]; then
     chmod 644 /etc/vsftpd.conf
 
     # The user's won't be able to log in, but can FTP
-    echo /sbin/nologin >> /etc/shells
+    echo "/sbin/nologin" >> /etc/shells
 
     # Only create the group if it has not been previously created
-    if ! getent group "$FTP_GROUP" >/dev/null; then
-        groupadd "$FTP_GROUP"
-    fi
+    #if ! getent group "$FTP_GROUP" >/dev/null; then
+    #    groupadd "$FTP_GROUP"
+    #fi
 
     # Create the shared directory (full path)
     mkdir -p "$FTP_ROOT_DIR"
-    mkdir -p "$FTP_USERS_DIR"
-    mkdir -p "$FTP_SHARED_DIR"
+    #mkdir -p "$FTP_USERS_DIR"
+    #mkdir -p "$FTP_SHARED_DIR"
 
     # Make user:group owners of the root FTP directory
     chown root:root "$FTP_ROOT_DIR"
@@ -104,11 +90,11 @@ if [ "$FTP_SERVER" == "1" ]; then
     chmod 755 "$FTP_ROOT_DIR"
 
     # Make the shared directoy owner the new group
-    chown root:"$FTP_GROUP" "$FTP_SHARED_DIR"
+    #chown root:"$FTP_GROUP" "$FTP_SHARED_DIR"
     # Owner, group owner full control, and others read and execute (view and navigate)
-    chmod 775 "$FTP_SHARED_DIR"
+    #chmod 775 "$FTP_SHARED_DIR"
 
-    echo "This is a shared file" > "$FTP_SHARED_DIR/test.txt"
+    #echo "This is a shared file" > "$FTP_SHARED_DIR/test.txt"
 
     # Ensue the user list files exist
     #if [ ! -f "$FTP_USERS_FILE" ]; then
@@ -118,8 +104,6 @@ if [ "$FTP_SERVER" == "1" ]; then
 
     # If the user file exists, create the users
     if [ -f "$FTP_USERS_FILE" ]; then
-
-        mkdir -p "$FTP_USERS_DIR"
 
         while read USER; do
 
@@ -135,10 +119,11 @@ if [ "$FTP_SERVER" == "1" ]; then
 
             # If the user does exist, do not print the regarding information
             if ! id "$USER" >/dev/null 2>&1; then
-                FTP_USER_DIR="$FTP_USERS_DIR/$USER"
+                FTP_USER_DIR="$FTP_ROOT_DIR/$USER"
 
                 # Create a new user (create the new users home directory in the specified path) (disable login on the server)
-                useradd -m -d "$FTP_USER_DIR" -s /sbin/nologin -G "$FTP_GROUP" "$USER"
+                # useradd -m -d "$FTP_USER_DIR" -s /sbin/nologin -G "$FTP_GROUP" "$USER"
+                useradd -m -d "$FTP_USER_DIR" -s /sbin/nologin "$USER"
                 # Set the password for the new user
                 echo "$USER:$FTP_PASS" | chpasswd
                 
@@ -148,16 +133,12 @@ if [ "$FTP_SERVER" == "1" ]; then
                 #mkdir -p "$FTP_USER_DIR/shared"
                 #mount --bind "$FTP_SHARED_DIR" "$FTP_USER_DIR/shared"
 
-                mkdir -p "$FTP_USER_DIR/shared"
-                cp -r "$FTP_SHARED_DIR/"* "$FTP_USER_DIR/shared/"
+                #mkdir -p "$FTP_USER_DIR/shared"
+                #cp -r "$FTP_SHARED_DIR/"* "$FTP_USER_DIR/shared/"
                 # Everything copied is owned by the user
-                chown -R "$USER":"$FTP_GROUP" "$FTP_USER_DIR/shared"
+                #chown -R "$USER":"$FTP_GROUP" "$FTP_USER_DIR/shared"
                 # Everything copied, has 770 access
-                chmod -R 770 "$FTP_USER_DIR/shared"
-
-
-                echo "WHY IS IT NOT WORKING!!!!"
-
+                #chmod -R 770 "$FTP_USER_DIR/shared"
 
             fi
 
@@ -166,6 +147,7 @@ if [ "$FTP_SERVER" == "1" ]; then
     fi
 
     service vsftpd start
+
 fi
 
 # Keep the container alive
