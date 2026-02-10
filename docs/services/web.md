@@ -62,3 +62,21 @@ Web traffic:
 
 !!! info
     Due to its simplicity, this service is ideal for testing HTTP-based detection, logging, and traffic classification.
+
+## How to use
+
+To generate HTTP traffic against the web service, use a simple HTTP client such as `curl`:
+
+```bash
+curl http://<hostname>
+curl <hostname>
+```
+
+If the service is running correctly, the service will respond with a message.
+
+The available hostnames are defined in the DNS configuration:
+- [DNS Names Assignment](../network-services/dns/server.md)
+
+!!! info
+    From the provided topology, the web service is available on the `dmz_server` and `internet_server` using the `server_vntd` image.
+    By default, all servers have a DNS-resolvable hostname.

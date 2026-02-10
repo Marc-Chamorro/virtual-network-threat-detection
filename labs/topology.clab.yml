@@ -189,6 +189,11 @@ topology:
     internal_server:
       kind: linux
       image: server_vntd:latest
+      runtime: docker
+      #cap-add:
+        #- NET_ADMIN
+        #- SYS_ADMIN
+        # - MKNOD      
       env: 
         SSH_SERVER: 1
         DHCP_SERVER: 1
