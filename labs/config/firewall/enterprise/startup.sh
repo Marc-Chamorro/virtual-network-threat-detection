@@ -92,12 +92,15 @@ iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 #--------------------------------------------------------------------------------------------------
 # Allow HTTP (80), SSH (22), DNS (53) from anywhere to the DMZ server
 
+# Allow the server to connect to the outside world (only ping to test connection)
+iptables -A FORWARD -s 192.168.10.10 -o eth1 -p icmp -j ACCEPT
+
 # DNAT - From the Internet to the server (both tcp and udp from specific ports)
-iptables -t nat -A PREROUTING -i eth1 -p tcp -m multiport --dports 80,22,53 -j DNAT --to-destination 192.168.10.10
+iptables -t nat -A PREROUTING -i eth1 -p tcp -m multiport --dports 80,22,53,25 -j DNAT --to-destination 192.168.10.10
 iptables -t nat -A PREROUTING -i eth1 -p udp --dport 53 -j DNAT --to-destination 192.168.10.10
 
 # Allow connections to the server
-iptables -A FORWARD -d 192.168.10.10 -p tcp -m multiport --dports 80,22,53 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -d 192.168.10.10 -p tcp -m multiport --dports 80,22,53,25 -m conntrack --ctstate NEW -j ACCEPT
 iptables -A FORWARD -d 192.168.10.10 -p udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
 
 # Allow ICMP (ping) to the server from inside the LAN
@@ -110,6 +113,9 @@ iptables -A FORWARD -d 192.168.10.10 -p icmp -j ACCEPT
 
 iptables -A FORWARD -s 192.168.10.10 -o eth1 -p udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
 iptables -A FORWARD -s 192.168.10.10 -o eth1 -p tcp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
+
+# MAIL
+iptables -A FORWARD -s 192.168.10.10 -o eth1 -p tcp --dport 25 -m conntrack --ctstate NEW -j ACCEPT
 
 # VLAN 20 - Monitoring & IDS
 #--------------------------------------------------------------------------------------------------

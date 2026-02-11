@@ -2,6 +2,15 @@
 
 set -e
 
+# MUTT Configuration (MAIL Service)
+
+MUTT_HOME="/root"   # We assume all end users are root for this environment
+mkdir -p "$MUTT_HOME/.mutt/cache/headers"
+mkdir -p "$MUTT_HOME/.mutt/cache/bodies"
+touch "$MUTT_HOME/.mutt/certificates"
+
+# Network Configuration
+
 IFACE="eth1"
 RETRY_DELAY=5
 

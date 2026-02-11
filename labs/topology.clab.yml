@@ -21,13 +21,26 @@ topology:
         WEB_SERVER: 1
         SSH_SERVER: 1
         DNS_SERVER: 1
+        MAIN_MAIL_SERVER: 1
       binds:
         - ./config/server/dns/internet/dnsmasq.conf:/etc/dnsmasq.conf
+
+        - ./config/server/smtp/internet/main.cf:/etc/postfix/main.cf
+        - ./config/server/smtp/internet/transport:/etc/postfix/transport
+        - ./config/server/smtp/internet/relay_recipients:/etc/postfix/relay_recipients
+
+        - ./config/server/imap/internet/10-auth.conf:/etc/dovecot/conf.d/10-auth.conf
+        - ./config/server/imap/internet/10-mail.conf:/etc/dovecot/conf.d/10-mail.conf
+        - ./config/server/imap/internet/auth-system.conf.ext:/etc/dovecot/conf.d/auth-system.conf.ext
+        - ./config/server/imap/internet/dovecot.conf:/etc/dovecot/dovecot.conf
       exec:                                                     # Commands to be executed inside the container after startup
         - ip addr add 172.16.100.100/24 dev eth1                # Assign Public IP address
         - ip link set eth1 up                                   # Enable interface
         - ip route del default                                  # Remove Docker default gateway
         - ip route add default via 172.16.100.1                 # Point to Internet Router as default gateway
+      dns:
+        servers:
+          - 127.0.0.1
 
     # =============================================================================================
     # Attacker network - Simulates a hostile external actor
@@ -66,11 +79,17 @@ topology:
     benign:
       kind: linux
       image: alpine_vntd:latest
+      binds:
+        - ./config/pc/mutt/internet/olivia:/root/.mutt/muttrc
       exec:
         - ip addr add 20.0.0.2/24 dev eth1
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 20.0.0.1
+        # For MUTT
+        - mkdir -p /root/.mutt/cache/headers
+        - mkdir -p /root/.mutt/cache/bodies
+        - touch /root/.mutt/certificates
       dns:
         servers:
           - 172.16.100.100
@@ -126,13 +145,24 @@ topology:
         WEB_SERVER: 1
         SSH_SERVER: 1
         DNS_SERVER: 1
+        MAIL_SERVER: 1
       binds:
         - ./config/server/dns/enterprise/dnsmasq.conf:/etc/dnsmasq.conf
+
+        - ./config/server/smtp/enterprise/main.cf:/etc/postfix/main.cf
+
+        - ./config/server/imap/enterprise/10-auth.conf:/etc/dovecot/conf.d/10-auth.conf
+        - ./config/server/imap/enterprise/10-mail.conf:/etc/dovecot/conf.d/10-mail.conf
+        - ./config/server/imap/enterprise/auth-system.conf.ext:/etc/dovecot/conf.d/auth-system.conf.ext
+        - ./config/server/imap/enterprise/dovecot.conf:/etc/dovecot/dovecot.conf 
       exec:
         - ip addr add 192.168.10.10/24 dev eth1
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.10.1                 # Gateway is Firewall
+      dns:
+        servers:
+          - 127.0.0.1
 
     # VLAN 20 - Monitoring & IDS
     #----------------------------------------------------------------------------------------------
@@ -170,11 +200,18 @@ topology:
     pc_admin:
       kind: linux
       image: alpine_vntd:latest
+      binds:
+        - ./config/pc/mutt/enterprise/lois:/root/.mutt/muttrc
       exec:
         - ip addr add 192.168.30.10/24 dev eth1
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.30.1
+        # For MUTT
+        - mkdir -p /root/.mutt/cache/headers
+        - mkdir -p /root/.mutt/cache/bodies
+        - touch /root/.mutt/certificates
+
       dns:
         servers:
           - 192.168.10.10
@@ -223,6 +260,7 @@ topology:
       image: alpine_vntd:latest
       binds:
         - ./config/pc/startup.sh:/startup.sh
+        - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
       exec:
         # - ip addr add 192.168.50.10/24 dev eth1
         # - ip link set eth1 up
@@ -236,6 +274,7 @@ topology:
       image: alpine_vntd:latest
       binds:
         - ./config/pc/startup.sh:/startup.sh
+        - ./config/pc/mutt/enterprise/emma:/root/.mutt/muttrc
       exec:
         # - ip addr add 192.168.60.10/24 dev eth1
         # - ip link set eth1 up
@@ -256,6 +295,7 @@ topology:
       image: alpine_vntd:latest
       binds:
         - ./config/pc/startup.sh:/startup.sh
+        - ./config/pc/mutt/enterprise/barry:/root/.mutt/muttrc
       exec:
         # - ip addr add 192.168.50.11/24 dev eth1
         # - ip link set eth1 up
@@ -269,6 +309,7 @@ topology:
       image: alpine_vntd:latest
       binds:
         - ./config/pc/startup.sh:/startup.sh
+        - ./config/pc/mutt/enterprise/clark:/root/.mutt/muttrc
       exec:
         # - ip addr add 192.168.60.11/24 dev eth1
         # - ip link set eth1 up
