@@ -150,5 +150,65 @@ if [ "$FTP_SERVER" == "1" ]; then
 
 fi
 
+# echo "hola" | mail -s test external@internet.com
+# echo "hola" | mail -s test alice@enterprise.com
+
+#https://blog.scottlowe.org/2006/03/01/creating-users-for-a-postfix-based-mail-relay/
+
+
+if [ "$MAIL_SERVER" = "1" ] || [ "$MAIN_MAIL_SERVER" = "1" ]; then
+
+    if [ "$MAIN_MAIL_SERVER" = "1" ]; then
+        chown root:root /etc/postfix/transport
+        chmod 644 /etc/postfix/transport
+        postmap /etc/postfix/transport
+
+        chown root:root /etc/postfix/relay_recipients
+        chmod 644 /etc/postfix/relay_recipients
+        postmap /etc/postfix/relay_recipients
+    fi
+
+    chown root:root /etc/postfix/main.cf
+    chmod 644 /etc/postfix/main.cf
+
+
+    postfix start
+
+    # DMZ only
+    # després s'hauria de treure la condicio, i fer que cada servidor tingui els seus usuaris
+    if [ "$MAIL_SERVER" = "1" ]; then
+        # Email users
+
+        useradd -m -s /sbin/nologin alice
+        echo alice:alice | chpasswd
+        maildirmake.dovecot /home/alice/Maildir
+        chown -R alice:alice /home/alice/Maildir
+
+        useradd -m -s /sbin/nologin emma
+        echo emma:emma | chpasswd
+        maildirmake.dovecot /home/emma/Maildir
+        chown -R emma:emma /home/emma/Maildir
+
+        service dovecot start
+    fi
+
+    # Internet Only
+    if [ "$MAIN_MAIL_SERVER" = "1" ]; then
+
+        useradd -m -s /sbin/nologin olivia
+        echo olivia:olivia | chpasswd
+        maildirmake.dovecot /home/olivia/Maildir
+        chown -R olivia:olivia /home/olivia/Maildir
+
+        service dovecot start
+    fi
+
+    # Maybe we can use it without users?
+    # saslpasswd2 -c -u <domain> <username>
+    #saslpasswd2 -c -u internet.com external
+    #saslpasswd2 -c -u enterprise.com alice
+    # sasldblistusers2
+fi
+
 # Keep the container alive
 sleep infinity

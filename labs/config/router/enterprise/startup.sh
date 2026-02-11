@@ -45,3 +45,5 @@ iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 
 # Forward incoming HTTP requests to the Firewall (which later forwards to  the DMZ)
 iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to-destination 192.168.0.2
+
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 25 -j DNAT --to-destination 192.168.0.2

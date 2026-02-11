@@ -1,0 +1,21 @@
+set from = "emma@enterprise.com"
+set realname = "Emma Enterprise"
+set use_from = yes
+
+# IMAP
+set folder = "imap://emma@192.168.10.10:143/"
+set imap_user = "emma"
+set imap_pass = "emma"
+set spoolfile = "+INBOX"
+
+# SMTP
+set smtp_url = "smtp://emma@192.168.10.10/"
+set smtp_pass = "emma"
+
+# Editor
+#set editor = "vim"
+set charset = UTF-8
+
+# SSL
+set ssl_starttls = no
+set ssl_force_tls = no
