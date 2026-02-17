@@ -51,7 +51,7 @@ This platform is designed to deploy a **modular**, **scalable**, and fully **vir
 -   :material-security:{ .lg .middle } **Real-World Simulation**
 
     ---
-    
+
     Implementing **real services** (SSH, FTP, HTTP, MAIL) and security tools (**Suricata**) to generate and monitor real traffic and logs.
 
 </div>
@@ -62,9 +62,8 @@ This platform is designed to deploy a **modular**, **scalable**, and fully **vir
 
 The documentation is organized to guide you from initial setup to advanced usage:
 
-*   [**Introduction**](./introduction.md): Detailed overview of goals and scope.
-*   [**Getting Started**](./getting-started.md): Prerequisites and requirements.
-*   [**Installation**](./installation.md): Step-by-step setup guide.
-*   [**Usage**](./usage.md): How to operate and manage the environment.
-*   [**Architecture**](./architecture/index.md): Network design and traffic flows.
-
+- [**Introduction**](./introduction.md): Detailed overview of goals and scope.
+- [**Getting Started**](./getting-started.md): Prerequisites and requirements.
+- [**Installation**](./installation.md): Step-by-step setup guide.
+- [**Usage**](./usage.md): How to operate and manage the environment.
+- [**Architecture**](./architecture/index.md): Network design and traffic flows.

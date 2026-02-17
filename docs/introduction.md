@@ -1,3 +1,8 @@
+---
+title: Introduction
+icon: material/information-outline
+---
+
 # Introduction
 
 The **Intelligent Threat Detection in Virtual Networks** project consists of the design and deployment of a **modular cybersecurity laboratory**. It simulates a realistic, segmented enterprise infrastructure using virtualization technologies to support **training, research, and experimentation**, enabling users to safely study attack techniques, defensive mechanisms, and traffic analysis.
@@ -10,30 +15,31 @@ The primary objective of this project is to **generate legitimate network securi
 
 ### Specific objectives:
 
-- **Infrastructure Simulation:** Deploying a virtual network that mimics a corporate environment, including DMZ, internal networks and administration zones.
-- **Threat Detection:** Implementing IDS (Intrusion Detection Systems) like Suricata to monitor traffic and generate logs.
-- **Data Analysis:** Centralizing logs (using Filebeat) and applying AI algorithms (Isolation Forest) to identify security incidents.
+- [x] **Infrastructure Simulation:** Deploying a virtual network that mimics a corporate environment, including DMZ, internal networks and administration zones.
+- [x] **Threat Detection:** Implementing IDS (Intrusion Detection Systems) like **Suricata** to monitor traffic and generate logs.
+- [x] **Data Analysis:** Centralizing logs (Filebeat) and applying AI algorithms (Isolation Forest) to identify security incidents.
 
 ---
 
 ## Architecture Overview
 
-The simulation is designed to be **modular** and **scalable**, allowing users to adapt the topology without requiring significant physical hardware. The infrastructure mimics a real enterprise network, composed of:
+The simulation is designed to be **modular** and **scalable**. The infrastructure mimics a real enterprise network, composed of:
 
-- **Internet / External Zone:** Simulates the public internet and external actors.
-- **Attacker Network:** A dedicated segment for generating malicious traffic and executing attacks.
-- **Enterprise Network:** The core infrastructure, protected by firewalls and segmented into:
-    - **DMZ (Demilitarized Zone):** Hosts public-facing services like Web, DNS, and Mail.
-    - **Internal Networks:** Simulates employee workstations and internal departments.
-    - **Management & Monitoring:** Dedicated subnets for administration and log centralization/analysis.
+| Zone                    | Purpose |
+| ----------------------- | --- |
+| **Internet / External** | Simulates the public internet and external actors. |
+| **Attacker Network**    | A dedicated segment for generating malicious traffic and executing attacks. |
+| **Enterprise Network**  | The core infrastructure, protected by firewalls and segmented into DMZ, Internal, Monitoring, Users, Administration and Management zones. |
+
+!!! warning "Safe Environment"
+    This environment is **not designed for production use** and should never be exposed to real external networks. All attacks must be executed within this isolated environment.
 
 ---
 
 ## Key Features
 
 - **Container-Based:** Built on **Docker** and **Containerlab**, ensuring the environment is lightweight and portable compared to traditional VM-based labs.
-- **Integrated Services:** Nodes run **real services** (Nginx, OpenSSH) to ensure realistic traffic behavior.
-- **Live Threat Detection:** Integration of **Suricata** for real-time traffic analysis and log generation.
+- **Integrated Services:** Nodes run **real services** (Nginx, Postfix, vsftpd) to ensure realistic traffic behavior.
 - **AI-Powered:** Utilization of the **Isolation Forest** algorithm detect unusual patterns in complex log data, providing an additional layer of detection beyond fixed rules.
 
 ---
