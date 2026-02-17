@@ -10,47 +10,6 @@ across the infrastructure.
 
 ---
 
-## Logical Topology
-
-The following diagram illustrates the connections between the simulated Internet core and the multiple provided segments:
-
-```mermaid
-graph TD
-    subgraph External_Networks
-        Attacker[Attacker Network - Kali]
-        Benign[Benign Network - Alpine]
-    end
-
-    subgraph Internet_Infrastructure
-        Router_ISP[Router Internet - FRR]
-        Server_ISP[Internet Server - DNS/Web]
-    end
-
-    subgraph Enterprise_Core
-        Router_Edge[Enterprise Edge Router]
-        Firewall[Central Firewall - iptables]
-    end
-
-    subgraph Internal_Segments
-        DMZ[VLAN 10 - DMZ Services]
-        IDS[VLAN 20 - Monitoring]
-        Admin[VLAN 30 - Management]
-        Services[VLAN 40 - Internal Services]
-        Users[VLAN 50/60 - User Floors]
-    end
-
-    Attacker --- Router_ISP
-    Benign --- Router_ISP
-    Router_ISP --- Server_ISP
-    Router_ISP --- Router_Edge
-    Router_Edge --- Firewall
-    Firewall --- DMZ
-    Firewall --- IDS
-    Firewall --- Admin
-    Firewall --- Services
-    Firewall --- Users
-```
-
 ## Topology Overview
 
 The topology simulates a **multi-zone enterprise network** connected to external devices. It is built around a central Internet core and a segmented enterprise network protected by a router and a firewall.
@@ -63,7 +22,47 @@ The topology consists of:
 - A central firewall.
 - Multiple VLAN-based internal segments.
 
-![Network Design](../assets/NET%20Design.svg)
+<figure markdown="span">
+  ![Network Design](../assets/NET%20Design.svg)
+  <figcaption>Provided topology</figcaption>
+</figure>
+
+```mermaid
+graph TD
+    subgraph External_Networks
+        Attacker[Attacker Network - Kali]
+        Benign[Benign Network - Alpine]
+    end
+
+    subgraph Internet_Infrastructure
+        Router_Internet[Router Internet]
+        Server_Internet[Internet Server]
+    end
+
+    subgraph Enterprise_Core
+        Router_Edge[Enterprise Edge Router]
+        Firewall[Central Firewall]
+    end
+
+    subgraph Internal_Segments
+        DMZ[VLAN 10 - DMZ Services]
+        IDS[VLAN 20 - Monitoring]
+        Admin[VLAN 30 - Management]
+        Services[VLAN 40 - Internal Services]
+        Users[VLAN 50/60 - User Floors]
+    end
+
+    Attacker --- Server_Internet
+    Benign --- Server_Internet
+    Server_Internet --- Server_Internet
+    Server_Internet --- Router_Edge
+    Router_Edge --- Firewall
+    Firewall --- DMZ
+    Firewall --- IDS
+    Firewall --- Admin
+    Firewall --- Services
+    Firewall --- Users
+```
 
 ---
 
@@ -108,6 +107,11 @@ This allows differentiation between malicious and legitimate traffic.
 
 ---
 
+!!! info "Configuration Persistence"
+    All configurations for routers and switches are decoupled from the images and mounted via bind in the topology definition file. Changes applied directly on the machines do not persist.
+
+---
+
 ## Enterprise Core
 
 ### Enterprise Edge Router
@@ -130,7 +134,7 @@ The firewall is the **central enforcement point** of the enterprise:
 - Hosts DHCP relay functionality.
 - Acts as the default gateway for all VLANs.
 
-!!! important
+!!! important "VLAN Communication"
     All enterprise VLANs are isolated by default. Inter-VLAN communication is only possible through explicit firewall rules.
 
 ---
