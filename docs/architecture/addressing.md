@@ -29,7 +29,7 @@ Every enterprise function is mapped to a dedicated VLAN and subnet, with the Fir
 | **60** | User Floor 1 & 2        | 192.168.60.0/24     | 192.168.60.1      |
 
 !!! note "IPv6"
-  IPv6 is intentionally out of scope for this project.
+    IPv6 is intentionally out of scope for this project.
 
 ---
 
@@ -51,12 +51,16 @@ For all enterprise VLANs:
 The project employs a hybrid model for IP assignment to reflect realistic corporate environments.
 
 === "Static Assignment"
+
     Used for core infrastructure nodes to ensure reliability:
+
     - **Routers & Firewalls:** Manually configured in startup scripts.
     - **Servers:** DMZ and Internal servers use fixed IPs (e.g., `192.168.10.10`).
 
 === "Dynamic Assignment (DHCP)"
+
     Used for end-user workstations in VLANs 50 and 60:
+    
     - **Server:** Centrally managed by `internal_server` (VLAN 40).
     - **Relay:** The Firewall hosts the `isc-dhcp-relay` service to bridge requests across VLANs.
 

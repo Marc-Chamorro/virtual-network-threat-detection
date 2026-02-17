@@ -52,10 +52,10 @@ graph TD
         Users[VLAN 50/60 - User Floors]
     end
 
-    Attacker --- Server_Internet
-    Benign --- Server_Internet
-    Server_Internet --- Server_Internet
-    Server_Internet --- Router_Edge
+    Attacker --- Router_Internet
+    Benign --- Router_Internet
+    Router_Internet --- Server_Internet
+    Router_Internet --- Router_Edge
     Router_Edge --- Firewall
     Firewall --- DMZ
     Firewall --- IDS
