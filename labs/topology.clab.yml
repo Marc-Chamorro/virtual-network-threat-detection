@@ -23,12 +23,15 @@ topology:
         DNS_SERVER: 1
         MAIN_MAIL_SERVER: 1
       binds:
+        #DNS
         - ./config/server/dns/internet/dnsmasq.conf:/etc/dnsmasq.conf
-
+        #MAIL USERS
+        - ./config/pc/mutt:/mail-users:ro
+        #MAIL (SMTP)
         - ./config/server/smtp/internet/main.cf:/etc/postfix/main.cf
         - ./config/server/smtp/internet/transport:/etc/postfix/transport
         - ./config/server/smtp/internet/relay_recipients:/etc/postfix/relay_recipients
-
+        #MAIL (IMAP)
         - ./config/server/imap/internet/10-auth.conf:/etc/dovecot/conf.d/10-auth.conf
         - ./config/server/imap/internet/10-mail.conf:/etc/dovecot/conf.d/10-mail.conf
         - ./config/server/imap/internet/auth-system.conf.ext:/etc/dovecot/conf.d/auth-system.conf.ext
@@ -86,7 +89,7 @@ topology:
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 20.0.0.1
-        # For MUTT
+        # Mail Agent (MUTT)
         - mkdir -p /root/.mutt/cache/headers
         - mkdir -p /root/.mutt/cache/bodies
         - touch /root/.mutt/certificates
@@ -147,10 +150,13 @@ topology:
         DNS_SERVER: 1
         MAIL_SERVER: 1
       binds:
+        # DNS
         - ./config/server/dns/enterprise/dnsmasq.conf:/etc/dnsmasq.conf
-
+        #MAIL USERS
+        - ./config/pc/mutt:/mail-users:ro
+        # MAIL (SMTP)
         - ./config/server/smtp/enterprise/main.cf:/etc/postfix/main.cf
-
+        # MAIL (IMAP)
         - ./config/server/imap/enterprise/10-auth.conf:/etc/dovecot/conf.d/10-auth.conf
         - ./config/server/imap/enterprise/10-mail.conf:/etc/dovecot/conf.d/10-mail.conf
         - ./config/server/imap/enterprise/auth-system.conf.ext:/etc/dovecot/conf.d/auth-system.conf.ext
@@ -211,7 +217,6 @@ topology:
         - mkdir -p /root/.mutt/cache/headers
         - mkdir -p /root/.mutt/cache/bodies
         - touch /root/.mutt/certificates
-
       dns:
         servers:
           - 192.168.10.10
@@ -227,10 +232,6 @@ topology:
       kind: linux
       image: server_vntd:latest
       runtime: docker
-      #cap-add:
-        #- NET_ADMIN
-        #- SYS_ADMIN
-        # - MKNOD      
       env: 
         SSH_SERVER: 1
         DHCP_SERVER: 1
@@ -238,10 +239,12 @@ topology:
         IP_ADDR: "192.168.40.10"                                # DHCP config required env variable
         FTP_SERVER: 1
       binds:
-       - ./config/server/dhcp/dhcpd.conf:/etc/dhcp/dhcpd.conf
-       - ./config/server/dhcp/isc-dhcp-server:/etc/default/isc-dhcp-server
-       - ./config/server/ftp/vsftpd.conf:/etc/vsftpd.conf
-       - ./config/server/ftp/vsftpd.chroot_list:/etc/vsftpd.chroot_list
+        # DHCP
+        - ./config/server/dhcp/dhcpd.conf:/etc/dhcp/dhcpd.conf
+        - ./config/server/dhcp/isc-dhcp-server:/etc/default/isc-dhcp-server
+        # FTP
+        - ./config/server/ftp/vsftpd.conf:/etc/vsftpd.conf
+        - ./config/server/ftp/vsftpd.chroot_list:/etc/vsftpd.chroot_list
       exec:
         - ip addr add 192.168.40.10/24 dev eth1
         - ip link set eth1 up
@@ -262,12 +265,7 @@ topology:
         - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
       exec:
-        # - ip addr add 192.168.50.10/24 dev eth1
-        # - ip link set eth1 up
-        # - dhcpcd eth1
         - sh /startup.sh
-        # - ip route del default                                  # Delete the default route assigned by Containerlab
-        # - ip route add default via 192.168.50.1
 
     pc_vlan60_1:
       kind: linux
@@ -276,12 +274,7 @@ topology:
         - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/emma:/root/.mutt/muttrc
       exec:
-        # - ip addr add 192.168.60.10/24 dev eth1
-        # - ip link set eth1 up
-        # - dhcpcd eth1
         - sh /startup.sh
-        # - ip route del default
-        # - ip route add default via 192.168.60.1
 
     # VLAN 50 & 60 - User floor 2
     #----------------------------------------------------------------------------------------------
@@ -297,12 +290,7 @@ topology:
         - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/barry:/root/.mutt/muttrc
       exec:
-        # - ip addr add 192.168.50.11/24 dev eth1
-        # - ip link set eth1 up
-        # - dhcpcd eth1
         - sh /startup.sh
-        # - ip route del default
-        # - ip route add default via 192.168.50.1
 
     pc_vlan60_2:
       kind: linux
@@ -311,12 +299,7 @@ topology:
         - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/clark:/root/.mutt/muttrc
       exec:
-        # - ip addr add 192.168.60.11/24 dev eth1
-        # - ip link set eth1 up
-        # - dhcpcd eth1
         - sh /startup.sh
-        # - ip route del default
-        # - ip route add default via 192.168.60.1
 
   # ===============================================================================================
   # Physical links between nodes

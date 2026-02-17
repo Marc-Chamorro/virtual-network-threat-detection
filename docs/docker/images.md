@@ -16,6 +16,11 @@ The majority of the network nodes are built with Debian 12 Slim. This provides a
 
 Used for lightweight testing end nodes where minimal resource consumption is critical. Used mostly for simulating user devices.
 
+- **Key Packages:**
+    - `dhcpcd`: Allows users to receive IP address automatically. Relies on the startup script, so the machine waits for the DHCP server to start and offer an address. Otherwise, it believes no DHCP server is available and stops asking.
+    - `lftp`: Client FTP service.
+    - `mutt`: Mail User Agent. Binds a configuration file for a specific user so that each machine has an already included profile and no manual action is needed. Relies on the startup script, to create a couple of mandatory directories.
+
 ---
 
 ## Network Nodes
@@ -90,14 +95,17 @@ An image designed to simulate an endpoint server providing various network servi
     - **Web:** `nginx`.
     - **DHCP:** `isc-dhcp-server`.
     - **DNS:** `dnsmasq`.
+    - **FPT:** `vsftpd`.
+    - **MAIL:** `postfix`, `dovecot-core`, `dovecot-imapd`.
 - **Environment Variables:**
     You can control this container using the following variables in your topology file:
     - `SSH_SERVER=1`: Starts the SSH daemon. Creates user `vntd` with password `pswd`.
     - `WEB_SERVER=1`: Starts Nginx and serves a default HTML page.
-    - `DHCP_SERVER=1`: Intended to start the DHCP service (configuration files are required to make this service work). Requires the following variables to be configured for the service to properly work (used for the system to wait for the parameters before starting the server; if not, the service would crash).
+    - `DHCP_SERVER=1`: Intended to start the DHCP service (configuration files are required to make this service work (2)). Requires the following variables to be configured for the service to properly work (used for the system to wait for the parameters before starting the server; if not, the service would crash).
         - `IFACE: "eth1"`: Define the interface used on the device.
         - `IP_ADDR: "192.168.40.10"`: Define the IP address to be assigned to the interface.
     - `DNS_SERVER=1`: Start the DNS service (configuration files are required to make this service work).
+    - `FTP_SERVER=1`: Intended to start the FTP service (configuration files are required to make this service work (2)).
 
 ---
 

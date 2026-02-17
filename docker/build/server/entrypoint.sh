@@ -60,60 +60,33 @@ if [ "$DNS_SERVER" == "1" ]; then
     dnsmasq
 fi
 
-# NFS | SMB | FTP - NAS
-
+# FTP - NAS
 if [ "$FTP_SERVER" == "1" ]; then
     FTP_ROOT_DIR="/ftp"
-    #FTP_GROUP="ftpusers"
     FTP_PASS="pswd"
     FTP_USERS_FILE="/etc/vsftpd.chroot_list"
 
+    # Modify permissions for the configuration file (otherwise, the system won't start)
     chown root:root /etc/vsftpd.conf
     chmod 644 /etc/vsftpd.conf
 
-    # The user's won't be able to log in, but can FTP
+    # The user's won't be able to log in, but can FTP (/shells reference the nologin file)
     echo "/sbin/nologin" >> /etc/shells
 
-    # Only create the group if it has not been previously created
-    #if ! getent group "$FTP_GROUP" >/dev/null; then
-    #    groupadd "$FTP_GROUP"
-    #fi
-
-    # Create the shared directory (full path)
+    # Create the directory (full path)
     mkdir -p "$FTP_ROOT_DIR"
-    #mkdir -p "$FTP_USERS_DIR"
-    #mkdir -p "$FTP_SHARED_DIR"
-
-    # Make user:group owners of the root FTP directory
+    # Make root owner of the root FTP directory
     chown root:root "$FTP_ROOT_DIR"
     # Owner full access and contro, other users see and navigate
     chmod 755 "$FTP_ROOT_DIR"
-
-    # Make the shared directoy owner the new group
-    #chown root:"$FTP_GROUP" "$FTP_SHARED_DIR"
-    # Owner, group owner full control, and others read and execute (view and navigate)
-    #chmod 775 "$FTP_SHARED_DIR"
-
-    #echo "This is a shared file" > "$FTP_SHARED_DIR/test.txt"
-
-    # Ensue the user list files exist
-    #if [ ! -f "$FTP_USERS_FILE" ]; then
-    #    echo "ERROR: $FTP_USERS_FILE not found"
-    #    exit 1
-    #fi
 
     # If the user file exists, create the users
     if [ -f "$FTP_USERS_FILE" ]; then
 
         while read USER; do
 
-            if [ "$USER" = "" ]; then
-                continue
-            fi
-
-            FIRST_CHAR=$(echo "$USER" | cut -c1)
-
-            if [ "$FIRST_CHAR" = "#" ]; then
+            # Avoid empty lines / comments
+            if [ "$USER" = "" ] || [ "$(echo "$USER" | cut -c1)" = "#" ]; then
                 continue
             fi
 
@@ -122,42 +95,26 @@ if [ "$FTP_SERVER" == "1" ]; then
                 FTP_USER_DIR="$FTP_ROOT_DIR/$USER"
 
                 # Create a new user (create the new users home directory in the specified path) (disable login on the server)
-                # useradd -m -d "$FTP_USER_DIR" -s /sbin/nologin -G "$FTP_GROUP" "$USER"
                 useradd -m -d "$FTP_USER_DIR" -s /sbin/nologin "$USER"
                 # Set the password for the new user
                 echo "$USER:$FTP_PASS" | chpasswd
-                
                 #chown "$USER":"$FTP_GROUP" "$FTP_USER_DIR"
                 chmod 700 "$FTP_USER_DIR"
-
-                #mkdir -p "$FTP_USER_DIR/shared"
-                #mount --bind "$FTP_SHARED_DIR" "$FTP_USER_DIR/shared"
-
-                #mkdir -p "$FTP_USER_DIR/shared"
-                #cp -r "$FTP_SHARED_DIR/"* "$FTP_USER_DIR/shared/"
-                # Everything copied is owned by the user
-                #chown -R "$USER":"$FTP_GROUP" "$FTP_USER_DIR/shared"
-                # Everything copied, has 770 access
-                #chmod -R 770 "$FTP_USER_DIR/shared"
-
             fi
 
         done < "$FTP_USERS_FILE"
 
     fi
 
+    # Start the FTP service
     service vsftpd start
-
 fi
 
-# echo "hola" | mail -s test external@internet.com
-# echo "hola" | mail -s test alice@enterprise.com
+# Mail Server
+if (( MAIL_SERVER + MAIN_MAIL_SERVER == 1 )); then
 
-#https://blog.scottlowe.org/2006/03/01/creating-users-for-a-postfix-based-mail-relay/
-
-
-if [ "$MAIL_SERVER" = "1" ] || [ "$MAIN_MAIL_SERVER" = "1" ]; then
-
+    # POSTFIX
+    # The main mail server relies on two additional configuration files
     if [ "$MAIN_MAIL_SERVER" = "1" ]; then
         chown root:root /etc/postfix/transport
         chmod 644 /etc/postfix/transport
@@ -171,43 +128,50 @@ if [ "$MAIL_SERVER" = "1" ] || [ "$MAIN_MAIL_SERVER" = "1" ]; then
     chown root:root /etc/postfix/main.cf
     chmod 644 /etc/postfix/main.cf
 
-
     postfix start
 
+    # DOVECOT
+    create_users_from_dir() {
+        BASE_DIR="$1"
+
+        if ! [ -d "$BASE_DIR" ]; then
+            return
+        fi
+
+        for USER_PATH in "$BASE_DIR"/*; do
+            if [ ! -f "$USER_PATH" ]; then
+                continue
+            fi
+
+            USER=$(basename "$USER_PATH")
+
+            if [ -z "$USER" ]; then
+                continue
+            fi
+
+            # Create user only if it does not exist
+            if ! id "$USER" >/dev/null 2>&1; then
+                useradd -m -s /sbin/nologin "$USER"
+                echo "$USER:$USER" | chpasswd
+                maildirmake.dovecot /home/"$USER"/Maildir
+                chown -R "$USER:$USER" /home/"$USER"/Maildir
+                echo "USER CREATED"
+            fi
+
+        done
+    }
+
     # DMZ only
-    # després s'hauria de treure la condicio, i fer que cada servidor tingui els seus usuaris
     if [ "$MAIL_SERVER" = "1" ]; then
-        # Email users
-
-        useradd -m -s /sbin/nologin alice
-        echo alice:alice | chpasswd
-        maildirmake.dovecot /home/alice/Maildir
-        chown -R alice:alice /home/alice/Maildir
-
-        useradd -m -s /sbin/nologin emma
-        echo emma:emma | chpasswd
-        maildirmake.dovecot /home/emma/Maildir
-        chown -R emma:emma /home/emma/Maildir
-
-        service dovecot start
+        create_users_from_dir /mail-users/enterprise
     fi
 
     # Internet Only
     if [ "$MAIN_MAIL_SERVER" = "1" ]; then
-
-        useradd -m -s /sbin/nologin olivia
-        echo olivia:olivia | chpasswd
-        maildirmake.dovecot /home/olivia/Maildir
-        chown -R olivia:olivia /home/olivia/Maildir
-
-        service dovecot start
+        create_users_from_dir /mail-users/internet
     fi
 
-    # Maybe we can use it without users?
-    # saslpasswd2 -c -u <domain> <username>
-    #saslpasswd2 -c -u internet.com external
-    #saslpasswd2 -c -u enterprise.com alice
-    # sasldblistusers2
+    service dovecot start
 fi
 
 # Keep the container alive
