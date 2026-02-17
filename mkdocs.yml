@@ -40,33 +40,34 @@ nav:
       - Resolution Flow: network-services/dns/flow.md
 
   - Docker & Containerlab:
-      # General overview of Docker and its relevance to the project. 
-      - Overview: docker/index.md
-      # Provided images, how to build them
-      - Image Catalog: docker/images.md
-      - Building Dockerfiles: docker/dockerfiles.md
-      - Entrypoints & Behavior: docker/entrypoints.md
-      - Importing Images: docker/supported-images.md
+    # General overview of Docker and its relevance to the project. 
+    - Overview: docker/index.md
+    # Provided images, how to build them
+    - Image Catalog: docker/images.md
+    - Building Dockerfiles: docker/dockerfiles.md
+    - Entrypoints & Behavior: docker/entrypoints.md
+    - Importing Images: docker/supported-images.md
 
   - Labs:
-      # Detailes information about topology files and lab configurations.
-      - Overview: labs/index.md
-      - Topology File: labs/topologies.md
-      - Lab Configuration: labs/configuration.md
+    # Detailes information about topology files and lab configurations.
+    - Overview: labs/index.md
+    - Topology File: labs/topologies.md
+    - Lab Configuration: labs/configuration.md
 
   - Scripts & Automation:
-      # Information about any scripts or automation tools included in the project.
-      - Overview: scripts/index.md
-      #- Automation Workflows: scripts/automation-workflows.md
-      - Images Management: scripts/images-management.md
-      - Lab Management: scripts/lab-management.md
+    # Information about any scripts or automation tools included in the project.
+    - Overview: scripts/index.md
+    #- Automation Workflows: scripts/automation-workflows.md
+    - Images Management: scripts/images-management.md
+    - Lab Management: scripts/lab-management.md
 
-  # THE FOLLOWING HAVE NOT BEEN IMPLEMENTED
-
-  # TO BE DEFINED AT ESTABLISHED LATER
-  # - Services:
+  - Services:
     # Overview of the services used in the project, their purpose, and how they interact with each other.
-    # - Overview: services/index.md
+    - Overview: services/index.md
+    - WEB: services/web.md
+    - SSH: services/ssh.md
+    - FTP: services/ftp.md
+    - MAIL: services/mail.md
     # - Suricata: services/suricata.md # Mayber here or somewhere else?
     # - Monitoring: services/monitoring.md
 
