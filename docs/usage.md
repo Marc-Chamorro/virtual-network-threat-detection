@@ -58,9 +58,9 @@ For standard usage of the environment, follow these steps:
     !!! info "Pro-Tip: Ignore Images"
         Directories in `docker/build/` starting with an underscore (e.g., `_mls`) are **ignored** by the automatic build process.
 
----
+=== "Topology Management"
 
-=== "Topology Management" Orchestrate the network simulation using Containerlab.
+    Orchestrate the network simulation using Containerlab.
 
     - **Deploy Topology:** Displays available topologies within the `labs/` directory and allows you to select one to launch. This command handles the creation of the virtual environment.
 
