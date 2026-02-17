@@ -105,9 +105,9 @@ Accessing the Internet from within the network consists of:
 
     The mail architecture follows a hub-and-spoke model:
 
-- **Outbound**: Internal clients send mail to the DMZ Server, which relays it to the Internet Mail Server (if the destination is not the server itself).
-- **Inbound**: The Internet server forwards mail to the Enterprise IP, where it is sent with DNAT through the router and firewall to port 25 of the DMZ node.
-- **Retreival**: Users access their mail via IMAP on port 143 (unencrypted for inspection purposes).
+    - **Outbound**: Internal clients send mail to the DMZ Server, which relays it to the Internet Mail Server (if the destination is not the server itself).
+    - **Inbound**: The Internet server forwards mail to the Enterprise IP, where it is sent with DNAT through the router and firewall to port 25 of the DMZ node.
+    - **Retreival**: Users access their mail via IMAP on port 143 (unencrypted for inspection purposes).
 
 ### Traffic Mirroring (IDS)
 
@@ -124,7 +124,7 @@ sequenceDiagram
     Note over FW: iptables TEE Rule
     FW-->>IDS: Cloned Packet (VLAN 20)
     FW->>DMZ: Original Packet
-    IDS->>IDS: Rule Matching & Alerting
+    IDS->>IDS: Storage and processing
 
 ```
 
