@@ -37,15 +37,21 @@ This platform is designed to deploy a **modular**, **scalable**, and fully **vir
 <div class="grid cards" markdown>
 
 -   :material-layers-outline:{ .lg .middle } **Virtualization & Orchestration**
+
     ---
+
     Utilizing **Docker** and **Containerlab** to create lightweight and reproducible network nodes that represent realistic infrastructures.
 
 -   :material-robot-outline:{ .lg .middle } **Intelligent Analysis**
+
     ---
+
     Integrating **Machine Learning** techniques to detect anomalies and suspicious patterns in network logs that traditional systems might miss.
 
 -   :material-security:{ .lg .middle } **Real-World Simulation**
+
     ---
+    
     Implementing **real services** (SSH, FTP, HTTP, MAIL) and security tools (**Suricata**) to generate and monitor real traffic and logs.
 
 </div>
