@@ -121,15 +121,15 @@ theme:
 
 plugins:
   - search
-  #- with-pdf:
-  #    author: Marc Chamorro
-  #    cover_subtitle: Virtual Network Threat Detection Lab
-  #    output_path: assets/pdf/vntd-docs.pdf
+  - with-pdf:
+      author: Marc Chamorro
+      cover_subtitle: Virtual Network Threat Detection Lab
+      output_path: assets/pdf/vntd-docs.pdf
+      enabled_if_env: ENABLE_PDF
 
 markdown_extensions:
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -141,6 +141,9 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - attr_list
   - md_in_html
 

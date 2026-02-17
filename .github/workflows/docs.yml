@@ -12,12 +12,23 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      ENABLE_PDF: true
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.11'
+
+      - name: Install system dependencies for PDF
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            wkhtmltopdf \
+            xvfb \
+            fonts-dejavu \
+            fontconfig
 
       - name: Install MkDocs and plugins
         run: |
