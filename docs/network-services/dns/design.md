@@ -35,14 +35,14 @@ The DNS service within the enterprise is not directly accessible from the Intern
 
 ## Design Constraints
 
-The DNS design follows these constraints:
+The DNS design follows these:
 
 - VLANs are isolated at Layer 3
 - All DNS traffic must traverse the firewall
 - All DNS requests are managed by the `Internal Server`
-- External resolution is managed by the `Internal Server`
+- External resolution is managed by the `Interent Server`
 
-These constraints ensure visibility and control over all name resolution activity.
+These ensure visibility and control over all name resolution activity.
 
 This **hybrid DNS model** allows for the following:
 

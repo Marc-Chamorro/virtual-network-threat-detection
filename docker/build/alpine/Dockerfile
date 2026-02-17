@@ -4,13 +4,11 @@ FROM wbitt/network-multitool:alpine-extra
 # Install additional tools if necessary (keeping it minimal)
 # dhcpcd allows to request IP by DHCP (client)
 # lftp uss FTP service as client
-# msmtp SMTP email sender
-# mutt IMAP & POP3
+# mutt mail user agent
 RUN apk update && apk upgrade --no-cache && apk add --no-cache \
     net-tools \
     dhcpcd \
     lftp \
-    msmtp \
     mutt \
     && rm -rf /var/cache/apk/*
 
