@@ -1,11 +1,55 @@
+---
+title: Network Design
+icon: material/map-marker-path
+---
+
 # Network Design
 
 This page describes the **logical and physical design** of the VNTD network topology, focusing on how components are interconnected and how responsibilities are distributed 
 across the infrastructure.
 
-The design simulates common enterprise networking practices while remaining fully virtual.
-
 ---
+
+## Logical Topology
+
+The following diagram illustrates the connections between the simulated Internet core and the multiple provided segments:
+
+```mermaid
+graph TD
+    subgraph External_Networks
+        Attacker[Attacker Network - Kali]
+        Benign[Benign Network - Alpine]
+    end
+
+    subgraph Internet_Infrastructure
+        Router_ISP[Router Internet - FRR]
+        Server_ISP[Internet Server - DNS/Web]
+    end
+
+    subgraph Enterprise_Core
+        Router_Edge[Enterprise Edge Router]
+        Firewall[Central Firewall - iptables]
+    end
+
+    subgraph Internal_Segments
+        DMZ[VLAN 10 - DMZ Services]
+        IDS[VLAN 20 - Monitoring]
+        Admin[VLAN 30 - Management]
+        Services[VLAN 40 - Internal Services]
+        Users[VLAN 50/60 - User Floors]
+    end
+
+    Attacker --- Router_ISP
+    Benign --- Router_ISP
+    Router_ISP --- Server_ISP
+    Router_ISP --- Router_Edge
+    Router_Edge --- Firewall
+    Firewall --- DMZ
+    Firewall --- IDS
+    Firewall --- Admin
+    Firewall --- Services
+    Firewall --- Users
+```
 
 ## Topology Overview
 
