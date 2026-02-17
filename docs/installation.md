@@ -1,3 +1,8 @@
+---
+title: Installation
+icon: material/download-outline
+---
+
 # Installation Guide
 
 This guide details the **step-by-step process** to set up the **Laboratory** environment. 
@@ -27,7 +32,7 @@ sudo apt install -y curl git
 sudo apt install -y ssh
 ```
 
-!!! note
+!!! note "SSH Installation"
     Installing SSH independently is recommended as it is later utilized by Containerlab to manage virtual devices.
 
 ---
@@ -41,13 +46,14 @@ Docker is the engine that manages the virtual nodes, and Containerlab is the too
 ```bash
 curl -sL https://containerlab.dev/setup | sudo -E bash -s "all"
 ```
+
 To be more specific, this command:
 - Installs the `git` and `make` packages
 - Installs Docker
 - Installs Containerlab
 - Configures permissions and SSH access
 
-!!! note
+!!! note "Alternative Docker Installation"
     Docker may not install properly (a common issue). Alternative commands to install Docker are:
     ``` bash
         curl -sL https://containerlab.dev/setup | sudo -E bash -s "install-docker" 
@@ -119,4 +125,4 @@ git clone https://github.com/Marc-Chamorro/virtual-network-threat-detection
 cd virtual-network-threat-detection/
 ```
 
-You are now ready to build the images and deploy the labs.
+You are now ready to [build the images and deploy the labs](./usage.md).
