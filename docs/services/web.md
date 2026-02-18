@@ -1,30 +1,38 @@
+---
+title: Web Service
+icon: material/web
+---
+
 # Web Service
 
-This document describes the **web service implementation** used in the laboratory.
+The web service implements **basic HTTP traffic** simulation with minimal configuration. It is primarily used to test web-based detection, logging, and traffic classification.
 
-The service is designed to generate **basic HTTP traffic** with minimal configuration.
+---
 
-## Service Activation
+## Technical Implementation
 
-The web service is enabled only if the following environment variable is set:
+The service utilizes **Nginx**, which is pre-installed in the server image.
+
+### Activation
+
+The service is enabled only by setting the following environment variable in the topology file:
 
 ```yml
 env:
     WEB_SERVER: 1
 ```
 
-If the variable is not set, the web server is not started.
+If this variable is absent or has any other value different than 1, the Nginx process will not initialize.
 
-!!! note
+!!! note "Activation Through Variables"
     This allows a single container image to serve multiple roles depending on runtime configuration.
 
----
+### Deployment Status
 
-## Web Server Software
+In the default provided topology, the web service is active *(on the containers using the `server_vntd` image)*:
 
-The service uses **Nginx**, installed as part of the container image.
-
-No advanced configuration is applied.
+- `dmz_server`: Internal organization website.
+- `internet_server`: External public website simulation.
 
 ---
 
@@ -56,27 +64,26 @@ service nginx start
 
 Nginx runs in the background using default settings.
 
-Web traffic:
-- Uses HTTP (TCP port 80)
-- Traverses firewall and routing policies.
+!!! info "Traffic within the enterprise"
+    Web traffic uses standard TCP port 80 and must traverse firewall and routing policies to reach the destination floor.
 
 !!! info
     Due to its simplicity, this service is ideal for testing HTTP-based detection, logging, and traffic classification.
 
 ## How to use
 
-To generate HTTP traffic against the web service, use a simple HTTP client such as `curl`:
+To generate HTTP traffic against the web service, use a simple HTTP client such as `curl` frp, any client workstation or external node:
 
 ```bash
 curl http://<hostname>
 curl <hostname>
 ```
 
+!!! info "IP"
+    IP addresses can also be used if the domain names are unknown or a DNS service is not available.
+    By default, all servers have a DNS-resolvable hostname.
+
 If the service is running correctly, the service will respond with a message.
 
 The available hostnames are defined in the DNS configuration:
 - [DNS Names Assignment](../network-services/dns/server.md)
-
-!!! info
-    From the provided topology, the web service is available on the `dmz_server` and `internet_server` using the `server_vntd` image.
-    By default, all servers have a DNS-resolvable hostname.

@@ -72,6 +72,6 @@ graph TD
 
 !!! example
 
-    1. Check if `SSH_SERVER=1` $\rightarrow$ Configure keys, create user, start sshd.
-    2. Check if `WEB_SERVER=1` $\rightarrow$ Generate index.html, start nginx.
+    1. Check if `SSH_SERVER=1` -> Configure keys, create user, start sshd.
+    2. Check if `WEB_SERVER=1` -> Generate index.html, start nginx.
     3. Execute `sleep infinity`.

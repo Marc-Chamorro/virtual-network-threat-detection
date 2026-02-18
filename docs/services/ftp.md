@@ -1,3 +1,8 @@
+---
+title: FTP Service
+icon: material/file-transfer
+---
+
 # FTP Service
 
 This document describes the **FTP service implementation** used in the laboratory.
@@ -27,7 +32,7 @@ If this attribute is not provided, there is a risk that the FTP service may brea
 
 It is therefore strongly recommended to include it.
 
-!!! note
+!!! note "Reusability"
     This allows the same server image to be reused with or without FTP enabled.
 
 ---
@@ -68,7 +73,7 @@ All FTP users share the same default password.
 |-----------|--------|
 | Password  | `pswd` |
 
-!!! warning
+!!! warning "Security concerns"
     These credentials are intentionally weak.
     They exist solely for lab and testing purposes.
 
@@ -106,8 +111,9 @@ FTP traffic:
 - Uses TCP port 21
 - Traverses firewall and routing policies
 
-!!! note
-    Packages can be observed and analyzed to detect unencrypted traffic.
+!!! note "Observation"
+    FTP traffic on TCP port 21 is unencrypted. This allows students to capture and analyze valid FTP commands and credentials in transit.
+
 
 ---
 

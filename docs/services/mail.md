@@ -1,3 +1,8 @@
+---
+title: Mail Service
+icon: material/email-outline
+---
+
 # Mail Service
 
 This document describes the **Mail service implementation** used in the laboratory.
@@ -21,6 +26,22 @@ The mail architecture simulates a realistic **hub-and-spoke deployment**:
 - Enterprise SMTP forwards outbound mail to the Internet server.
 - The Internet server discards unknown destinations.
 
+```mermaid
+sequenceDiagram
+    participant PC as User Workstation (VLAN 50)
+    participant DMZ as Enterprise Mail (DMZ)
+    participant ISP as Internet Mail (Public)
+
+    Note over PC, ISP: Outbound Email
+    PC->>DMZ: SMTP Outbound (Port 25)
+    DMZ->>ISP: Forwarding to Central Hub
+
+    Note over ISP, PC: Inbound Email
+    ISP->>DMZ: Forwarding via Port Redirection
+    DMZ->>DMZ: Store in User Maildir
+    PC->>DMZ: IMAP Retrieval (Port 143)
+```
+
 **Traffic flow:**
 ```text
 Internal Client -> DMZ Mail Server -> Internet Mail Server -> Destination
@@ -33,7 +54,7 @@ Internet Mail Server → Router (port 25 forward) → DMZ Mail Server
 
 Traffic whose destination is the user's same mail service provider does not get redirected.
 
-!!! note
+!!! note "Security rules"
     From the Internet towards the Enterprise network, the router forwards **TCP port 25** traffic to the `dmz_server`.
 
 ---
@@ -93,7 +114,7 @@ When `MAIN_MAIL_SERVER` is set, the entrypoint:
 - Adjusts file permissions and ownership.
 - Runs `postmap` on transport and relay files.
 
-!!! important
+!!! important "Unknown Destination"
     Unknown mail addresses are discarded.
 
 Postfix is initialized automatically based on the chosen configuration.
@@ -120,7 +141,7 @@ Dovecot provides:
 - IMAP on port 143.
 - Maildir mailbox access.
 
-!!! note
+!!! note "IMAP vs POP3"
     POP3 is intentionally not installed.
 
 ---
@@ -245,10 +266,10 @@ From any client, write on the terminal:
 mutt
 ```
 
-!!! warning
+!!! warning "Mandatory Connectivity"
     The device **must** have connection to the mail provider. Otherwise, the automatic sign up process will fail. For DHCP users, wait for a moment or check if an address has been assigned using `ifconfig`.
 
-!!! important
+!!! important "Refresh Mutt"
     The `mutt` interface is simple and does **not** detect new emails. To receive new emails, the user needs to exit the program and access it again.
 
 ---
@@ -264,4 +285,6 @@ This is required for:
 - Clear and easy traffic inspection.
 - IDS pattern detection.
 
-This configuration must **never** be used in production environments.
+!!! warning "Lab Isolation"
+    This configuration must **never** be used in production environments.
+    This is designed for training and must remain isolated to prevent the laboratory from acting as a real relay for external spam or malicious mail.

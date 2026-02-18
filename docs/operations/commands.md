@@ -1,189 +1,154 @@
-NOW TESTING THE SMTP
-
-pc_vlan50_1:/# telnet mail.internet.com 25
-Connected to mail.internet.com
-220 mail.internet.com ESMTP Postfix (Debian/GNU)
-ls -la
-500 5.5.2 Error: command not recognized
-cd
-500 5.5.2 Error: command not recognized
-dir
-500 5.5.2 Error: command not recognized
-help
-500 5.5.2 Error: command not recognized
-h
-500 5.5.2 Error: command not recognized
-^C
-Console escape. Commands are:
-
- l	go to line mode
- c	go to character mode
- z	suspend telnet
- e	exit telnet
-pc_vlan50_1:/# telnet mail.internet.com 25
-Connected to mail.internet.com
-220 mail.internet.com ESMTP Postfix (Debian/GNU)
-HELO test.lab
-250 mail.internet.com
-MAIL FROM:<test@internet.com>
-250 2.1.0 Ok
-RCPT TO:<alice@enterprise.com>
-250 2.1.5 Ok
-DATA
-354 End data with <CR><LF>.<CR><LF>
-Subject: test
-Some more contant to write goes here
-.
-250 2.0.0 Ok: queued as DB2F7623773
-
-
-
-
-#### Now for sending mail
-echo "hola" | msmtp alice@enterprise.com
-
-
-
-
-
 ---
-TEST EVERYTHING:
-c_vlan50_1:/# telnet enterprise.com 25
-MAIL FROM:<alice@enterprise.com>
-RCPT TO:<external@internet.com>
-DATA
-Subject: test
-hi!  
-.
-QUIT
-
-
-
-DESPRES: (des de dins de la xarxa)
-telnet internet.com 143
-a login <name> <pswd>
-
-a select INBOX
-
-a fetch 1 full
+title: Operational Commands Reference
+icon: material/fontawesome-solid-code
 ---
 
-ONLY LOCAL
-benign:/# telnet internet.com 25
-Connected to internet.com
-220 mail.internet.com ESMTP Postfix (Debian/GNU)
-MAIL FROM:<external@internet.com>
-250 2.1.0 Ok
-RCPT TO:<external@internet.com>
-250 2.1.5 Ok
-DATA
-354 End data with <CR><LF>.<CR><LF>
-Hola, aixo es una prova
-.
-250 2.0.0 Ok: queued as 87AE962367D
-QUIT
-221 2.0.0 Bye
-Connection closed by foreign host
-benign:/#
+# Operational Commands Reference
 
+This document provides a repository of useful commands for managing, troubleshooting, and interacting with the nodes in the VNTD laboratory.
 
-# This commands recovers the email, now, we are trying internet-internet, IT WORKS
-# The number is the number of email
-a fetch 1 rfc822
-a fetch * rfc822
+---
 
+## Container Management
 
+These commands are executed from the **host machine** to control the virtual environment.
 
-
------
-
-To use, mutt
-set the mail and so on, on the editor :wq to save.
-
-
-
-
-
-
-
-
-
-
-
-
-
-Logs form device
-```bash
+- **View Device Logs:** Check the output and initialization errors for a specific node:
+```sh
 docker logs clab-virtual-env-internal_server
 ```
 
-Connect to device
-```bash
+- **Connect to a Device:** Open a terminal inside a running node:
+```sh
 docker exec -it clab-virtual-env-pc_vlan50_1 bash
 ```
 
-View all services from a device
-```bash
+---
+
+## Services
+
+To view the services running on a concrete device, use:
+
+```sh
 service --status-all
 ```
 
-Request DHCP
-```bash
+```sh
+ps aux
+```
+
+---
+
+## Traffic Inspection Tools
+
+### tcpdump
+
+Use `tcpdump` to capture and analyze packets on a specific interface. This is critical for validating that the **DHCP Relay** or **Firewall** is forwarding traffic correctly.
+
+- **Monitor DHCP Traffic:** In which `port` is the physical port to analyze. For this example, DHCP traffic can be viewed to detect any possible related issues given changes are made and the service is no longer working as intended.
+
+```sh
+tcpdump -i <port> -f 'port 67 or port 68'
+```
+
+---
+
+## Connectivity and Web Verification
+
+Test if web services are reachable and serving content through the network policies.
+
+### Web Service Check
+
+```sh
+# Internal DMZ Website
+curl http://enterprise.local
+
+# External ISP Website
+curl http://internet.com
+```
+> *Expected output: "Hello from Nginx on the web server"*
+
+---
+
+## DHCP Troubleshooting
+
+To request an IP address again from a client device with access to the DHCP server:
+
+```sh
 dhcpcd -4 -d eth1
 ```
 
+---
 
-## Local Inspection Tools
+## DNS Troubleshooting
 
-The traffic can be inspected using:
+Tools to verify the name resolution service between the enterprise network and the internet.
 
-- `tcpdump -i <port> -f 'port 67 or port 68'`
+### DNS Infrastructure
 
-In which `port` is the physical port to analyze. This way, DHCP traffic can be viewed to detect any possible related issues given changes are made and the service is no longer working as intended.
+| Zone             | DNS Known IP Addresses       |
+|------------------|------------------------------|
+| **Internal DNS** | 192.168.10.10, 192.168.40.10 |
+| **External DNS** | 172.16.100.100, 172.16.30.2  |
 
+### Resolution Diagnostic Tools
 
-
-
-
-pc_admin:/# curl http://enterprise.local
-Hello from Nginx on the web server
-
-pc_vlan50_1:/# curl http://enterprise.local
-Hello from Nginx on the web server
-
+```sh
+# Which DNS to query
 cat /etc/resolv.conf
+```
+
+```sh
+# Query DNS records for a specific name
 nslookup enterprise.local
 nslookup 192.168.10.10
+```
+
+```sh
+# More structured and detailed output
 dig www.enterprise.local
+```
 
-tcpdump -i eth1 -f 'port 67 or port 68'
+#### Example Output
 
-DNS INTERN  - 192.168.10.10
-            - 192.168.40.10
-
-DNS EXTERN  - 172.16.100.100
-            - 172.16.30.2
-
-
-pc_vlan50_2:/# nslookup enterprise.local
+```
+pc_enterprise:/# nslookup enterprise.local
 Server:		192.168.10.10
 Address:	192.168.10.10#53
 
 Name:	enterprise.local
 Address: 192.168.10.10
+```
 
-pc_vlan50_2:/# nslookup enterprise.com
+```
+pc_enterprise:/# nslookup enterprise.com
 Server:		192.168.10.10
 Address:	192.168.10.10#53
 
 Name:	enterprise.com
 Address: 192.168.10.10
+```
 
-pc_vlan50_2:/# nslookup internet.com
+```
+pc_enterprise:/# nslookup internet.com
 Server:		192.168.10.10
 Address:	192.168.10.10#53
 
 Name:	internet.com
 Address: 172.16.100.100
+```
 
-pc_vlan50_2:/# 
+---
+
+## Mutt
+
+End-user systems use the Mutt mail client for sending and retrieving emails.
+
+- **Launch:** Type in the terminal:
+```sh
+mutt
+```
+- **Editor Usage:** When setting up mail, use the built-in editor. To save changes and exit the editor, use the command `:wq`.
+- **Note:** The client does not detect new emails in real-time. You must exit and restart the program to refresh the inbox.
+
+---
