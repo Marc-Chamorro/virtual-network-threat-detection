@@ -261,6 +261,10 @@ topology:
     pc_vlan50_1:
       kind: linux
       image: alpine_vntd:latest
+      env: 
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
@@ -270,6 +274,10 @@ topology:
     pc_vlan60_1:
       kind: linux
       image: alpine_vntd:latest
+      env:
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/emma:/root/.mutt/muttrc
@@ -286,6 +294,10 @@ topology:
     pc_vlan50_2:
       kind: linux
       image: alpine_vntd:latest
+      env:
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/barry:/root/.mutt/muttrc
@@ -295,6 +307,10 @@ topology:
     pc_vlan60_2:
       kind: linux
       image: alpine_vntd:latest
+      env:
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/clark:/root/.mutt/muttrc

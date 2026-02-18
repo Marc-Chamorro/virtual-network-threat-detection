@@ -1,8 +1,11 @@
+---
+title: DNS Service Design
+icon: material/dns-outline
+---
+
 # DNS Service Design
 
-This document describes the **design and placement** of the DNS service within the Virtual Network Threat Detection lab.
-
-DNS is a critical infrastructure service that enables name-based communication while respecting network segmentation and security boundaries.
+TNS is a critical infrastructure service that provides hostname resolution for internal enterprise services and simulated external internet resources while respecting network segmentation and security boundaries.
 
 ---
 
@@ -10,46 +13,52 @@ DNS is a critical infrastructure service that enables name-based communication w
 
 The DNS service is responsible for:
 
-- Resolving hostnames for internal enterprise services
-- Supporting user access to DMZ-hosted resources
-- Forwarding unresolved queries to external DNS servers
-- Simulating realistic enterprise name resolution behavior
+- Resolving hostnames for internal enterprise services.
+- Supporting user access to DMZ-hosted resources.
+- Forwarding unresolved queries to external DNS servers.
+- Simulating realistic enterprise name resolution behavior.
 
 DNS is required for both usability and realism, as most applications rely on name resolution rather than raw IP addresses.
 
 ---
 
-## Architectural Placement
+## Hybrid DNS Model
 
-The DNS server is deployed in the **DMZ (VLAN 10)** and in the **Internet Server**.
+The DNS design needs to consider these constraints:
 
-This placement reflects a common enterprise pattern where:
-
-- DNS is reachable by internal users
-- DNS can communicate with other external resolvers
-- Exposure is controlled through firewall policies
-
-The DNS service within the enterprise is not directly accessible from the Internet. However, the external one can be accessed by the internal one.
-
----
-
-## Design Constraints
-
-The DNS design follows these:
-
-- VLANs are isolated at Layer 3
-- All DNS traffic must traverse the firewall
-- All DNS requests are managed by the `Internal Server`
-- External resolution is managed by the `Interent Server`
+- VLANs are isolated at Layer 3.
+- All DNS traffic must traverse the firewall.
+- All DNS requests are managed by the `Internal Server`.
+- External resolution is managed by the `Interent Server`.
 
 These ensure visibility and control over all name resolution activity.
 
-This **hybrid DNS model** allows for the following:
+Therefore, the lab employs a **hybrid resolution model** to ensure both local efficiency and realistic internet behavior:
 
-- **Authoritative resolution** for internal zones and known domains.
-- **Recursive forwarding** for unknown external domains (Internet domains)
+- **Authoritative resolution:** The internal server resolves local domains like `enterprise.local`.
+- **Recursive forwarding:** Requests for unknown domains are forwarded to the simulated internet resolver.
 
 This allows internal services to be resolved, managed and optimized locally while still enabling Internet access.
+
+---
+
+## Placement Strategy
+
+DNS services are deployed in two distinct locations:
+
+| Resolver         | Node              | Zone          | Role                                   |
+|:-----------------|:------------------|:--------------|:---------------------------------------|
+| **Internal DNS** | `dmz_server`      | DMZ (VLAN 10) | Primary resolver for enterprise users. |
+| **External DNS** | `internet_server` | ISP Core      | Simulated public internet DNS.         |
+
+
+This placement reflects a common enterprise pattern where:
+
+- DNS is reachable by internal users.
+- DNS can communicate with other external resolvers.
+- Exposure is controlled through firewall policies.
+
+The DNS service within the enterprise is not directly accessible from the Internet. However, the external one can be accessed by the internal one.
 
 ---
 
@@ -57,20 +66,9 @@ This allows internal services to be resolved, managed and optimized locally whil
 
 DNS and DHCP are intentionally coupled:
 
-- DHCP provides the DNS server address to clients
-- Clients do not configure resolvers manually
-- DNS behavior is consistent across all 
-user VLANs
+- DHCP provides the DNS server address to clients (DMZ Server).
+- Clients do not configure resolvers manually.
+- DNS behavior is consistent across all user VLANs.
 
-!!! note
+!!! note "DHCP Coupling"
     This dependency is intentional and mirrors common enterprise environments.
-
----
-
-## Security Considerations
-
-DNS is treated as a policy-controlled service:
-
-- Only permitted clients may query the DNS server
-- Only the DNS server may forward queries externally
-- DNS traffic leaving the enterprise network is visible for inspection and analysis in the Monitoring zone.

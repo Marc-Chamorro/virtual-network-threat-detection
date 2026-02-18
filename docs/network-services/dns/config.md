@@ -1,8 +1,11 @@
+---
+title: DNS Server Configuration
+icon: material/cog-outline
+---
+
 # DNS Server Configuration
 
-This document describes the **configuration and behavior** of the DNS server used in the VNTD lab.
-
-The configuration focuses on clarity, explicit behavior, and ease of debugging.
+Both the DMZ and Internet servers use **dnsmasq** to provide lightweight and efficient name resolution. The documentation focuses on clarity, explicit behavior, and ease of debugging.
 
 ---
 
@@ -76,7 +79,7 @@ All DNS configuration files are stored under the project `config/` directory and
 | `enterprise.com`      | 172.16.30.2    |
 | `www.enterprise.com`  | 172.16.30.2    |
 
-**PTR Defined:** Resolves addresses to names.
+**Reverse DNS (PTR Defined):** Resolves addresses to names.
 | Address             | Name             |
 |---------------------|------------------|
 | 172.16.100.100      | `internet.com`   |
@@ -106,7 +109,7 @@ This configuration allows clients to communicate with the Internet Server and th
 
 The DMZ Server also contains name resolution for the `.com` pointing to itself. This allows users to connect to the DMZ just as external users/clients would but removes the need to leave the network.
 
-**PTR Defined:** Resolves addresses to names.
+**Reverse DNS (PTR Defined):** Resolves addresses to names.
 | Address         | Name                        |
 |-----------------|-----------------------------|
 | 192.168.10.10   | `enterprise.local`          |
