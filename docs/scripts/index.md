@@ -1,6 +1,6 @@
 ---
 title: Scripts & Automation Overview
-icon: material/script-code-outline
+icon: material/file-code-outline
 ---
 
 # Scripts & Automation Overview
