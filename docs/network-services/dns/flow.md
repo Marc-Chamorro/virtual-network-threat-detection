@@ -45,11 +45,11 @@ DNS address assignment  does not rely on a working DNS server. Assignment can be
 The easiest way to manage and make a network node use a DNS server is to directly assign it to them through the `topology` file.
 
 !!! example "DNS manual assignment"
-```yml
-dns:
-    servers:
-        - 172.16.100.100
-```
+    ```yml
+    dns:
+        servers:
+            - 172.16.100.100
+    ```
 
 This way, addresses can be easily managed and modified without resorting to scripting or startup files.
 
