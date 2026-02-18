@@ -1,6 +1,6 @@
 ---
 title: DHCP Relay Configuration
-icon: material/Bridge
+icon: material/bridge
 ---
 
 # DHCP Relay Configuration
