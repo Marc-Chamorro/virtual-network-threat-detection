@@ -71,6 +71,7 @@ All DNS configuration files are stored under the project `config/` directory and
 ## DNS Configuration (`internet_server`)
 
 **Names Defined:** Resolves names to addresses.
+
 | Name                  | Address        |
 |-----------------------|----------------|
 | `internet.com`        | 172.16.100.100 |
@@ -80,6 +81,7 @@ All DNS configuration files are stored under the project `config/` directory and
 | `www.enterprise.com`  | 172.16.30.2    |
 
 **Reverse DNS (PTR Defined):** Resolves addresses to names.
+
 | Address             | Name             |
 |---------------------|------------------|
 | 172.16.100.100      | `internet.com`   |
@@ -97,6 +99,7 @@ This configuration allows clients to communicate with the Internet Server and th
 ## DNS Configuration (`dmz_server`)
 
 **Names Defined:** Resolves names to addresses.
+
 | Name                        | Address       |
 |-----------------------------|---------------|
 | `enterprise.local`          | 192.168.10.10 |
@@ -110,6 +113,7 @@ This configuration allows clients to communicate with the Internet Server and th
 The DMZ Server also contains name resolution for the `.com` pointing to itself. This allows users to connect to the DMZ just as external users/clients would but removes the need to leave the network.
 
 **Reverse DNS (PTR Defined):** Resolves addresses to names.
+
 | Address         | Name                        |
 |-----------------|-----------------------------|
 | 192.168.10.10   | `enterprise.local`          |
