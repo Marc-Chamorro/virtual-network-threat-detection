@@ -1,15 +1,24 @@
+---
+title: Supported External Images
+icon: material/import
+---
+
 # Supported External Images
 
-While most images are built from source Dockerfiles, the environment also supports importing vendor-supplied images.
+While most images are built from source Dockerfiles, the environment supports the integration of vendor-provided images.
 
 ## Import Directory
 
-The automation scripts look for compressed archives in:
-`docker/import/`. Should the directory not exist, it must be created manually.
+The automation scripts automatically search for compressed image archives in the following directory:
+
+> `docker/import/`
+
+!!! warning "Directory Requirement"
+    If the `import` directory does not exist, it must be created manually before running the build scripts.
 
 ## Arista cEOS
 
-The primary use case for the import functionality is Arista's cEOS. This allows users to work with an industry-standard CLI (Command Line Interface) indistinguishable from physical Arista switches.
+The primary use case for the import functionality is integration of **Arista cEOS**. This allows users to work with an industry-standard CLI (Command Line Interface) indistinguishable from physical Arista switches.
 
 !!! important
     Arista cEOS does not support assigning access lists to VLANs or ports. This feature is locked.
@@ -22,8 +31,8 @@ The primary use case for the import functionality is Arista's cEOS. This allows 
 
 ### Licensing, Download & Import
 
-!!! warning "Proprietary Software"
-    Arista cEOS is **not** open source. It requires a valid account and acceptance of the EULA to download.
+!!! danger "Proprietary Software"
+    Arista cEOS is **not open source** open source. Users must register for a valid account and accept the vendor's EULA to download the image from their support portal.
 
 1.  Register at [Arista Software Downloads](https://www.arista.com/en/support/software-download).
 2.  Navigate to **cEOS-lab** releases.

@@ -44,9 +44,9 @@ nav:
     - Overview: docker/index.md
     # Provided images, how to build them
     - Image Catalog: docker/images.md
-    - Building Dockerfiles: docker/dockerfiles.md
+    - Dockerfile Standards: docker/dockerfiles.md
     - Entrypoints & Behavior: docker/entrypoint.md
-    - Importing Images: docker/supported-images.md
+    - External Images: docker/supported-images.md
 
   - Labs:
     # Detailes information about topology files and lab configurations.
