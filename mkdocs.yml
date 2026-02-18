@@ -45,7 +45,7 @@ nav:
     # Provided images, how to build them
     - Image Catalog: docker/images.md
     - Building Dockerfiles: docker/dockerfiles.md
-    - Entrypoints & Behavior: docker/entrypoints.md
+    - Entrypoints & Behavior: docker/entrypoint.md
     - Importing Images: docker/supported-images.md
 
   - Labs:
