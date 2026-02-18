@@ -29,7 +29,7 @@ The environment is built around three core principles to ensure its utility for 
 
     ---
 
-    Images are single-purpose (e.g., router, web server, firewall) to mimic physical network appliances.
+    Images are single-purpose (e.g., router, web server, firewall) to mimic physical network devices.
 
 -   :material-infinity:{ .lg .middle } **Persistence**
 

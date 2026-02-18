@@ -1,10 +1,15 @@
+---
+title: Topology Definitions
+icon: material/file-code-outline
+---
+
 # Topology Definitions
 
 The project uses **Containerlab**'s YAML-based topology definition format (`.clab.yml`) to define the virtual network. This file acts as a *manager*, telling Docker which containers to start and how to link their network interfaces.
 
 ## File Structure
 
-A typical topology file in this project follows this structure:
+A standard topology file in is organized into two primary sections: `nodes` and `links`.
 
 ```yaml
 name: virtual-env
@@ -20,7 +25,7 @@ topology:
 
 The `nodes` section defines every device in the network. Each entry specifies:
 
-!!! note
+!!! note "Mandatory & Optional"
     Mandatory &rarr; **M**
     Optional &rarr; **O**
 
@@ -32,7 +37,7 @@ The `nodes` section defines every device in the network. Each entry specifies:
 - `env` [O]: Environment variables (e.g., enabling `SSH_SERVER`).
 - `dns` [O]: Used to assign a DNS server address easily, accompanied usually of `servers` with a list of all addresses.
 
-!!! example
+!!! example "Exec & Binds interaction"
     `exec` and `binds` are commonly used together to inject configuration files into the container and then execute such scripts upon startup.
 
 Additional sections definitions can be added to change the behavior and capabilities of devices to easily test the behavior under high-stress environments:
@@ -106,7 +111,7 @@ This directory contains:
 - Node-specific runtime data
 - Node configuration files
 
-!!! warning
+!!! warning "Artifacts persistence"
     The `clab-virtual-env` directory is **not permanent** and managed by Containerlab. Do **not** store permanent configurations here, as they may be wiped on redeployment. Always use the `config/` directory for persistent data or any other directory of your choice.
 
 ## Additional Resources
