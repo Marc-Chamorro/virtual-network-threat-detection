@@ -47,7 +47,7 @@ The services integrated into the environment are designed to be minimal and pred
     Remote access simulation for administrative tasks and credential abuse scenarios.
     [View Details](./ssh.md)
 
--   :material-file-transfer:{ .lg .middle } **FTP (File Transfer)**
+-   :material-file-arrow-up-down-outline:{ .lg .middle } **FTP (File Transfer)**
 
     ---
 

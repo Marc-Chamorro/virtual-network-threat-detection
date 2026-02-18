@@ -1,6 +1,6 @@
 ---
 title: FTP Service
-icon: material/file-transfer
+icon: material/file-arrow-up-down-outline
 ---
 
 # FTP Service
