@@ -1,25 +1,34 @@
+---
+title: Image Catalog
+icon: material/format-list-bulleted
+---
+
 # Image Catalog
 
-This page provides a comprehensive documentation of the custom Docker images maintained in this project. All images are built with the `_vntd` suffix to ensure local uniqueness.
+All custom images developed for this project are built with the **`_vntd`** suffix to ensure they remain unique within the local Docker registry and prevent naming conflicts.
 
 ---
 
 ## Operating System Base Images
 
-### Debian Slim (`debian:12-slim`)
+The project utilizes two primary base environments configured for either robust infrastructure services or lightweight user endpoints.
 
-The majority of the network nodes are built with Debian 12 Slim. This provides a stable, modern Linux environment with a small footprint, ideal for simulating general-purpose Linux routers and servers.
+=== "Debian Slim" 
+    - **Image Identifier:** **`debian:12-slim`**
+    - **Usage:** Serves as the foundation for most infrastructure nodes, including routers, firewalls, and servers. 
+    - **Characteristics:** Selected for its stability, modern Linux environment with a small footprint, and minimal storage footprint, making it ideal for simulating general-purpose Linux routers and servers.
 
----
-
-### Alpine Linux (`wbitt/network-multitool:alpine-extra`)
-
-Used for lightweight testing end nodes where minimal resource consumption is critical. Used mostly for simulating user devices.
-
-- **Key Packages:**
-    - `dhcpcd`: Allows users to receive IP address automatically. Relies on the startup script, so the machine waits for the DHCP server to start and offer an address. Otherwise, it believes no DHCP server is available and stops asking.
-    - `lftp`: Client FTP service.
-    - `mutt`: Mail User Agent. Binds a configuration file for a specific user so that each machine has an already included profile and no manual action is needed. Relies on the startup script, to create a couple of mandatory directories.
+=== "Alpine Linux"
+    - **Image Identifier:** **`alpine_vntd`** (based on `wbitt/network-multitool:alpine-extra`)
+    - **Usage:** Simulates user workstations and lightweight end-nodes.
+    - **Technical Detail:**
+        - **`dhcpcd`:** Allows users to receive IP address automatically. Relies on the startup script, so the machine waits for the DHCP server to start and offer an address. Otherwise, it believes no DHCP server is available and stops asking.
+        - **`lftp`:** Client FTP service.
+        - **`mutt`:** Mail User Agent. Binds a configuration file for a specific user so that each machine has an already included profile and no manual action is needed. Relies on the startup script, to create a couple of mandatory directories.
+    - **Environment Variables:** You can control this container using the following variables in your topology file *(these attributes are not applied on the `entrypoint`, but rather on the `startup` file)*:
+        - `DHCP_CLIENT=1`: Starts the DHCP client service daemon, which makes it so that it doesn't stop asking for an address until one is assigned.
+            - `IFACE="eth1"`: Define the interface used on the device. If none is assigned, it'll use `eth1` by default.
+        - `MUTT_CLIENT=1`: Starts the `mutt` client configuration process. Requires a user configuration file to be assigned.
 
 ---
 
@@ -106,6 +115,7 @@ An image designed to simulate an endpoint server providing various network servi
         - `IP_ADDR: "192.168.40.10"`: Define the IP address to be assigned to the interface.
     - `DNS_SERVER=1`: Start the DNS service (configuration files are required to make this service work).
     - `FTP_SERVER=1`: Intended to start the FTP service (configuration files are required to make this service work (2)).
+    - `MAIL_SERVER=1 || MAIN_MAIL_SERVER=1`: Starts the mail server as a secondary or primary mail provider (requires multiple configuration files (3)).
 
 ---
 
