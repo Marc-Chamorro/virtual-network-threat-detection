@@ -1,12 +1,21 @@
+---
+title: SSH Service
+icon: material/ssh
+---
+
 # SSH Service
 
-This document describes the **SSH service implementation** used in the laboratory.
-
-The SSH service is intentionally simple and is enabled conditionally at container startup.
+The SSH service provides a mechanism for executing remote commands and simulate administration connections. It is intentionally configured with weak security settings to support credential abuse and brute-force experimentation.
 
 ---
 
-## Service Activation
+## Implementation Details
+
+The service is based on **OpenSSH Server** and is managed via environment variables in the container entrypoint file.
+
+---
+
+### Activation
 
 The SSH service is enabled only if the following environment variable is set:
 
@@ -15,14 +24,24 @@ env:
     SSH_SERVER: 1
 ```
 
-If the variable is not set (or set to any other value), the SSH service is not started.
+If this variable is absent or has any other value different than 1, the Nginx process will not initialize.
 
 !!! note
     This allows the same container image to be reused with or without SSH enabled.
 
 ---
 
-## Default Credentials
+### Deployment Status
+
+In the default provided topology, the SSH service is active *(on the containers using the `server_vntd` image)*:
+
+- `dmz_server`: Internal organization website.
+- `internet_server`: External public website simulation.
+- `internal_server`: Interenal organization service provider.
+
+---
+
+### Default Credentials
 
 When the SSH service is enabled, a dedicated user account is created automatically.
 
@@ -33,9 +52,8 @@ When the SSH service is enabled, a dedicated user account is created automatical
 
 These credentials are defined directly in the startup script.
 
-!!! warning
-    These credentials are intentionally weak.
-    They exist solely for lab and testing purposes.
+!!! warning "Credentials"
+    These credentials are intentionally weak. They exist solely for lab and testing purposes.
 
 ---
 
@@ -65,8 +83,8 @@ SSH traffic:
 - Uses TCP port 22.
 - Traverses firewall and routing policies.
 
-!!! tip
-Repeated failed SSH attempts are useful for simulating brute-force or credential abuse scenarios.
+!!! tip "Security"
+    Repeated failed SSH attempts are useful for simulating brute-force or credential abuse scenarios.
 
 ## How to use
 
@@ -76,6 +94,10 @@ The Alpine client images include a SSH Client, which is used to interact with th
 ssh vntd@<name or address>
 ```
 
+!!! info "IP"
+    IP addresses can be used if the domain names are unknown or a DNS service is not available.
+    By default, all servers have a DNS-resolvable hostname.
+
 When prompted, enter the default password:
 
 ```bash
@@ -84,7 +106,3 @@ pswd
 
 The available hostnames are defined in the DNS configuration:
 - [DNS Names Assignment](../network-services/dns/server.md)
-
-!!! info
-    From the provided topology, the SSH service is available on all `server_vntd` machines.
-    By default, all servers have a DNS-resolvable hostname.

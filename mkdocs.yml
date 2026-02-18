@@ -71,7 +71,7 @@ nav:
     # - Suricata: services/suricata.md # Mayber here or somewhere else?
     # - Monitoring: services/monitoring.md
 
-  # - Operations & Troubleshooting:
+  - Operations & Troubleshooting: operations/commands.md
     # - Useful Commands: operations/commands.md
     # - Debugging Network Issues: operations/debugging.md
     

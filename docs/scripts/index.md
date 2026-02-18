@@ -1,28 +1,58 @@
+---
+title: Scripts & Automation Overview
+icon: material/script-code-outline
+---
+
 # Scripts & Automation Overview
 
-To minimize human errors and automate the workflow, the project includes a set of automation scripts. These scripts handle the repetitive tasks of building Docker images, managing lifecycle states, and interacting with the Containerlab orchestrator.
+To minimize human errors and automate the workflow, the project includes a comprehensive set of automation scripts. These tools manage the entire lifecycle of the laboratory, from building custom Docker images to orchestrating complex network topologies with Containerlab
 
 ## Core Philosophy
 
-The automation is built around three principles:
+The automation framework is built upon three fundamental principles:
 
-1.  **Centralized Control:** A single entry point (`run.sh`) manages the entire environment.
-2.  **Naming Convention:** Automatically appends `_vntd` to all images to prevent conflicts with other local projects.
-3.  **Interactive Menus:** User-friendly interfaces that guide you through operations without needing to memorize complex flags or instructions.
+<div class="grid cards" markdown>
 
-## Run script (`run.sh`)
+-   :material-hub:{ .lg .middle } **Centralized Control**
 
-Serves as the main entry point for interacting with the project. It provides a simple, command-interactive user interface that guides the user through available operations.
+    ---
 
-**Role:** Central hub for launching all management scripts.
-**Input:** None required; it relies on the directory structure.
-**Behavior:** Prompts the user to choose between functionalities and delegates execution to the appropriate sub-script.
-**Command:**
+    A single entry point (`run.sh`) provides access to every management function, eliminating the need to memorize complex CLI flags.
+
+-   :material-tag-outline:{ .lg .middle } **Naming Conventions**
+
+    ---
+
+    The system automatically enforces project-specific tags (using the `_vntd` suffix) to prevent conflicts with other local Docker resources.
+
+-   :material-monitor-dashboard:{ .lg .middle } **Interactive Guidance**
+
+    ---
+    
+    User-friendly interfaces that guide the operator through operations by removing the needing of memorize complex flags or instructions.
+
+</div>
+
+## Main Entry Point: `run.sh`
+
+The `run.sh` script, located at the project root, serves as the main entry point for interacting with the environment. It acts as a wrapper that delegates tasks to specialized scripts in the `scripts/` directory.
+
+### Execution
+
+To launch the project management menu, execute:
+
 ```bash
 ./run.sh
 ```
 
+!!! note "Permissions"
+    Ensure the script is executable before the first run: chmod +x run.sh
+
+---
+
 ## Navigation
 
-- [**Lab Management**](./lab-management.md): Detailed documentation on the scripts that deploy, destroy, and inspect network topologies.
-- [**Image Management**](./images-management.md): Explanations of how the build system constructs, imports and manages Docker images.
+The automation logic is divided into two modules:
+
+- [**Lab Management**](./lab-management.md): Orchestrates Containerlab deployments and monitors active topologies.
+- [**Image Management**](./images-management.md): Automates Docker build, import, and cleanup operations.
