@@ -1,6 +1,6 @@
 ---
 title: Operational Commands Reference
-icon: material/fontawesome-solid-code
+icon: material/code-braces
 ---
 
 # Operational Commands Reference
