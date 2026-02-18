@@ -1,8 +1,11 @@
+---
+title: DHCP Design
+icon: material/vector-polyline
+---
+
 # DHCP Service Design
 
-This document describes the **design and architecture** of the DHCP service used in the Virtual Network Threat Detection (VNTD) lab.
-
-DHCP is a **core infrastructure service** that enables scalable client connectivity while preserving strict VLAN isolation and centralized control.
+DHCP is a **core infrastructure service** that enables scalable client connectivity while maintaining strict VLAN isolation and centralized control.
 
 ---
 
@@ -19,19 +22,6 @@ DHCP is intentionally limited to **user-facing VLANs** and is not used for infra
 
 ---
 
-## Architectural Constraints
-
-The DHCP design is constrained by the following architectural choices:
-
-- VLANs are fully isolated at Layer 3.
-- The firewall is the default gateway for all enterprise VLANs.
-- User devices are located in VLAN 50 and VLAN 60.
-- Core services are centralized in the Internal Services VLAN (VLAN 40).
-
-Because DHCP relies on broadcast-based discovery, a direct client–server model is not viable.
-
----
-
 ## Centralized DHCP Architecture
 
 The lab implements a **centralized DHCP server model**, where:
@@ -42,7 +32,7 @@ The lab implements a **centralized DHCP server model**, where:
 
 This approach reflects common enterprise deployments and simplifies management, logging, and policy enforcement.
 
-### Flow
+### Traffic Flow Logic
 
 ```mermaid
 flowchart LR
@@ -50,23 +40,26 @@ flowchart LR
     Relay -->|Unicast| DHCP_Server
     DHCP_Server -->|DHCPOFFER| Relay
     Relay -->|Broadcast| Client
+
+    Client[Client VLAN 50/60] -->|Broadcast| Relay[Firewall Relay]
+    Relay -->|Unicast| Server[DHCP Server VLAN 40]
+    Server -->|Unicast| Relay
+    Relay -->|Broadcast| Client
 ```
 
 ---
 
-## Role of the Firewall
+## Architectural Constraints
 
-The firewall plays a critical role in the DHCP architecture:
+The DHCP design is constrained by the following architectural choices:
 
-- Acts as the default gateway for all VLANs.
-- Hosts the DHCP **relay agent**.
-- Enforces security policies on DHCP traffic.
+- **Isolation:** User devices (VLAN 50/60) cannot communicate directly with the server (VLAN 40) but through the firewall.
+- **Enforcement:** All DHCP traffic must traverse the firewall, where security policies can be applied.
+- **Scope:** DHCP is reserved for user workstations; infrastructure nodes (routers, servers) use static assignments to ensure stability.
 
-The firewall forwards all DHCP traffic between the allowed VLANs requesting addresses and the DHCP server.
+Because DHCP relies on broadcast-based discovery, a direct client–server model is not viable.
 
----
-
-## Design Benefits
+### Design Benefits
 
 This design provides several advantages:
 
@@ -75,11 +68,15 @@ This design provides several advantages:
 - **Maintainability:** All address pools are defined in a single location.
 - **Realism:** Mirrors enterprise DHCP deployments.
 
-The DHCP flows described align with the **Architecture → Traffic Flows** section:
-
-1. Broadcasts originate at the client.
-2. Relayed as unicast traffic by the firewall.
-3. Responses follow the reverse path.
-
-!!! tip
+!!! tip "Scalability"
     The design makes it easy to add new devices to the domains without modifying the DHCP server logic.
+
+### Role of the Firewall
+
+The firewall plays a critical role in the DHCP architecture:
+
+- Acts as the default gateway for all VLANs.
+- Hosts the DHCP **relay agent**.
+- Enforces security policies on DHCP traffic.
+
+The firewall forwards all DHCP traffic between the allowed VLANs requesting addresses and the DHCP server.

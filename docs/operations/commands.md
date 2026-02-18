@@ -132,6 +132,19 @@ Request DHCP
 dhcpcd -4 -d eth1
 ```
 
+
+## Local Inspection Tools
+
+The traffic can be inspected using:
+
+- `tcpdump -i <port> -f 'port 67 or port 68'`
+
+In which `port` is the physical port to analyze. This way, DHCP traffic can be viewed to detect any possible related issues given changes are made and the service is no longer working as intended.
+
+
+
+
+
 pc_admin:/# curl http://enterprise.local
 Hello from Nginx on the web server
 
