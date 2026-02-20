@@ -133,6 +133,8 @@ plugins:
       cover_subtitle: "Containerlab-based Network Threat Detection Lab"
       output_path: "assets/pdf/vntd-docs.pdf"
       enabled_if_env: "ENABLE_PDF"
+      custom_template_path: null
+      two_columns_level: 0
   #- with-pdf:
   #    author: Marc Chamorro
   #    cover_subtitle: Virtual Network Threat Detection Lab
@@ -167,3 +169,6 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Marc-Chamorro
+
+extra_css:
+  - pdf.css
