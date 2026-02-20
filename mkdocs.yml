@@ -119,13 +119,17 @@ theme:
     - search.highlight
     - search.suggest
 
+    - content.tabs.link
+    - content.tooltips
+    - content.print
+
 plugins:
   - search
-  - with-pdf:
-      author: Marc Chamorro
-      cover_subtitle: Virtual Network Threat Detection Lab
-      output_path: assets/pdf/vntd-docs.pdf
-      enabled_if_env: ENABLE_PDF
+  #- with-pdf:
+  #    author: Marc Chamorro
+  #    cover_subtitle: Virtual Network Threat Detection Lab
+  #    output_path: assets/pdf/vntd-docs.pdf
+  #    enabled_if_env: ENABLE_PDF
 
 markdown_extensions:
   - admonition
