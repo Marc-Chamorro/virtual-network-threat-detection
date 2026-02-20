@@ -117,7 +117,7 @@ The final stage of the project involves processing security data using Machine L
 
 - `run.sh`: Main entry point for executing, building and deploying the lab.
 - `docker/`: Contains the source code for the custom nodes (Routers, Kali, Servers, etc.).
-- `docs/`: Documentation files, also available published at: [Documentation](https://marc-chamorro.github.io/virtual-network-threat-detection/).
+- `docs/`: Documentation files, also available published at: [Docs](https://marc-chamorro.github.io/virtual-network-threat-detection/).
 - `labs/`: Contains the topology design and configuration files for individual network devices.
 - `scripts/`: Internal logic used by the environment for building and lab management.
 
@@ -134,11 +134,11 @@ The final stage of the project involves processing security data using Machine L
 **Recommendation**
 - Use a dedicated VM to ensure no malicious traffic or content accidentally spreads to any sensitive device.
 
-For detailed requirements, see: ([Docs](https://marc-chamorro.github.io/virtual-network-threat-detection/getting-started/))
+For detailed requirements, see: [Docs - GettingStarted](https://marc-chamorro.github.io/virtual-network-threat-detection/getting-started/)
 
 ## Quick Installation
 
-1. **Install Core Tools:** Follow the ([Docs](https://marc-chamorro.github.io/virtual-network-threat-detection/installation/)) to set up Docker and Containerlab.
+1. **Install Core Tools:** Follow the [Docs - Installation](https://marc-chamorro.github.io/virtual-network-threat-detection/installation/) to set up Docker and Containerlab.
 
 2. **Clone the Repo:**
 ```bash
@@ -184,12 +184,6 @@ The primary scenario provided is an **Enterprise Network** featuring multiple zo
 ![Example Topology](images/NET%20Design.svg)
 
 Additional topologies can be added by following the guidelines described in the topology documentation [Docs - Labs Overview](https://marc-chamorro.github.io/virtual-network-threat-detection/labs/).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Documentation
-
-Official documentation can be found at: [Docs](https://marc-chamorro.github.io/virtual-network-threat-detection/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
