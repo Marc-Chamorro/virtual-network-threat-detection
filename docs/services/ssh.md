@@ -105,4 +105,4 @@ pswd
 ```
 
 The available hostnames are defined in the DNS configuration:
-- [DNS Names Assignment](../network-services/dns/server.md)
+- [DNS Names Assignment](../network-services/dns/config.md)
