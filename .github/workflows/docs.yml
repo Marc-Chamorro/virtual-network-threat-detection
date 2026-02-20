@@ -34,11 +34,17 @@ jobs:
         run: |
           pip install \
             mkdocs==1.5.3 \
-            mkdocs-material==9.5.3 \
-            mkdocs-with-pdf
+            mkdocs-material[imaging]==9.5.3
 
       - name: Build site
         run: mkdocs build
+
+      - name: Generate PDF with wkhtmltopdf
+        run: |
+          mkdir -p site/assets/pdf
+          xvfb-run wkhtmltopdf \
+            site/index.html \
+            site/assets/pdf/vntd-docs.pdf
 
       - uses: actions/upload-pages-artifact@v3
         with:
