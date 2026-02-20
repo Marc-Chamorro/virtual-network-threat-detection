@@ -181,7 +181,7 @@ The primary scenario provided is an **Enterprise Network** featuring multiple zo
 
 **Enterprise Main Lab:** named `topology.clab.yml`, is the core environment used for the TFG research.
 
-![Example Topology](images/NET%20Design.svg)
+![Example Topology](docs/assets/NET%20Design.svg)
 
 Additional topologies can be added by following the guidelines described in the topology documentation [Docs - Labs Overview](https://marc-chamorro.github.io/virtual-network-threat-detection/labs/).
 
