@@ -1,0 +1,23 @@
+.md-grid {
+  display: block !important;
+}
+
+.md-main__inner {
+  display: block !important;
+}
+
+.md-sidebar {
+  display: none !important;
+}
+
+.md-header {
+  display: none !important;
+}
+
+.md-footer {
+  display: none !important;
+}
+
+.md-nav {
+  display: none !important;
+}
