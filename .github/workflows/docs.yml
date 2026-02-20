@@ -21,31 +21,30 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install system dependencies for PDF
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            wkhtmltopdf \
-            xvfb \
-            fonts-dejavu \
-            fontconfig
+      #- name: Install system dependencies for PDF
+      #  run: |
+      #    sudo apt-get update
+      #    sudo apt-get install -y \
+      #      wkhtmltopdf \
+      #      xvfb \
+      #      fonts-dejavu \
+      #      fontconfig
 
-      - name: Install MkDocs and plugins
+      #- name: Install MkDocs and plugins
+      #  run: |
+      #    pip install \
+      #      mkdocs==1.5.3 \
+      #      mkdocs-material==9.5.3 \
+      #      mkdocs-with-pdf
+
+      - name: Install MkDocs and Material
         run: |
           pip install \
             mkdocs==1.5.3 \
-            mkdocs-material==9.5.3 \
-            mkdocs-with-pdf
-
+            mkdocs-material[imaging]==9.5.3
 
       - name: Build documentation
-        run: xvfb-run -a mkdocs build
-
-      - name: Debug site structure
-        run: |
-          echo "Checking PDF output..."
-          ls -R site/assets || true
-
+        run: mkdocs build
 
       - uses: actions/upload-pages-artifact@v3
         with:
