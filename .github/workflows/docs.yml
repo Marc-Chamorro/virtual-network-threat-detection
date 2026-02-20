@@ -21,27 +21,21 @@ jobs:
         with:
           python-version: '3.11'
 
-      #- name: Install system dependencies for PDF
-      #  run: |
-      #    sudo apt-get update
-      #    sudo apt-get install -y \
-      #      wkhtmltopdf \
-      #      xvfb \
-      #      fonts-dejavu \
-      #      fontconfig
+      - name: Install system dependencies for PDF
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            wkhtmltopdf \
+            xvfb \
+            fonts-dejavu \
+            fontconfig
 
-      #- name: Install MkDocs and plugins
-      #  run: |
-      #    pip install \
-      #      mkdocs==1.5.3 \
-      #      mkdocs-material==9.5.3 \
-      #      mkdocs-with-pdf
-
-      - name: Install MkDocs and Material
+      - name: Install MkDocs and plugins
         run: |
           pip install \
             mkdocs==1.5.3 \
-            mkdocs-material==9.5.3
+            mkdocs-material==9.5.3 \
+            mkdocs-with-pdf
 
       - name: Build site
         run: mkdocs build
