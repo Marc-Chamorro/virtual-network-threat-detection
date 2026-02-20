@@ -41,11 +41,12 @@ jobs:
         run: |
           pip install \
             mkdocs==1.5.3 \
-            mkdocs-material[imaging]==9.5.3
+            mkdocs-material[imaging]==9.5.3 \
+            mkdocs-print-site-plugin
 
-      - name: Build documentation
+      - name: Build site (HTML + PDF)
         run: mkdocs build
-
+        
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
