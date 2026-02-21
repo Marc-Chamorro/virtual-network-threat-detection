@@ -145,12 +145,14 @@ plugins:
           concurrency: 4
 
           # Optional but recommended
-          stylesheets: []
+          stylesheets:
+            - resources/stylesheets/pdf.scss
 
           aggregator:
             enabled: true
             output: assets/pdf/vntd-docs.pdf
-            covers: none
+            covers:
+              front: resources/templates/covers/front.html.j2
 
 markdown_extensions:
   - admonition
