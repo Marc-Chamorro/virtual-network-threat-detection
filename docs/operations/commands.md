@@ -152,3 +152,8 @@ mutt
 - **Note:** The client does not detect new emails in real-time. You must exit and restart the program to refresh the inbox.
 
 ---
+
+
+
+# WORKING ON THIS:
+tcpdump -i eth1 icmp -nn

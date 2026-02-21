@@ -186,6 +186,8 @@ topology:
         - ip route del default
         - ip route add default via 192.168.20.1
         - ip link set eth1 promisc on                           # Promiscuous mode to see traffic not addressed to it
+        - sysctl -w net.ipv4.ip_forward=0
+        - iptables -P FORWARD DROP                 # IDS should not forward any traffic, only analyze
 
     monitoring_server:
       kind: linux
