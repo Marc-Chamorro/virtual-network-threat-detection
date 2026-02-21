@@ -152,7 +152,7 @@ plugins:
             enabled: true
             output: assets/pdf/vntd-docs.pdf
             covers:
-              front: resources/templates/covers/front.html.j2
+              front: front
 
 markdown_extensions:
   - admonition
