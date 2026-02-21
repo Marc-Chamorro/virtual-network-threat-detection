@@ -36,8 +36,11 @@ jobs:
             mkdocs==1.5.3 \
             mkdocs-material[imaging]==9.5.3
 
-      - name: Build site
-        run: mkdocs build
+      #- name: Build site
+      #  run: mkdocs build
+      # why isnt this working
+      - name: Build documentation
+        run: xvfb-run -a mkdocs build
 
       - name: Generate PDF with wkhtmltopdf
         run: |

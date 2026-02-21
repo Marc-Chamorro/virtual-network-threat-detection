@@ -137,6 +137,12 @@ plugins:
   #  add_to_navigation: false
   #  print_page_title: "Virtual Network Threat Detection"
   #  output_path: assets/pdf/vntd-docs.pdf
+  - with-pdf:
+      author: Marc Chamorro
+      cover_subtitle: Virtual Network Threat Detection Lab
+      output_path: assets/pdf/vntd-docs.pdf
+      enabled_if_env: ENABLE_PDF
+      combined: true
 
 markdown_extensions:
   - admonition
