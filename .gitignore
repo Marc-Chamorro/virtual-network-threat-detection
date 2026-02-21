@@ -2,3 +2,5 @@
 *.xz
 labs/*/
 !labs/config/
+dump_project.sh
+dump_project.txt

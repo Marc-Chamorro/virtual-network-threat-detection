@@ -1,8 +1,13 @@
+---
+title: Lab Management Scripts
+icon: material/lan-connect
+---
+
 # Lab Management Scripts
 
 Located in `scripts/clab/`, these **Containerlab** scripts provide a text-based interface to ensure safer and more convenient user experience. They handle automatic topology discovery and status checking.
 
-## Interactive Menu (`clab/menu.sh`)
+## Interactive Controller: `menu.sh`
 
 **Role:** The controller for all topology operations.
 **Input:** Project root directory.
@@ -12,7 +17,11 @@ Located in `scripts/clab/`, these **Containerlab** scripts provide a text-based 
 ./menu.sh /path/to/project/dir/virtual-network-threat-detection
 ```
 
-## Deploy Script (`clab/deploy.sh`)
+---
+
+## Core Operations
+
+### Topology Deployment (`deploy.sh`)
 
 **Role:** Deploys a network topology.
 **Input:** Project `lab/` directory.
@@ -26,7 +35,7 @@ Located in `scripts/clab/`, these **Containerlab** scripts provide a text-based 
 ./deploy.sh /path/to/project/dir/virtual-network-threat-detection/labs
 ```
 
-## Destroy Script (`clab/destroy.sh`)
+### Environment Destruction (`destroy.sh`)
 
 **Role:** Destroys a running topology.
 **Input:** Project `lab/` directory.
@@ -40,7 +49,7 @@ Located in `scripts/clab/`, these **Containerlab** scripts provide a text-based 
 ./destroy.sh /path/to/project/dir/virtual-network-threat-detection/labs
 ```
 
-## Display Script (`clab/display.sh`)
+### Visibility and Inspection (`display.sh`)
 
 **Role:** Provides environment state visibility.
 **Input:** Project `lab/` directory.
@@ -49,3 +58,20 @@ Located in `scripts/clab/`, these **Containerlab** scripts provide a text-based 
 ```bash
 ./display.sh /path/to/project/dir/virtual-network-threat-detection/labs
 ```
+
+!!! danger "Persistence Practise"
+    Avoid storing permanent configuration files inside the `clab-<name>` directories generated during deployment. Use the project's `config/` directory and binds instead.
+
+---
+
+## Technical Summary
+
+| Function    | Command Path              | Target Directory |
+|:------------|:--------------------------|:-----------------|
+| **Deploy**  | `scripts/clab/deploy.sh`  | `lab/`           |
+| **Destroy** | `scripts/clab/destroy.sh` | `lab/`           |
+| **Display** | `scripts/clab/display.sh` | `lab/`           |
+
+
+!!! tip "Free Resources"
+    After using the environment, stop it to ensure no unnecessary resources are consumed.

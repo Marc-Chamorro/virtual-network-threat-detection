@@ -1,3 +1,8 @@
+---
+title: Lab Configuration
+icon: material/file-settings-outline
+---
+
 # Lab Configuration Guidelines
 
 While the topology file defines the *structure* of the network, the behavior of the individual nodes is determined by their configuration files. In this project, we decouple configuration from the container images to allow for quick response and flexibility.
@@ -28,30 +33,30 @@ Generic Linux nodes (Debian, Alpine) often require more advanced setup sequences
 
 Instead of hardcoding commands in the `exec` section of the topology file, we use a `startup.sh` scripts mounted to the container.
 
-**Topology Definition:**
+=== "Topology Definition"
 
-```yaml
-firewall:
-  kind: linux
-  image: firewall_vntd:latest
-  binds:
-    - ./config/firewall/my-lab/startup.sh:/startup.sh
-  exec:
-    - sh /startup.sh
-```
+  ```yaml
+  firewall:
+    kind: linux
+    image: firewall_vntd:latest
+    binds:
+      - ./config/firewall/my-lab/startup.sh:/startup.sh
+    exec:
+      - sh /startup.sh
+  ```
 
-### What goes in `startup.sh`?
+=== "Script Content `startup.sh`"
 
-- **IP Addressing:** `ip addr add ...`
-- **Interface Management:** Creating bridges (`ip link add type bridge`) or VLAN sub-interfaces (`ip link add link eth0 name eth0.10 type vlan id 10`).
-- **System Toggles:** Enabling IP forwarding (`sysctl -w net.ipv4.ip_forward=1`).
-- **Security Rules:** Defining `iptables` or `nftables` policies.
+  - **IP Addressing:** `ip addr add ...`
+  - **Interface Management:** Creating bridges (`ip link add type bridge`) or VLAN sub-interfaces (`ip link add link eth0 name eth0.10 type vlan id 10`).
+  - **System Toggles:** Enabling IP forwarding (`sysctl -w net.ipv4.ip_forward=1`).
+  - **Security Rules:** Defining `iptables` or `nftables` policies.
 
 ## 3. Arista cEOS Switches
 
 Arista cEOS (Containerized EOS) nodes emulate enterprise-grade switching. They consume standard EOS CLI configuration files.
 
-!!! danger
+!!! danger "Arista Limits"
     Arista cEOS switches do not support assigning access lists to either VLANs orports. This means such switches cannot be used as a Multi Layer Switch (L3). Hence, the provided `_mls` images.
 
 ### Configuration Injection
@@ -71,7 +76,7 @@ switch_access:
 
 The file should contain standard Arista CLI commands.
 
-```
+```text title="Example Switch Config (.cli)"
 hostname switch-access
 !
 vlan 10

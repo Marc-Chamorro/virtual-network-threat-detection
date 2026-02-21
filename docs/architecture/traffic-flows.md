@@ -1,0 +1,132 @@
+---
+title: Traffic Flows
+icon: material/swap-horizontal
+---
+
+# Traffic Flows
+
+This page documents the **expected traffic flows** within the architecture and the **security logic** enforced by the network devices. Understanding these flows is critical for debugging and validating the network.
+
+---
+
+## Routing & Connectivity Logic
+
+The environment uses a hybrid routing model to ensure internal isolation while maintaining controlled external accessibility.
+
+### External Routing (OSPF)
+
+The **Enterprise Edge Router** (**router_enterprise**) uses OSPF to communicate with the Internet Core:
+- **Advertisement:** It announces the public address (`172.16.30.2/30`).
+- **Static Internal Routing:** To ensure traffic reaches internal VLANs, the router has static routes pointing all `192.168.0.0/16` traffic to the **Firewall** (`192.168.0.2`).
+
+### Internal Routing
+
+- **Default Gateway:** The firewall acts as the default gateway for all enterprise VLANs (10, 20, 30, 40, 50 & 60).
+- **Default Route:** The firewall sends all unknown traffic to the Enterprise Router interface (`192.168.0.1`).
+
+---
+
+## Security Policies (iptables)
+
+The Firewall implements a **Default DROP** policy for all INPUT and FORWARD packets. Only explicit flows are permitted.
+
+### Core Firewall Rules
+
+- **Stateful Inspection:** All established and related traffic is allowed via `conntrack`, ensuring response packets from valid connections are not blocked.
+- **Management:** ICMP (Ping) is allowed from the enterprise subnets to the firewall itself for diagnostic and testing purposes.
+- **Loopback:** Full access is allowed on the local loopback (`lo`) interface.
+
+!!! note "Policies format"
+    Policies are designed to be explicit rather than permissive.
+
+---
+
+### Inter-Zone Communication
+
+| Source          | Destination             | Permitted Traffic / Protocols                           |
+|-----------------|-------------------------|---------------------------------------------------------|
+| Admin (VLAN 30) | Any                     | Unrestricted full access to all subnets and Internet    |
+| Users (50/60)   | Internet, DMZ, Services | Web browsing, internal services access, and DNS queries |
+| Services (40)   | Admin, Users            | General connectivity and responses to internal requests |
+| Monitoring (20) | -                       | None, restricted to passive observation                 |
+| DMZ (10)        | Internet                | DNS forwarding and Outbound Mail Relay (SMTP)           |
+
+!!! note "Intra-VLAN Traffic"
+    Traffic between devices from the same VLAN is permitted and handled by the Arista L2 switches without firewall intervention (Given that both devices are found within the same switch). 
+
+---
+
+## Specific Protocol Flows
+
+### Inbound (DNAT)
+
+Accessing enterprise services from the Internet (DMZ Server) consists of a two-step process:
+
+1. **Router Enterprise:** Internet -> Firewall Link
+```bash
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to-destination 192.168.0.2
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 25 -j DNAT --to-destination 192.168.0.2
+```
+
+2. **Central Firewall:** Router Link -> DMZ Server
+```bash
+iptables -t nat -A PREROUTING -i eth1 -p tcp -m multiport --dports 80,22,53,25 -j DNAT --to-destination 192.168.10.10
+iptables -t nat -A PREROUTING -i eth1 -p udp --dport 53 -j DNAT --to-destination 192.168.10.10
+```
+
+### Outbound (SNAT)
+
+Accessing the Internet from within the network consists of:
+
+1. **Firewall:** Ensures communication policies are met, and if so, redirects traffic to the Router.
+2. **Router Enterprise:** Allows communication with the outside world through Masquerade.
+
+## Infrastructure Service Flows
+
+=== "DHCP Relay Mechanism"
+
+    Since the **DHCP Server** is found in VLAN 40, but clients are in VLAN 50/60, the firewall bridges the gap performing a relay:
+
+    1.  **Client**: Broadcasts a `DHCPDISCOVER` on its local bridge.
+    2.  **Firewall**: The `isc-dhcp-relay` service picks up the broadcast and forwards it as **unicast** to `192.168.40.10`.
+    3.  **Server**: Sends a `DHCPOFFER` back to the firewall relay.
+    4.  **Firewall**: Forwards the offer back to the originating VLAN floor.
+
+=== "DNS Resolution"
+    
+    The DMZ server provides DNS service to individuals within the enterprise network. Devices using DHCP will receive the DNS address automatically upon IP assignment. This service responds to the name addresses referencing the internal server.
+
+    Given the situation that an unknown address is received, the DNS forwards the request to the DNS located on the Internet Server:
+
+    - **Internal Query**: Clients query the `dmz_server` (`192.168.10.10`).
+    - **External Forwarding**: If the `dmz_server` cannot resolve the name, it forwards the request to the `internet_server` (`172.16.100.100`) at the Internet core.
+
+=== "Mail Service (SMTP/IMAP)" 
+
+    The mail architecture follows a hub-and-spoke model:
+
+    - **Outbound**: Internal clients send mail to the DMZ Server, which relays it to the Internet Mail Server (if the destination is not the server itself).
+    - **Inbound**: The Internet server forwards mail to the Enterprise IP, where it is sent with DNAT through the router and firewall to port 25 of the DMZ node.
+    - **Retreival**: Users access their mail via IMAP on port 143 (unencrypted for inspection purposes).
+
+### Traffic Mirroring (IDS)
+
+To enable threat detection without modifying the traffic flow or introducing latency, the firewall implements traffic mirroring using the TEE function:
+
+```mermaid
+sequenceDiagram
+    participant Ext as Internet Core
+    participant FW as Firewall
+    participant DMZ as DMZ Server
+    participant IDS as Suricata (IDS)
+
+    Ext->>FW: Malicious Packet (eth1)
+    Note over FW: iptables TEE Rule
+    FW-->>IDS: Cloned Packet (VLAN 20)
+    FW->>DMZ: Original Packet
+    IDS->>IDS: Storage and processing
+
+```
+
+- **Mechanism:** Every packet going through the Internet-facing interface (`eth1`) of the firewall is cloned and sent to the **IDS node** (`192.168.20.10`).
+- **Security Constraint:** The IDS node is strictly prohibited from sending any traffic back into the network, making sure it remains a passive observer.

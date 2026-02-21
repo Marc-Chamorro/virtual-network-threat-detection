@@ -1,29 +1,164 @@
+---
+title: Network Design
+icon: material/map-marker-path
+---
+
 # Network Design
 
-The laboratory uses a topology where the `router_internet` represents the external Internet, the `router_enterprise` serves as the enterprise edge router connecting to the outside world, and the `firewall` acts as the gateway to all internal enterprise segments.
+This page describes the **logical and physical design** of the VNTD network topology, focusing on how components are interconnected and how responsibilities are distributed 
+across the infrastructure.
 
-## IP Addressing Plan
+---
 
-The project uses a structured private IP plan to facilitate routing and firewall rule management:
+## Topology Overview
 
-| Zone | Subnet | Gateway |
-| :--- | :--- | :--- |
-| **Attacker** | 10.0.0.0/24 | 10.0.0.1 |
-| **Benign** | 20.0.0.0/24 | 20.0.0.1 |
-| **Network Core** | 192.168.0.0/30 | 192.168.0.1 |
-| **DMZ (VLAN 10)** | 192.168.10.0/24 | 192.168.10.1 |
-| **Monitoring (VLAN 20)** | 192.168.20.0/24 | 192.168.20.1 |
-| **Admin (VLAN 30)** | 192.168.30.0/24 | 192.168.30.1 |
-| **Services (VLAN 40)** | 192.168.40.0/24 | 192.168.40.1 |
-| **Floor 1 (VLAN 50)** | 192.168.50.0/24 | 192.168.50.1 |
-| **Floor 2 (VLAN 60)** | 192.168.60.0/24 | 192.168.60.1 |
+The topology simulates a **multi-zone enterprise network** connected to external devices. It is built around a central Internet core and a segmented enterprise network protected by a router and a firewall.
 
+The topology consists of:
 
-## Communication Flows & Rules
+- An Internet core router.
+- Separate external networks (attacker and benign).
+- An enterprise router.
+- A central firewall.
+- Multiple VLAN-based internal segments.
 
-The environment implements a <check if it has a name> model:
+<figure markdown="span">
+  ![Network Design](../assets/NET%20Design.svg)
+  <figcaption>Provided topology</figcaption>
+</figure>
 
-1.  **External to DMZ:** 
-2.  **Internal to External:** 
-3.  **Inter-VLAN:** 
-4.  **Traffic Mirroring:**
+```mermaid
+graph TD
+    subgraph External_Networks
+        Attacker[Attacker Network - Kali]
+        Benign[Benign Network - Alpine]
+    end
+
+    subgraph Internet_Infrastructure
+        Router_Internet[Router Internet]
+        Server_Internet[Internet Server]
+    end
+
+    subgraph Enterprise_Core
+        Router_Edge[Enterprise Edge Router]
+        Firewall[Central Firewall]
+    end
+
+    subgraph Internal_Segments
+        DMZ[VLAN 10 - DMZ Services]
+        IDS[VLAN 20 - Monitoring]
+        Admin[VLAN 30 - Management]
+        Services[VLAN 40 - Internal Services]
+        Users[VLAN 50/60 - User Floors]
+    end
+
+    Attacker --- Router_Internet
+    Benign --- Router_Internet
+    Router_Internet --- Server_Internet
+    Router_Internet --- Router_Edge
+    Router_Edge --- Firewall
+    Firewall --- DMZ
+    Firewall --- IDS
+    Firewall --- Admin
+    Firewall --- Services
+    Firewall --- Users
+```
+
+---
+
+## External Networks
+
+### Internet Core
+
+The router (`router_internet`) located at the center of the topology represents the public Internet core. It serves as the interconnection point for:
+
+- External benign traffic.
+- External attacker traffic.
+- Enterprise outbound and inbound traffic.
+
+This router uses FRRouting (FRR) to provide realistic routing behavior.
+
+Within the network, a server (`internet_server`) can be appreciated, simulating common internet services.
+
+---
+
+### Attacker Network
+
+The attacker network simulates a hostile external actor:
+
+- A dedicated router (`router_attacker`).
+- A Kali Linux-based attacker node.
+
+This network is intentionally separated to allow controlled attack generation.
+
+!!! warning
+    Attack simulations should only be executed inside this isolated environment.
+
+---
+
+### Benign Network
+
+The benign network simulates legitimate external users:
+
+- A dedicated router (`router_benign`).
+- A lightweight client node.
+
+This allows differentiation between malicious and legitimate traffic.
+
+---
+
+!!! info "Configuration Persistence"
+    All configurations for routers and switches are decoupled from the images and mounted via bind in the topology definition file. Changes applied directly on the machines do not persist.
+
+---
+
+## Enterprise Core
+
+### Enterprise Edge Router
+
+The `router_enterprise` node connects the enterprise network to the Internet. Its responsibilities include:
+
+- Routing between enterprise and external networks (`NAT`).
+- Forwarding traffic toward the firewall.
+- Acting as a clear limit between external and internal domains.
+
+---
+
+### Firewall
+
+The firewall is the **central enforcement point** of the enterprise:
+
+- Enforces inter-VLAN policies.
+- Controls inbound and outbound traffic.
+- Mirrors traffic to the IDS.
+- Hosts DHCP relay functionality.
+- Acts as the default gateway for all VLANs.
+
+!!! important "VLAN Communication"
+    All enterprise VLANs are isolated by default. Inter-VLAN communication is only possible through explicit firewall rules.
+
+---
+
+## Layer 2 Segmentation
+
+VLANs are implemented using the custom firewall images, but L2 package traffic is managed with **Arista cEOS switches**, providing realistic L2 behavior:
+
+- Access ports for end devices.
+- Trunk ports for multi-VLAN floors.
+- Clear separation between zones.
+
+Each VLAN maps to a dedicated VLAN gateway. This VLAN gateway represents the firewall. The firewall works both as a L3 switch and as a security device.
+
+---
+
+## Monitoring Placement
+
+Monitoring and IDS nodes are placed in a dedicated VLAN, reading all traffic outgoing and incoming the enterprise network, ensuring:
+
+- Visibility into enterprise traffic.
+- Isolation from services and users.
+
+Traffic mirroring and promiscuous interfaces are used where required to capture relevant packets.
+
+!!! tip
+    This placement ensures maximum visibility with minimal configuration.

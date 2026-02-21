@@ -1,8 +1,13 @@
+---
+title: Image Management Scripts
+icon: material/docker
+---
+
 # Image Management Scripts
 
-Located in `scripts/images/`, these scripts automate the **Docker** build process. These are necessary to ensure all nodes in the topology run the correct customized software versions defined in the project.
+Located in `scripts/images/`, these scripts automate the **Docker** lifecycle build process of the custom Docker images required for the laboratory infrastructure. These are necessary to ensure all nodes in the topology run the correct customized software versions defined in the project.
 
-## Interactive Menu (`images/menu.sh`)
+## Interactive Controller: `menu.sh`
 
 **Role:** The controller for all Docker operations.
 **Input:** Project root directory.
@@ -12,7 +17,11 @@ Located in `scripts/images/`, these scripts automate the **Docker** build proces
 ./menu.sh /path/to/project/dir/virtual-network-threat-detection
 ```
 
-## Create Script (`images/create.sh`)
+---
+
+## Operational Workflow
+
+### Building Custom Images (`create.sh`)
 
 **Role:** Builds custom Docker images from source.
 **Input:** Project directory.
@@ -28,7 +37,9 @@ Located in `scripts/images/`, these scripts automate the **Docker** build proces
 ./create.sh /path/to/project/dir/virtual-network-threat-detection
 ```
 
-## Import Script (`images/import.sh`)
+---
+
+### Importing External Images (`import.sh`)
 
 **Role:** Imports vendor-supplied images (e.g., Arista cEOS).
 **Input:** Project directory.
@@ -43,7 +54,9 @@ Located in `scripts/images/`, these scripts automate the **Docker** build proces
 ./import.sh /path/to/project/dir/virtual-network-threat-detection
 ```
 
-## Delete Script (`images/delete.sh`)
+---
+
+### Delete Images (`images/delete.sh`)
 
 **Role:** Cleans up the created Docker images.
 **Input:** None required.
@@ -56,7 +69,9 @@ Located in `scripts/images/`, these scripts automate the **Docker** build proces
 ./delete.sh
 ```
 
-## Display Script (`images/display.sh`)
+---
+
+### Display Available Images (`images/display.sh`)
 
 **Role:** Lists project-specific images.
 **Input:** None required.
@@ -65,3 +80,17 @@ Located in `scripts/images/`, these scripts automate the **Docker** build proces
 ```bash
 ./display.sh
 ```
+
+---
+
+## Technical Summary
+
+| Function    | Command Path                | Target Directory |
+|:------------|:----------------------------|:-----------------|
+| **Create**  | `scripts/images/create.sh`  | `docker/build/`  |
+| **Import**  | `scripts/images/import.sh`  | `docker/import/` |
+| **Delete**  | `scripts/images/delete.sh`  | Local Registry   |
+| **Display** | `scripts/images/display.sh` | Local Registry   |
+
+!!! tip "Build Optimization"
+    The build script uses the local Docker cache. If you modify a specific configuration file inside the build directory, only the affected elements will be rebuilt during the next `Create` process.

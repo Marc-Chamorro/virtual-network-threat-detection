@@ -132,7 +132,7 @@ To destroy the lab:
 containerlab destroy
 ```
 
-!!! important
+!!! danger
     Always clean up resources after testing to avoid conflicts.
 
 -------
