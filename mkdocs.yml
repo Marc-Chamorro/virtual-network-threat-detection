@@ -138,21 +138,6 @@ plugins:
   #  print_page_title: "Virtual Network Threat Detection"
   #  output_path: assets/pdf/vntd-docs.pdf
   # https://github.com/adrienbrignon/mkdocs-exporter
-  - exporter:
-      formats:
-        pdf:
-          enabled: true
-          concurrency: 4
-
-          # Optional but recommended
-          stylesheets:
-            - resources/stylesheets/pdf.scss
-
-          aggregator:
-            enabled: true
-            output: assets/pdf/vntd-docs.pdf
-            covers:
-              front: front
 
 markdown_extensions:
   - admonition
