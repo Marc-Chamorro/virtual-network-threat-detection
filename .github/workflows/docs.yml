@@ -12,8 +12,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      ENABLE_PDF: 1
     steps:
       - uses: actions/checkout@v4
 
@@ -21,27 +19,14 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install system dependencies for PDF
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            wkhtmltopdf \
-            xvfb \
-            fonts-dejavu \
-            fontconfig
-
       - name: Install dependencies
         run: |
           pip install \
             mkdocs==1.5.3 \
-            mkdocs-material==9.5.3 \
-            mkdocs-exporter==6.2.0
+            mkdocs-material==9.5.3
 
-      - name: Install Playwright browsers
-        run: |
-          playwright install --with-deps
 
-      - name: Build site with PDF
+      - name: Build site
         run: mkdocs build
 
       - uses: actions/upload-pages-artifact@v3

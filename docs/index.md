@@ -27,9 +27,6 @@ This platform is designed to deploy a **modular**, **scalable**, and fully **vir
 
 ## Project Resources
 
-<!--[:material-file-pdf-box: Download full documentation (PDF)](https://github.com/marc-chamorro/virtual-network-threat-detection){ .md-button .md-button--primary }-->
-[:material-file-pdf-box: Download full documentation (PDF)](assets/pdf/vntd-docs.pdf){ .md-button .md-button--primary }
-
 [:material-github: View on GitHub](https://github.com/marc-chamorro/virtual-network-threat-detection){ .md-button }
 
 ---
