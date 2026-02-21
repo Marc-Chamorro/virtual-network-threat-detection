@@ -1,3 +1,8 @@
+---
+title: Dockerfile Standards
+icon: material/file-code
+---
+
 # Dockerfile Standards
 
 To maintain consistency across the laboratory environment, all custom images adhere to a strict set of guidelines. These standards ensure that images are lightweight, non-interactive during build, and persistent during runtime.
@@ -6,15 +11,15 @@ To maintain consistency across the laboratory environment, all custom images adh
 
 ### 1. Non-Interactive Environment
 
-Debian and Ubuntu-based images often prompt for acceptance requests during installation. This breaks automated builds. We explicitly disable this:
+To prevent build failures caused by package managers requesting user input, images are configured for non-interactive environments.
 
 ```dockerfile
 ENV DEBIAN_FRONTEND=noninteractive
 ```
 
-### 2. Image Cleanup
+### 2. Image Optimization (Cleanup)
 
-To keep the footprint small, package lists (apt cache) are removed in the same RUN instruction as the installation. This prevents the cache from being committed to the image layer.
+To keep image sizes minimal, cached package lists are removed within the same RUN instruction once the software is installed. This prevents the cache from being stored unnecessarily.
 
 **Pattern:**
 
@@ -25,11 +30,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 ```
 
+> This prevents the cache from being stored unnecessarily.
+
 ### 3. Service Persistence
 
 In a standard Docker environment, a container exits as soon as its main process finishes. However, a network node (like a router) must stay alive even if it's doing nothing but listening.
 
-If no specific service (like a web server) keeps the container occupied, we use:
+If no specific service (like a web server) keeps the container occupied, use:
 
 ```Dockerfile
 CMD ["sleep", "infinity"]

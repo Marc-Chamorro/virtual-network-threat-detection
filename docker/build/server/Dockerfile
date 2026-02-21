@@ -8,6 +8,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 # openssh-server: Remote access
 # nginx: Web server
 # isc-dhcp-server: Dynamic host configuration
+# dnsmasq: DNS Service
+# vsftpd: FTP Service
+# postfix: email sender
+# dovecot: email destination tray (don't install POP3)
 RUN apt-get update && apt-get install -y \
     iproute2 \
     iputils-ping \
@@ -17,13 +21,22 @@ RUN apt-get update && apt-get install -y \
     procps \
     openssh-server \
     nginx \
+    vim \
     isc-dhcp-server \
+    dnsmasq \
+    vsftpd \
+    postfix \
+    dovecot-core \
+    dovecot-imapd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy entrypoint script and set executable permissions
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
+
+# Directory for all the users used
+RUN mkdir -p /mail-users
 
 # Execute the entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]

@@ -17,11 +17,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Enable OSPF daemon by default in FRR configuration
-RUN sed -i 's/ospfd=no/ospfd=yes/' /etc/frr/daemons
+# Copy entrypoint script and set executable permissions
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 
-# Enable IP Forwarding persistently in sysctl.conf
-RUN echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
-
-# Keep the container alive
-CMD ["sleep", "infinity"]
+# Execute the entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
