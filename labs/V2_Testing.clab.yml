@@ -1,0 +1,38 @@
+name: virtual-env
+
+topology:
+  nodes:
+    # VLAN 20 - Monitoring & IDS
+    #----------------------------------------------------------------------------------------------
+    switch_vlan20:
+      kind: arista_ceos
+      image: ceos_vntd:latest
+      startup-config: ./config/switch/enterprise/config_v20.cli
+
+    ids:
+      kind: linux
+      image: ids_vntd:latest
+      env:
+        IFACE: "eth1"
+        IP_ADDR: "192.168.20.10/24"
+        IP_GTWY: "192.168.20.1"
+        IDS_SURICATA: 1
+      binds:
+        - ./config/ids/suricata/suricata.yaml:/etc/suricata/suricata.yaml
+        - ./config/ids/startup.sh:/startup.sh
+      exec:
+        - sh /startup.sh
+
+    monitoring_server:
+      kind: linux
+      image: monitoring_vntd:latest
+      exec:
+        - ip addr add 192.168.20.11/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 192.168.20.1
+
+  links:
+    # VLAN 20
+    - endpoints: ["switch_vlan20:eth2", "ids:eth1"]
+    - endpoints: ["switch_vlan20:eth3", "monitoring_server:eth1"]
