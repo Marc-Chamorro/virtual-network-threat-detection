@@ -180,14 +180,21 @@ topology:
     ids:
       kind: linux
       image: ids_vntd:latest
+      env:
+        IDS: 1
+        IFACE: "eth1"
+      binds:
+        - ./config/ids/suricata/suricata.yaml:/etc/suricata/suricata.yaml
+        - ./config/ids/startup.sh::/startup.sh
       exec:
         - ip addr add 192.168.20.10/24 dev eth1
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.20.1
         - ip link set eth1 promisc on                           # Promiscuous mode to see traffic not addressed to it
-        - sysctl -w net.ipv4.ip_forward=0
-        - iptables -P FORWARD DROP                 # IDS should not forward any traffic, only analyze
+        - sh /startup.sh
+        #- sysctl -w net.ipv4.ip_forward=0
+        #- iptables -P FORWARD DROP                 # IDS should not forward any traffic, only analyze
 
     monitoring_server:
       kind: linux

@@ -157,3 +157,31 @@ mutt
 
 # WORKING ON THIS:
 tcpdump -i eth1 icmp -nn
+
+Testing suricata configuration:
+suricata -T -c /etc/suricata/suricata.yaml
+
+To see the suricata logs perfectly:
+docker logs -f clab-virtual-env-ids
+
+View the logs data as it grows
+docker exec -it clab-virtual-env-ids tail -f /var/log/suricata/eve.json
+
+From suricata i'll need:
+Flow metadata
+
+Timing
+
+Bytes
+
+Ports
+
+Protocol
+
+Flags
+
+DNS queries
+
+HTTP hostnames
+
+TLS fingerprints
