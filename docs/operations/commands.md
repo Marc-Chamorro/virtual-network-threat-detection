@@ -166,22 +166,41 @@ docker logs -f clab-virtual-env-ids
 
 View the logs data as it grows
 docker exec -it clab-virtual-env-ids tail -f /var/log/suricata/eve.json
+tail -f /var/log/suricata/eve.json
+
+View the logs that only contain certain words:
+docker logs -f clab-virtual-env-ids 2>&1 | grep -Ei 'elastic|filebeat|elasticsearch|kibana'
+
+Health:
+curl http://192.168.20.11:9200/_cluster/health?pretty
+
+See machines usage cponsumption:
+docker stats
+
+curl -s http://localhost:5066/stats
+
+curl -s "http://192.168.20.11:9200/_cat/indices?v"
+curl -X GET "http://192.168.20.11:9200/_cat/indices?v"
+curl -X GET "http://192.168.20.11:9200/_cat/shards?v"
+curl 192.168.20.11:9200/_cat/indices?v
+curl 192.168.20.11:9200/_data_stream?pretty
+
+All traffic:
+tcpdump -i eth1 -nn
+
+Suricata logs:
+tail -f /var/log/suricata/suricata.log
+
+new token?
+/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
 
 From suricata i'll need:
 Flow metadata
-
 Timing
-
 Bytes
-
 Ports
-
 Protocol
-
 Flags
-
 DNS queries
-
 HTTP hostnames
-
 TLS fingerprints

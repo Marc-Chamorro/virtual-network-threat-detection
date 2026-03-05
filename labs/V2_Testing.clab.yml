@@ -17,20 +17,28 @@ topology:
         IP_ADDR: "192.168.20.10/24"
         IP_GTWY: "192.168.20.1"
         IDS_SURICATA: 1
+        FT_FILEBEAT: 1
+        no_proxy: "192.168.20.11,localhost,127.0.0.1"
+        NO_PROXY: "192.168.20.11,localhost,127.0.0.1"
       binds:
         - ./config/ids/suricata/suricata.yaml:/etc/suricata/suricata.yaml
-        - ./config/ids/startup.sh:/startup.sh
-      exec:
-        - sh /startup.sh
+        - ./config/ids/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
+        - ./config/ids/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
 
     monitoring_server:
       kind: linux
       image: monitoring_vntd:latest
-      exec:
-        - ip addr add 192.168.20.11/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.20.1
+      env:
+        IFACE: "eth1"
+        IP_ADDR: "192.168.20.11/24"
+        IP_GTWY: "192.168.20.1"
+        ELASTIC: 1
+        NODE_OPTIONS: "--max-old-space-size=1024"
+      binds:
+        - ./config/monitoring/elasticsearch/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
+        - ./config/monitoring/elasticsearch/heap.options:/etc/elasticsearch/jvm.options.d/heap.options
+        - ./config/monitoring/kibana/kibana.yml:/etc/kibana/kibana.yml
+        - ./config/monitoring/kibana/node.options:/etc/kibana/node.options
 
   links:
     # VLAN 20

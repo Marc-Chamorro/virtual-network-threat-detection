@@ -35,6 +35,8 @@ RUN echo "deb https://artifacts.elastic.co/packages/8.x/apt stable main" \
 
 RUN apt-get update && apt-get install -y \
     filebeat \
+    elasticsearch \
+    kibana \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
