@@ -306,8 +306,8 @@ outputs:
             deltas: no        # include delta values
         # vntd
         # bi-directional flows
-        - flows:
-            enabled: yes
+        - flow:
+            #enabled: yes
             # Include additional metadata
             metadata: yes
 
@@ -627,7 +627,7 @@ af-packet:
     use-mmap: yes # Performance and reduce packet loss (use shared memory)
     # Lock memory map to avoid it being swapped. Be careful that over
     # subscribing could lock your system
-    mmap-locked: yes # Stability and performance (keep packets in memory)
+    mmap-locked: no # Stability and performance (keep packets in memory), disable it to make it more secure (try later with yes - vntd)
     # Use tpacket_v3 capture mode, only active if use-mmap is true
     # Don't use it in IPS or TAP mode as it causes severe latency
     tpacket-v3: yes # Efficient (groups multiple packets before sending to suricata, good for IDS, not so good for IPS)
