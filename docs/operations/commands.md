@@ -191,6 +191,8 @@ tcpdump -i eth1 -nn
 Suricata logs:
 tail -f /var/log/suricata/suricata.log
 
+docker stats
+
 new token?
 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
 

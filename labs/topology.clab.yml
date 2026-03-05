@@ -177,33 +177,24 @@ topology:
       image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v20.cli
 
-    ids:
+    # ! Requires many resources to opperate !
+    logwatch:
       kind: linux
-      image: ids_vntd:latest
+      image: logwatch_vntd:latest
       env:
-        IDS: 1
         IFACE: "eth1"
+        IP_ADDR: "192.168.20.10/24"
+        IP_GTWY: "192.168.20.1"
+        SURICATA_SERVICE: 1                         
+        ELASTIC_STACK: 1                                        # Filebeat + Elasticsearch + Kibana
       binds:
         - ./config/ids/suricata/suricata.yaml:/etc/suricata/suricata.yaml
-        - ./config/ids/startup.sh::/startup.sh
-      exec:
-        - ip addr add 192.168.20.10/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.20.1
-        - ip link set eth1 promisc on                           # Promiscuous mode to see traffic not addressed to it
-        - sh /startup.sh
-        #- sysctl -w net.ipv4.ip_forward=0
-        #- iptables -P FORWARD DROP                 # IDS should not forward any traffic, only analyze
-
-    monitoring_server:
-      kind: linux
-      image: monitoring_vntd:latest
-      exec:
-        - ip addr add 192.168.20.11/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.20.1
+        - ./config/ids/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
+        - ./config/ids/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
+        - ./config/monitoring/elasticsearch/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
+        - ./config/monitoring/elasticsearch/heap.options:/etc/elasticsearch/jvm.options.d/heap.options
+        - ./config/monitoring/kibana/kibana.yml:/etc/kibana/kibana.yml
+        - ./config/monitoring/kibana/node.options:/etc/kibana/node.options
 
     # VLAN 30 - Administration
     #----------------------------------------------------------------------------------------------
@@ -353,8 +344,7 @@ topology:
 
       # VLAN 20
     - endpoints: ["firewall:eth3", "switch_vlan20:eth1"]
-    - endpoints: ["switch_vlan20:eth2", "ids:eth1"]
-    - endpoints: ["switch_vlan20:eth3", "monitoring_server:eth1"]
+    - endpoints: ["switch_vlan20:eth2", "logwatch:eth1"]
 
       # VLAN 30
     - endpoints: ["firewall:eth4", "switch_vlan30:eth1"]
