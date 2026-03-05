@@ -23,7 +23,7 @@ ip link set "$IFACE" promisc on
 PIDS=()
 
 # Suricata
-if [ "$ENABLE_ALL" == "1" ]; then
+if [ "$SURICATA_SERVICE" == "1" ]; then
 
     echo "Starting Suricata on $IFACE..."
     # -D to run on the background - LATER CHECK IF THE -i IS NECESSARY
@@ -37,7 +37,7 @@ if [ "$ENABLE_ALL" == "1" ]; then
 fi
 
 # Elasticsearch
-if [ "$ENABLE_ALL" == "1" ]; then
+if [ "$SURICATA_SERVICE" == "1" ]; then
 
     echo "Starting Elasticsearch..."
     sysctl -w vm.max_map_count=262144
@@ -62,7 +62,7 @@ if [ "$ENABLE_ALL" == "1" ]; then
     echo "Elasticsearch started with PID $!"
 
     # Wait for Elasticsearch to be ready
-    until curl -s http://localhost:9200 >/dev/null 2>&1; do
+    while ! curl -s http://localhost:9200 >/dev/null 2>&1; do
         sleep "$RETRY_DELAY"
         echo "Waiting for Elasticsearch to be ready..."
     done
@@ -71,7 +71,7 @@ if [ "$ENABLE_ALL" == "1" ]; then
 fi
 
 # Kibana
-if [ "$ENABLE_ALL" == "1" ]; then
+if [ "$SURICATA_SERVICE" == "1" ]; then
     echo "Starting Kibana..."
     #su -s /bin/bash kibana -c "kibana -e -c /etc/kibana/kibana.yml" &
     #su -s /bin/bash kibana -c "/usr/share/kibana/bin/kibana -e -c /etc/kibana/kibana.yml" &
@@ -80,7 +80,7 @@ if [ "$ENABLE_ALL" == "1" ]; then
     echo "Kibana started with PID $!"
 
     # Wait for Kibana to be ready
-    until curl -s http://localhost:5601 >/dev/null 2>&1; do
+    while ! curl -s http://localhost:5601 >/dev/null 2>&1; do
         sleep "$RETRY_DELAY"
         echo "Waiting for Kibana to be ready..."
     done
@@ -88,7 +88,16 @@ if [ "$ENABLE_ALL" == "1" ]; then
 fi
 
 # Filebeat
-if [ "$ENABLE_ALL" == "1" ]; then
+if [ "$SURICATA_SERVICE" == "1" ]; then
+
+    # Fix permissions
+    echo "Setting Filebeat permissions..."
+    chown root:root /etc/filebeat/filebeat.yml
+    chmod 600 /etc/filebeat/filebeat.yml
+    if [ -f /etc/filebeat/modules.d/suricata.yml ]; then
+        chown root:root /etc/filebeat/modules.d/suricata.yml
+        chmod 644 /etc/filebeat/modules.d/suricata.yml
+    fi
 
     echo "Enabling Filebeat modules..."
     # Enable Suricata module if not already enabled
