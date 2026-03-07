@@ -133,9 +133,6 @@ iptables -A FORWARD -s 192.168.20.10 -j DROP
 # Unrestricted access to all other subnets
 iptables -A FORWARD -s 192.168.30.0/24 -j ACCEPT
 
-# Allow responses to the device from the internet
-#iptables -A FORWARD -i eth1 -d 192.168.30.0/24 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-
 # VLAN 40 - Internal services
 #--------------------------------------------------------------------------------------------------
 
@@ -153,16 +150,10 @@ iptables -A FORWARD -i br-vlan50 -o eth1 -j ACCEPT
 iptables -A FORWARD -i br-vlan50 -d 192.168.10.0/24 -j ACCEPT
 iptables -A FORWARD -i br-vlan50 -d 192.168.40.0/24 -j ACCEPT
 
-# Allow responses to the device from the internet
-#iptables -A FORWARD -i eth1 -o br-vlan60 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-
 # VLAN 60 ---------------------------------------
 iptables -A FORWARD -i br-vlan60 -o eth1 -j ACCEPT
 iptables -A FORWARD -i br-vlan60 -d 192.168.10.0/24 -j ACCEPT
 iptables -A FORWARD -i br-vlan60 -d 192.168.40.0/24 -j ACCEPT
-
-# Allow responses to the device from the internet
-#iptables -A FORWARD -i eth1 -o br-vlan60 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 # Start the DHCP Relay service once all bridges have been built and configured
 if [ "$DHCP_RELAY" = "1" ]; then
@@ -194,4 +185,3 @@ if [ "$DHCP_RELAY" = "1" ]; then
 fi
 
 # By default, all Forward packets if not specified are dropped (set on the Firewall entrypoint script)
-# iptables -P FORWARD DROP
