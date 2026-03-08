@@ -15,6 +15,9 @@ RUN apk update && apk upgrade --no-cache && apk add --no-cache \
 # Necessary folder for mutt not created automatically
 RUN mkdir -p /root/.mutt
 
-# Default command to keep the container running
-CMD ["sleep", "infinity"]
+# Copy entrypoint script and set executable permissions
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 
+# Execute the entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
