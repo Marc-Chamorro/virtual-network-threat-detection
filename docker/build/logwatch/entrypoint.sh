@@ -8,15 +8,15 @@ RETRY_DELAY=5
 ELASTIC_HOST="http://localhost:9200"
 KIBANA_HOST="http://localhost:5601"
 
-ADMIN_USER="elastic"
-ADMIN_PASSWORD=""
+ELASTIC_USER="elastic"
+ELASTIC_PASSWORD=""             # Set later
 ADMIN_LOGIN="admin"
 ADMIN_LOGIN_PASSWORD="12345aA"
 
 KIBANA_PASSWORD="pswd_vntd"
 FILEBEAT_ROLE="filebeat_writer"
 FILEBEAT_USER="filebeat_internal"
-BEATS_PASSWORD="pswd_vntd"
+FILEBEAT_PASSWORD="pswd_vntd"
 
 # Wait for the interface to be up
 while ! ip link show "${IFACE}" >/dev/null 2>&1; do
@@ -77,19 +77,21 @@ if [ "$ELASTIC_STACK" == "1" ]; then
     echo "Elastic password: $ELASTIC_PASSWORD"
 
     # Wait for elasticsearch security system to be up before creating the users / roles
-    while ! curl -s -u $ADMIN_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_security/_authenticate >/dev/null; do
+    while ! curl -s -u $ELASTIC_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_security/_authenticate >/dev/null; do
         echo "Waiting for Elasticsearch security..."
         sleep $RETRY_DELAY
     done
     echo "Elasticsearch security ready"
 
+    echo "Configuring passwords..."
+
     # Set kibana_system password (already provided by elasticsearch)
-    curl -s -X POST -u $ADMIN_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_security/user/kibana_system/_password \
+    curl -s -X POST -u $ELASTIC_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_security/user/kibana_system/_password \
     -H "Content-Type: application/json" \
     -d "{\"password\":\"$KIBANA_PASSWORD\"}"
 
     # Create a new role for the filebeat system so it can send data
-    curl -u $ADMIN_USER:$ELASTIC_PASSWORD -X POST "$ELASTIC_HOST"/_security/role/"$FILEBEAT_ROLE" \
+    curl -u $ELASTIC_USER:$ELASTIC_PASSWORD -X POST "$ELASTIC_HOST"/_security/role/"$FILEBEAT_ROLE" \
     -H "Content-Type: application/json" \
     -d '{
         "cluster": ["monitor", "read_ilm", "read_pipeline", "manage_ilm", "manage", "all"],
@@ -102,7 +104,7 @@ if [ "$ELASTIC_STACK" == "1" ]; then
     }'
 
     # Create a new user with the previously created role 
-    curl -u $ADMIN_USER:$ELASTIC_PASSWORD -X POST "$ELASTIC_HOST"/_security/user/"$FILEBEAT_USER" \
+    curl -u $ELASTIC_USER:$ELASTIC_PASSWORD -X POST "$ELASTIC_HOST"/_security/user/"$FILEBEAT_USER" \
     -H "Content-Type: application/json" \
     -d "{
         \"password\": \"$FILEBEAT_PASSWORD\",
@@ -114,7 +116,7 @@ if [ "$ELASTIC_STACK" == "1" ]; then
 
     # New user to connect to the kibana web service
     echo "Create new user to connect to the web"
-    curl -X POST -u $ADMIN_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_security/user/"$ADMIN_LOGIN" \
+    curl -X POST -u $ELASTIC_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_security/user/"$ADMIN_LOGIN" \
     -H "Content-Type: application/json" \
     -d "{
         \"password\": \"$ADMIN_LOGIN_PASSWORD\",
@@ -124,63 +126,59 @@ if [ "$ELASTIC_STACK" == "1" ]; then
     echo "New superuser created [$ADMIN_LOGIN - $ADMIN_LOGIN_PASSWORD]"
 
 
-    while ! curl -s -u $ADMIN_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_security/_authenticate >/dev/null; do
+    while ! curl -s -u $ELASTIC_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_security/_authenticate >/dev/null; do
         sleep $RETRY_DELAY
     done
-
     echo "Elasticsearch security ready"
 
 fi
 
 # Kibana
 if [ "$ELASTIC_STACK" == "1" ]; then
-    echo "Configuring Kibana authentication..."
 
     echo "Starting Kibana..."
-    #su -s /bin/bash kibana -c "kibana -e -c /etc/kibana/kibana.yml" &
-    #su -s /bin/bash kibana -c "/usr/share/kibana/bin/kibana -e -c /etc/kibana/kibana.yml" &
     su -s /bin/bash kibana -c "/usr/share/kibana/bin/kibana" &
     PIDS+=($!)
     echo "Kibana started with PID $!"
 
     # Wait for Kibana to be ready
-    until curl -s http://localhost:5601/api/status >/dev/null; do
-        echo "Waiting for Kibana to start..."
-        sleep $RETRY_DELAY
-    done
-    echo "Kibana ready"
-
-    until curl -s http://localhost:5601/api/status | grep -q '"level":"available"'; do
+    while ! curl -s "$KIBANA_HOST"/api/status | grep -q '"level":"available"'; do
         echo "Waiting for Kibana to become available..."
         sleep $RETRY_DELAY
     done
-    echo "Kibana fully ready"
+    echo "Kibana ready"
 fi
 
 # Filebeat
-if (( SURICATA_SERVICE + ELASTIC_STACK == 1 )); then
+if [ "$SURICATA_SERVICE" == "1" ] && [ "$ELASTIC_STACK" == "1" ]; then
 
-    # Fix permissions
+    # Fix permissions for the binded files
     echo "Setting Filebeat permissions..."
     chown root:root /etc/filebeat/filebeat.yml
     chmod 600 /etc/filebeat/filebeat.yml
+
     if [ -f /etc/filebeat/modules.d/suricata.yml ]; then
         chown root:root /etc/filebeat/modules.d/suricata.yml
         chmod 644 /etc/filebeat/modules.d/suricata.yml
     fi
 
+    # Rather than changing on the configuration file, only start the specified modules
     echo "Enabling Filebeat modules..."
-    # Enable Suricata module if not already enabled
     if ! filebeat modules list | grep -q "^suricata.*enabled"; then
         filebeat modules enable suricata
         echo "Suricata module enabled"
     fi
 
+    # Prepare Elastic to receive, parse and visualize logs correctly. It loads crucial elements like:
+    # - Templates
+    # - Ingest pipelines
+    # - Pre-built dashboards
     echo "Running Filebeat setup..."
     filebeat setup \
-    -E output.elasticsearch.username=elastic \
+    -E output.elasticsearch.username=$ELASTIC_USER \
     -E output.elasticsearch.password=$ELASTIC_PASSWORD \
-    -E setup.kibana.host=http://localhost:5601
+    -E setup.kibana.host=$KIBANA_HOST
+    echo "Filebeat setup completed"
 
     echo "Starting Filebeat..."
     filebeat -e -c /etc/filebeat/filebeat.yml &
