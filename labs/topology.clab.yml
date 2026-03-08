@@ -82,6 +82,8 @@ topology:
     benign:
       kind: linux
       image: alpine_vntd:latest
+      env:
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/mutt/internet/olivia:/root/.mutt/muttrc
       exec:
@@ -89,10 +91,6 @@ topology:
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 20.0.0.1
-        # Mail Agent (MUTT)
-        - mkdir -p /root/.mutt/cache/headers
-        - mkdir -p /root/.mutt/cache/bodies
-        - touch /root/.mutt/certificates
       dns:
         servers:
           - 172.16.100.100
@@ -185,8 +183,8 @@ topology:
         IFACE: "eth1"
         IP_ADDR: "192.168.20.10/24"
         IP_GTWY: "192.168.20.1"
-        SURICATA_SERVICE: 1                         
-        ELASTIC_STACK: 1                                        # Filebeat + Elasticsearch + Kibana
+        SURICATA_SERVICE: 0                         
+        ELASTIC_STACK: 0                                      # Filebeat + Elasticsearch + Kibana
       binds:
         - ./config/ids/suricata/suricata.yaml:/etc/suricata/suricata.yaml
         - ./config/ids/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
@@ -206,6 +204,8 @@ topology:
     pc_admin:
       kind: linux
       image: alpine_vntd:latest
+      env:
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/mutt/enterprise/lois:/root/.mutt/muttrc
       exec:
@@ -213,10 +213,6 @@ topology:
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.30.1
-        # For MUTT
-        - mkdir -p /root/.mutt/cache/headers
-        - mkdir -p /root/.mutt/cache/bodies
-        - touch /root/.mutt/certificates
       dns:
         servers:
           - 192.168.10.10
@@ -266,10 +262,7 @@ topology:
         IFACE: "eth1"
         MUTT_CLIENT: 1
       binds:
-        - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
-      exec:
-        - sh /startup.sh
 
     pc_vlan60_1:
       kind: linux
@@ -279,10 +272,7 @@ topology:
         IFACE: "eth1"
         MUTT_CLIENT: 1
       binds:
-        - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/emma:/root/.mutt/muttrc
-      exec:
-        - sh /startup.sh
 
     # VLAN 50 & 60 - User floor 2
     #----------------------------------------------------------------------------------------------
@@ -299,10 +289,7 @@ topology:
         IFACE: "eth1"
         MUTT_CLIENT: 1
       binds:
-        - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/barry:/root/.mutt/muttrc
-      exec:
-        - sh /startup.sh
 
     pc_vlan60_2:
       kind: linux
@@ -312,10 +299,7 @@ topology:
         IFACE: "eth1"
         MUTT_CLIENT: 1
       binds:
-        - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/clark:/root/.mutt/muttrc
-      exec:
-        - sh /startup.sh
 
   # ===============================================================================================
   # Physical links between nodes
