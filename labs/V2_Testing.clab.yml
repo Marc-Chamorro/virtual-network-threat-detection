@@ -21,13 +21,13 @@ topology:
         SURICATA_SERVICE: 1                         
         ELASTIC_STACK: 1                                        # Filebeat + Elasticsearch + Kibana
       binds:
-        - ./config/ids/suricata/suricata.yaml:/etc/suricata/suricata.yaml
-        - ./config/ids/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
-        - ./config/ids/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
-        - ./config/monitoring/elasticsearch/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
-        - ./config/monitoring/elasticsearch/heap.options:/etc/elasticsearch/jvm.options.d/heap.options
-        - ./config/monitoring/kibana/kibana.yml:/etc/kibana/kibana.yml
-        - ./config/monitoring/kibana/node.options:/etc/kibana/node.options
+        - ./config/logwatch/suricata/suricata.yaml:/etc/suricata/suricata.yaml
+        - ./config/logwatch/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
+        - ./config/logwatch/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
+        - ./config/logwatch/elasticsearch/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
+        - ./config/logwatch/elasticsearch/heap.options:/etc/elasticsearch/jvm.options.d/heap.options
+        - ./config/logwatch/kibana/kibana.yml:/etc/kibana/kibana.yml
+        - ./config/logwatch/kibana/node.options:/etc/kibana/node.options
 
     client:
       kind: linux
@@ -37,7 +37,6 @@ topology:
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.20.1
-
 
   links:
     # VLAN 20
