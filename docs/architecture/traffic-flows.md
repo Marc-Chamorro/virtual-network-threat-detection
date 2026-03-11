@@ -111,7 +111,8 @@ Accessing the Internet from within the network consists of:
 
 ### Traffic Mirroring (IDS)
 
-To enable threat detection without modifying the traffic flow or introducing latency, the firewall implements traffic mirroring using the TEE function:
+To enable threat detection without modifying the traffic flow or introducing latency, the firewall implements traffic mirroring using the **`TEE`** function. And with the addition of the **Logwatch** node, the architecture supports a complete security flow:
+
 
 ```mermaid
 sequenceDiagram
@@ -132,6 +133,20 @@ sequenceDiagram
 - **Security Constraint:** The IDS node is strictly prohibited from sending any traffic back into the network, making sure it remains a passive observer.
 
 The **logwatch node** receives mirrored traffic and performs the following processing pipeline:
+
+```mermaid
+graph LR
+    FW[Central Firewall] -->|TEE / Traffic Mirroring| IDS[Suricata IDS]
+    IDS -->|JSON Event Logs| FB[Filebeat]
+    FB -->|Port 9200| ES[Elasticsearch]
+    ES -->|Visualization| KB[Kibana]
+
+    subgraph Monitoring_Stack [Logwatch Node]
+        ES
+        KB
+        FB
+    end
+```
 
 1. **Packet Inspection**
     Suricata analyzes packets in real time and generates structured JSON registers.

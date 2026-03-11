@@ -232,7 +232,7 @@ pc_vlan50_1:
     - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
 ```
 
-!!! important
+!!! important "Anchor overwrite value"
   When a node uses an anchor, its values / settings can be overwritten by simply setting a new value in the already defined parameter.
 
 This technique provides the benefits of:
@@ -253,6 +253,15 @@ Allow assigning common runtime behaviour such as startup stages and health check
 However, a node can belong to **only one group**.
 
 Therefore, groups are mainly used for **deployment management**. These are not intended for creating templates.
+
+Devices are assigned to a specific group:
+
+| Group        | Description                 | Nodes                                                |
+|--------------|-----------------------------|------------------------------------------------------|
+| **watcher**  | Threat detection and Logs   | `logwatch`                                           |
+| **switches** | Enterprise core devices     | `switch_*`, `firewall`                               |
+| **routers**  | All routers available       | `router_*`                                           |
+| **hosts**    | Servers and users connected | `*_server`, `attacker`, `benign`, `pc_admin`, `pc_*` |
 
 ### Kinds
 

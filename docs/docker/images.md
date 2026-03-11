@@ -32,7 +32,7 @@ The project utilizes two primary base environments configured for either robust 
 
 ---
 
-## Network Nodes
+## Network & Infrastructure Nodes
 
 ### Router (`router_vntd`)
 A general-purpose Linux router. Unlike the official FRR image, this image is built on Debian and installs the FRR service via package managers, allowing for more system-level manipulation.
