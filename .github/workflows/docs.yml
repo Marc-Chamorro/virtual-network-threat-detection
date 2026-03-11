@@ -36,6 +36,7 @@ jobs:
             mkdocs==1.5.3 \
             mkdocs-material==9.5.3 \
             mkdocs-with-pdf \
+            mkdocs-git-revision-date-localized-plugin \
             weasyprint
 
 
