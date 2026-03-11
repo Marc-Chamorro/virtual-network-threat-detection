@@ -120,8 +120,6 @@ theme:
     - navigation.footer
     - navigation.indexes
 
-    - content.action.edit
-
     #- toc.integrate
     - toc.follow
 
@@ -139,6 +137,8 @@ theme:
 
 plugins:
   - search
+  - social
+  - offline
 
   - git-revision-date-localized
 
