@@ -1,0 +1,18 @@
+/* Fix Material cards grid for PDF rendering */
+
+@media print {
+
+  /* Disable grid layout */
+  .grid.cards {
+    display: block !important;
+  }
+
+  /* Make cards render vertically */
+  .grid.cards > * {
+    display: block !important;
+    margin-bottom: 1.5rem !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+}
