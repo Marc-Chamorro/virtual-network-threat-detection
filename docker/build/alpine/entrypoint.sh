@@ -16,6 +16,11 @@ if [ "$DHCP_CLIENT" == "1" ]; then
     IFACE="${IFACE:-eth1}"
     RETRY_DELAY=5
 
+    # Wait for the interface to be up
+    while ! ip link show "${IFACE}" >/dev/null 2>&1; do
+        sleep "$RETRY_DELAY"
+    done
+
     ip link set "$IFACE" up
 
     # Delete the default route assigned by Containerlab
@@ -37,3 +42,6 @@ if [ "$DHCP_CLIENT" == "1" ]; then
         sleep "$RETRY_DELAY"
     done
 fi
+
+# Keep the container running
+sleep infinity

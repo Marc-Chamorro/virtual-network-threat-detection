@@ -148,7 +148,7 @@ End-user systems use the Mutt mail client for sending and retrieving emails.
 ```sh
 mutt
 ```
-- **Editor Usage:** When setting up mail, use the built-in editor. To save changes and exit the editor, use the command `:wq`.
+- **Editor Usage:** When setting up mail, use the built-in editor. To start writing use the `i` button. To save changes and exit the editor, use the command `:wq`.
 - **Note:** The client does not detect new emails in real-time. You must exit and restart the program to refresh the inbox.
 
 ---
@@ -157,3 +157,52 @@ mutt
 
 # WORKING ON THIS:
 tcpdump -i eth1 icmp -nn
+
+Testing suricata configuration:
+suricata -T -c /etc/suricata/suricata.yaml
+
+To see the suricata logs perfectly:
+docker logs -f clab-virtual-env-ids
+
+View the logs data as it grows
+docker exec -it clab-virtual-env-ids tail -f /var/log/suricata/eve.json
+tail -f /var/log/suricata/eve.json
+
+View the logs that only contain certain words:
+docker logs -f clab-virtual-env-ids 2>&1 | grep -Ei 'elastic|filebeat|elasticsearch|kibana'
+
+Health:
+curl http://192.168.20.11:9200/_cluster/health?pretty
+
+See machines usage cponsumption:
+docker stats
+
+curl -s http://localhost:5066/stats
+
+curl -s "http://192.168.20.11:9200/_cat/indices?v"
+curl -X GET "http://192.168.20.11:9200/_cat/indices?v"
+curl -X GET "http://192.168.20.11:9200/_cat/shards?v"
+curl 192.168.20.11:9200/_cat/indices?v
+curl 192.168.20.11:9200/_data_stream?pretty
+
+All traffic:
+tcpdump -i eth1 -nn
+
+Suricata logs:
+tail -f /var/log/suricata/suricata.log
+
+docker stats
+
+new token?
+/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+
+From suricata i'll need:
+Flow metadata
+Timing
+Bytes
+Ports
+Protocol
+Flags
+DNS queries
+HTTP hostnames
+TLS fingerprints

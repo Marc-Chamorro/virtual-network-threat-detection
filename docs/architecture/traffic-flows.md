@@ -111,14 +111,15 @@ Accessing the Internet from within the network consists of:
 
 ### Traffic Mirroring (IDS)
 
-To enable threat detection without modifying the traffic flow or introducing latency, the firewall implements traffic mirroring using the TEE function:
+To enable threat detection without modifying the traffic flow or introducing latency, the firewall implements traffic mirroring using the **`TEE`** function. And with the addition of the **Logwatch** node, the architecture supports a complete security flow:
+
 
 ```mermaid
 sequenceDiagram
     participant Ext as Internet Core
     participant FW as Firewall
     participant DMZ as DMZ Server
-    participant IDS as Suricata (IDS)
+    participant IDS as Logwatch
 
     Ext->>FW: Malicious Packet (eth1)
     Note over FW: iptables TEE Rule
@@ -130,3 +131,31 @@ sequenceDiagram
 
 - **Mechanism:** Every packet going through the Internet-facing interface (`eth1`) of the firewall is cloned and sent to the **IDS node** (`192.168.20.10`).
 - **Security Constraint:** The IDS node is strictly prohibited from sending any traffic back into the network, making sure it remains a passive observer.
+
+The **logwatch node** receives mirrored traffic and performs the following processing pipeline:
+
+```mermaid
+graph LR
+    FW[Central Firewall] -->|TEE / Traffic Mirroring| IDS[Suricata IDS]
+    IDS -->|JSON Event Logs| FB[Filebeat]
+    FB -->|Port 9200| ES[Elasticsearch]
+    ES -->|Visualization| KB[Kibana]
+
+    subgraph Monitoring_Stack [Logwatch Node]
+        ES
+        KB
+        FB
+    end
+```
+
+1. **Packet Inspection**
+    Suricata analyzes packets in real time and generates structured JSON registers.
+
+2. **Log Shipping**
+    Filebeat monitors Suricata output files and forwards the events to Elasticsearch.
+
+3. **Indexing**
+    Elasticsearch parses and stores the logs.
+
+4. **Visualization**
+    Kibana allows the exploration of events, build dashboards, and analyse network patterns.
