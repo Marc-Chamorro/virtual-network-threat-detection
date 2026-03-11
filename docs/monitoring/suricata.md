@@ -5,9 +5,9 @@ icon: material/shield-search
 
 # Suricata
 
-Suricata is the **network intrusion detection system** used within the VNTD laboratory.
+Suricata is the **Network Intrusion Detection System** used within the VNTD laboratory.
 
-Its function is to record **all** incoming and outgoing network traffic for later processing.
+The primary purpose of this engine is to record **all** incoming and outgoing network traffic for later processing.
 
 Within the project architecture, Suricata acts as the **first stage of the monitoring stack**, generating structured network events that are later processed by the rest of the monitoring stack. Therefore, it operates as a **passive sensor**.
 
@@ -130,11 +130,17 @@ This allows modifying the Suricata service behavior without rebuilding the conta
 
 ### Rules
 
-The rules define the logic used to identify / sotre network traffic to generate logs accordingly.
+The rules define the logic used to identify / store network traffic to generate logs accordingly.
 
 !!! note "Rule Updates"
     In this laboratory, environment rules are included with the configuration file.
     Any changes applied to the file will require a service (or environment) restart.
+
+One of the main advantages Suricata offers is its ability to configure the service to detect or ignore traffic from specific protocols, allowing users to only process concrete traffic.
+
+!!! tip "Monitoring Health"
+    To verify if Suricata is correctly receiving packets, you can check the statistics log: `tail -f /var/log/suricata/stats.log`.
+
 
 ---
 
@@ -146,10 +152,10 @@ Suricata generates several log files located in:
 /var/log/suricata/
 ```
 
-The most relevant file for this scenario is:
+The most relevant feature of Suricata in this lab is the file output. All data is recovered and logged into a single estructured JSON file:
 > `eve.json`
 
-This file contains structured security events in JSON format. This file is later processed by **Filebeat**.
+Considering the security events are stored in a structured JSON format, it offers seamless integration with the Elastic stack.
 
 Other generated files:
 

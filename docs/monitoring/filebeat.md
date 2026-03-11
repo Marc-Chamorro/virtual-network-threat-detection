@@ -56,6 +56,15 @@ This ensures Filebeat only runs when both Suricata and analysis tools (Elastic s
 
 ## File Structure and Configuration
 
+Filebeat is configured via two primary files:
+
+=== "filebeat.yml"
+    Main configuration file defines the output destination.
+    Filebeat and Elasticsearch reside on the same `logwatch` node for simplified management.
+
+=== "suricata.yml"
+    Located in `modules.d/`, this file define which services the filebeat is supposed to recover the logs from.
+
 Filebeat configuration file:
 
 ```bash

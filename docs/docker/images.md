@@ -82,7 +82,7 @@ A dedicated node for simulating network security boundaries. Using a custom imag
 
 ### MLS (`mls_vntd`)
 
-!!! note
+!!! note "Ignore images"
     This directory starts with `_` and is currently ignored by build scripts.
 
 Intended to simulate a Multi-Layer Switch.
@@ -156,5 +156,5 @@ This approach simplifies deployment and reduces inter-container dependencies.
         - `elasticsearch`
         - `kibana`
 
-!!! note
+!!! note "Resource consumption"
     Monitoring services can take a significant amount of time to fully initialize, especially the elastic components. It is normal for the stack to require **a couple of minutes** before all services become operational.

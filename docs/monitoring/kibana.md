@@ -5,7 +5,7 @@ icon: material/chart-line
 
 # Kibana
 
-Kibana provides the **web interface** used to visualize and analyze security events.
+Kibana provides the **browser-based interface** used to searching, viewing, and interacting with the security data stored in Elasticsearch.
 
 It connects to **Elasticsearch** to visualize the data stored in it through dashboards and other graphical elements for easy analysis.
 
@@ -48,6 +48,9 @@ env:
 If the variable is not set, none of the Elastic components (Elasticsearch, Filebeat, Kibana) start.
 
 This allows disabling the full monitoring stack when running the laboratory on lower resource systems
+
+!!! warning "Elasticsearch Dependency"
+    Kibana cannot function without Elasticsearch. If the logwatch node reports a "yellow" or "red" status on it's health, the Kibana interface may be unavailable.
 
 ---
 

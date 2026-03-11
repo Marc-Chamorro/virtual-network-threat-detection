@@ -163,7 +163,7 @@ Traffic is mirrored by the firewall using the **iptables TEE mechanism**, combin
 !!! tip
     This placement ensures maximum visibility with minimal configuration.
 
-!!! note
+!!! note "Monitoring node"
     It acts purely as an **observer**, ensuring the integrity of the simulated network traffic.
 
 This node, called **logwatch**, acts as a centralized analysis system responsible for capturing, processing and visualizing network logs. Such is composed of four main components:
@@ -175,5 +175,5 @@ This node, called **logwatch**, acts as a centralized analysis system responsibl
 
 Unlike traditional IDS where components are separated, this project integrates the entire monitoring components within a single container. This design simplifies deployment and reduces the number of containers used.
 
-!!! note
+!!! note "Communication"
     This node **cannot sends traffic back into the network**, ensuring it does not interfere with normal network operation.
