@@ -119,7 +119,8 @@ theme:
     - navigation.top
     - navigation.footer
     - navigation.indexes
-    - navigation.path
+
+    - content.action.edit
 
     #- toc.integrate
     - toc.follow
