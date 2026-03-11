@@ -19,15 +19,28 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcairo2 \
+            libpango-1.0-0 \
+            libpangocairo-1.0-0 \
+            libgdk-pixbuf2.0-0 \
+            libffi-dev \
+            shared-mime-info
+
       - name: Install dependencies
         run: |
           pip install \
             mkdocs==1.5.3 \
-            mkdocs-material==9.5.3
+            mkdocs-material==9.5.3 \
+            mkdocs-with-pdf \
+            weasyprint
 
 
       - name: Build site
-        run: mkdocs build
+        run: ENABLE_PDF_EXPORT=1 mkdocs build
 
       - uses: actions/upload-pages-artifact@v3
         with:
