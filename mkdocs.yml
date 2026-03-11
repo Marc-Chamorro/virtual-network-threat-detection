@@ -183,3 +183,6 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Marc-Chamorro
+
+extra_css:
+  - assets/stylesheets/pdf.css
