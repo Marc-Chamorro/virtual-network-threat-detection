@@ -29,6 +29,8 @@ This platform is designed to deploy a **modular**, **scalable**, and fully **vir
 
 [:material-github: View on GitHub](https://github.com/marc-chamorro/virtual-network-threat-detection){ .md-button }
 
+[:material-file-pdf-box: Download Full Documentation (PDF)](assets/pdf/vntd-docs.pdf){ .md-button .md-button--primary }
+
 ---
 
 <div class="grid cards" markdown>

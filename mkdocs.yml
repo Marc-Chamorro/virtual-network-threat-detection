@@ -137,6 +137,16 @@ theme:
 
 plugins:
   - search
+
+
+  - with-pdf:
+      author: Marc Chamorro
+      cover_title: Virtual Network Threat Detection
+      cover_subtitle: Network Threat Detection Laboratory
+      toc_level: 3
+      ordered_chapter_level: 2
+      output_path: assets/pdf/vntd-docs.pdf
+      enabled_if_env: ENABLE_PDF_EXPORT
   
   #- with-pdf:
   #    author: Marc Chamorro
