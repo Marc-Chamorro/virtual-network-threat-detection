@@ -22,7 +22,7 @@ Every enterprise function is mapped to a dedicated VLAN and subnet, with the Fir
 | **-**  | Benign Network          | 20.0.0.0/24         | 20.0.0.1          |
 |        |                         |                     |                   |
 | **10** | DMZ                     | 192.168.10.0/24     | 192.168.10.1      |
-| **20** | Monitoring & IDS        | 192.168.20.0/24     | 192.168.20.1      |
+| **20** | Monitoring & Logwatch   | 192.168.20.0/24     | 192.168.20.1      |
 | **30** | Administration          | 192.168.30.0/24     | 192.168.30.1      |
 | **40** | Internal Services       | 192.168.40.0/24     | 192.168.40.1      |
 | **50** | User Floor 1 & 2        | 192.168.50.0/24     | 192.168.50.1      |

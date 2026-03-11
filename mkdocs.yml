@@ -27,18 +27,6 @@ nav:
       - Addressing & VLANs: architecture/addressing.md
       - Traffic Flows: architecture/traffic-flows.md
 
-  - Network Services:
-    - Overview: network-services/index.md
-    - DHCP:
-      - Design: network-services/dhcp/design.md
-      - Server Configuration: network-services/dhcp/server.md
-      - Relay Configuration: network-services/dhcp/relay.md
-      - Client Behavior: network-services/dhcp/clients.md
-    - DNS:
-      - Design: network-services/dns/design.md
-      - Configuration: network-services/dns/config.md
-      - Resolution Flow: network-services/dns/flow.md
-
   - Docker & Containerlab:
     # General overview of Docker and its relevance to the project. 
     - Overview: docker/index.md
@@ -61,6 +49,18 @@ nav:
     - Images Management: scripts/images-management.md
     - Lab Management: scripts/lab-management.md
 
+  - Network Services:
+    - Overview: network-services/index.md
+    - DHCP:
+      - Design: network-services/dhcp/design.md
+      - Server Configuration: network-services/dhcp/server.md
+      - Relay Configuration: network-services/dhcp/relay.md
+      - Client Behavior: network-services/dhcp/clients.md
+    - DNS:
+      - Design: network-services/dns/design.md
+      - Configuration: network-services/dns/config.md
+      - Resolution Flow: network-services/dns/flow.md
+
   - Services:
     # Overview of the services used in the project, their purpose, and how they interact with each other.
     - Overview: services/index.md
@@ -70,6 +70,16 @@ nav:
     - MAIL: services/mail.md
     # - Suricata: services/suricata.md # Mayber here or somewhere else?
     # - Monitoring: services/monitoring.md
+
+  - Monitoring:
+    - Overview: monitoring/index.md
+    - Suricata: monitoring/suricata.md
+    - Elasticsearch: monitoring/elasticsearch.md
+    - Filebeat: monitoring/filebeat.md
+    - Kibana: monitoring/kibana.md
+
+  - Attacks:
+    - Overview: attacks/index.md
 
   - Operations & Troubleshooting: operations/commands.md
     # - Useful Commands: operations/commands.md

@@ -148,7 +148,7 @@ End-user systems use the Mutt mail client for sending and retrieving emails.
 ```sh
 mutt
 ```
-- **Editor Usage:** When setting up mail, use the built-in editor. To save changes and exit the editor, use the command `:wq`.
+- **Editor Usage:** When setting up mail, use the built-in editor. To start writing use the `i` button. To save changes and exit the editor, use the command `:wq`.
 - **Note:** The client does not detect new emails in real-time. You must exit and restart the program to refresh the inbox.
 
 ---

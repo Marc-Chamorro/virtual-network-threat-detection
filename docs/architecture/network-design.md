@@ -46,7 +46,7 @@ graph TD
 
     subgraph Internal_Segments
         DMZ[VLAN 10 - DMZ Services]
-        IDS[VLAN 20 - Monitoring]
+        Logwatch[VLAN 20 - Monitoring]
         Admin[VLAN 30 - Management]
         Services[VLAN 40 - Internal Services]
         Users[VLAN 50/60 - User Floors]
@@ -58,7 +58,7 @@ graph TD
     Router_Internet --- Router_Edge
     Router_Edge --- Firewall
     Firewall --- DMZ
-    Firewall --- IDS
+    Firewall --- Logwatch
     Firewall --- Admin
     Firewall --- Services
     Firewall --- Users
@@ -130,7 +130,7 @@ The firewall is the **central enforcement point** of the enterprise:
 
 - Enforces inter-VLAN policies.
 - Controls inbound and outbound traffic.
-- Mirrors traffic to the IDS.
+- Mirrors traffic to the Logwatch.
 - Hosts DHCP relay functionality.
 - Acts as the default gateway for all VLANs.
 
@@ -153,12 +153,27 @@ Each VLAN maps to a dedicated VLAN gateway. This VLAN gateway represents the fir
 
 ## Monitoring Placement
 
-Monitoring and IDS nodes are placed in a dedicated VLAN, reading all traffic outgoing and incoming the enterprise network, ensuring:
+Traffic monitoring is performed by a dedicated node located in the **Monitoring VLAN (VLAN 20)**, reading all traffic outgoing and incoming the enterprise network, ensuring:
 
 - Visibility into enterprise traffic.
 - Isolation from services and users.
 
-Traffic mirroring and promiscuous interfaces are used where required to capture relevant packets.
+Traffic is mirrored by the firewall using the **iptables TEE mechanism**, combined with the node operating in **promiscuous mode**, allows the node to receive packets without interfering with the original flow.
 
 !!! tip
     This placement ensures maximum visibility with minimal configuration.
+
+!!! note
+    It acts purely as an **observer**, ensuring the integrity of the simulated network traffic.
+
+This node, called **logwatch**, acts as a centralized analysis system responsible for capturing, processing and visualizing network logs. Such is composed of four main components:
+
+- **Suricata** — Intrusion Detection System (IDS), inspects mirrored packets and generates registers.
+- **Filebeat** — Log shipper, collects Suricata logs and forwards them to Elasticsearch for processing.
+- **Elasticsearch** — Log storage and indexing, stores and indexes log data for efficient processing and analysis.
+- **Kibana** — Visualization interface, provides dashboards and visual analysis tools.
+
+Unlike traditional IDS where components are separated, this project integrates the entire monitoring components within a single container. This design simplifies deployment and reduces the number of containers used.
+
+!!! note
+    This node **cannot sends traffic back into the network**, ensuring it does not interfere with normal network operation.

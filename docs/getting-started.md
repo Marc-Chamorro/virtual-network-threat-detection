@@ -11,13 +11,38 @@ Ensure your system meets these criteria before proceeding to the installation.
 
 ## System Requirements
 
-The environment is designed to be lightweight, but simulating a full enterprise topology with monitoring sericves requires moderate resources.
-
-### Hardware
+The environment is designed to be lightweight, but simulating a full enterprise topology with monitoring services requires moderate resources.
 
 * **Architecture:** x86_64 / amd64.
-* **RAM:** Minimum **16GB** recommended, though higher is preferred for full AI and monitoring services running.
-* **Storage:** At least 8GB of free disk space for Docker images plus additional space for log data.
+
+### Minimum Requirements
+
+| Resource | Requirement           |
+|----------|-----------------------|
+| CPU      | 12 cores              |
+| RAM      | 20 GB                 |
+| Storage  | 20 GB free disk space |
+
+These requirements allow the complete environment to run including all the monitoring stack.
+
+### Reduced Requirements Mode
+
+If the **Elastic stack is disabled**, the environment can run with reduced memory:
+
+| Resource | Requirement            |
+|----------|------------------------|
+| CPU      | 8–12 cores recommended |
+| RAM      | 16 GB                  |
+| Storage  | 20 GB                  |
+
+In this mode the monitoring stack should be disabled.
+
+!!! warning "Hardware Requirements"
+    The monitoring stack (Suricata + Elastic components) is resource intensive.
+    Long execution periods with limited resources may cause instability if system resources are insufficient.
+
+!!! important "Monitoring Stack"
+    The user can run the environment nonetheless with reduced resources. Although given that not enough resources are available, it is suggested that secondary containers are removed from the topology (e.g. benign / entire floor 2).
 
 ### Operating System
 
