@@ -138,7 +138,6 @@ theme:
 plugins:
   - search
   - social
-  - offline
 
   - git-revision-date-localized
 
