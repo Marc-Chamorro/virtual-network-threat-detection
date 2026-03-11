@@ -119,16 +119,7 @@ An image designed to simulate an endpoint server providing various network servi
 
 ---
 
-### Monitoring (`monitoring_vntd`)
-
-A management station based on Ubuntu, designed for network packet processing.
-
-- **Base:** `ubuntu:22.04`
-- **Key Packages:** `git`, `nmap`, `tcpdump`, `curl`.
-
----
-
-## Security & Pentesting
+## Security & Monitoring 
 
 ### Kali (`kali_vntd`)
 
@@ -142,10 +133,28 @@ A simulation of an attacker machine.
 
 ---
 
-### IDS (`ids_vntd`)
+### Logwatch (`logwatch_vntd`)
 
-Intrusion Detection System node.
+The `logwatch` node is responsible for centralized monitoring and threat detection within the VNTD environment, this consists of a **single container running multiple services**.
+
+This approach simplifies deployment and reduces inter-container dependencies.
 
 - **Base:** `debian:12-slim`
-- **Key Packages:** `tcpdump`, `iproute2`.
-- **Use Case:** Passive traffic analysis and logging.
+- **Services Included:**
+    - `suricata`: Network intrusion detection and traffic inspection.
+    - `filebeat`: Log collection and forwarding.
+    - `elasticsearch`: Log storage and indexing.
+    - `kibana`: Log visualization and dashboards.
+- **Environment Variables:** 
+    You can control this container using the following variables in your topology file:
+    - `IP_ADDR: "192.168.20.10"`: Define the IP address to be assigned to the interface.
+    - `IP_GTWY: "192.168.20.1"`: Define the IP gateway address to be assigned to the interface.
+    - `IFACE: "eth1"`: Define the interface used on the device.
+    - `SURICATA_SERVICE=1`: Starts the suricata service on the defined interface.
+    - `ELASTIC_STACK=1`: Starts all elastic services (configuration files are required to make these services work). These are:
+        - `filebeat`
+        - `elasticsearch`
+        - `kibana`
+
+!!! note
+    Monitoring services can take a significant amount of time to fully initialize, especially the elastic components. It is normal for the stack to require **a couple of minutes** before all services become operational.

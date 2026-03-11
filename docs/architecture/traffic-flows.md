@@ -118,7 +118,7 @@ sequenceDiagram
     participant Ext as Internet Core
     participant FW as Firewall
     participant DMZ as DMZ Server
-    participant IDS as Suricata (IDS)
+    participant IDS as Logwatch
 
     Ext->>FW: Malicious Packet (eth1)
     Note over FW: iptables TEE Rule
@@ -130,3 +130,17 @@ sequenceDiagram
 
 - **Mechanism:** Every packet going through the Internet-facing interface (`eth1`) of the firewall is cloned and sent to the **IDS node** (`192.168.20.10`).
 - **Security Constraint:** The IDS node is strictly prohibited from sending any traffic back into the network, making sure it remains a passive observer.
+
+The **logwatch node** receives mirrored traffic and performs the following processing pipeline:
+
+1. **Packet Inspection**
+    Suricata analyzes packets in real time and generates structured JSON registers.
+
+2. **Log Shipping**
+    Filebeat monitors Suricata output files and forwards the events to Elasticsearch.
+
+3. **Indexing**
+    Elasticsearch parses and stores the logs.
+
+4. **Visualization**
+    Kibana allows the exploration of events, build dashboards, and analyse network patterns.
