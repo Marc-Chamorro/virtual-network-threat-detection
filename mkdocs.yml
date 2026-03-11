@@ -119,7 +119,7 @@ theme:
     - navigation.top
     - navigation.footer
     - navigation.indexes
-    - navigation.tabs
+    - navigation.path
 
     #- toc.integrate
     - toc.follow
@@ -139,6 +139,7 @@ theme:
 plugins:
   - search
 
+  - git-revision-date-localized
 
   - with-pdf:
       author: Marc Chamorro
