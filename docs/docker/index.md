@@ -65,7 +65,7 @@ These environments are intentionally smaller and are used for:
 - Debugging services without deploying the full infrastructure.
 - Experimenting with simplified network scenarios
 
-!!! note
+!!! note "Smaller environments"
     These testing topologies reuse the same images and configuration patterns used in the main environment but reduce the number of nodes to improve startup times.
 
 ---

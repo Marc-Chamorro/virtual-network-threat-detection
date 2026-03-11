@@ -242,6 +242,12 @@ The site can also be accessed from a web explorer.
 !!! important "Localhost -> IP Address"
     To connect to the web site for testing the environment and it's accessibility, use the Containerlab generated IP management address.
 
+You can verify the health of the service directly from the terminal from the same machine:
+
+```bash
+curl -X GET "http://localhost:9200/_cluster/health?pretty"
+```
+
 ---
 
 ## Additional Resources
