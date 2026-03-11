@@ -128,7 +128,7 @@ The final stage of the project involves processing security data using Machine L
 ## Prerequisites
 
 - **OS:** Linux (Ubuntu 22.04+ or 25.10 recommended).
-- **Hardware:** At least 12GB of RAM and 8 cores are required to run the designed environment, XXXXXXXXX with the monitoring tools.
+- **Hardware:** At least 12GB of RAM and 8 cores are required to run the designed environment, 20GB and 12 cores with the monitoring tools.
 - **Tools:** Docker and Containerlab fully installed.
 
 **Recommendation**
@@ -186,6 +186,12 @@ The primary scenario provided is an **Enterprise Network** featuring multiple zo
 Additional topologies can be added by following the guidelines described in the topology documentation [Docs - Labs Overview](https://marc-chamorro.github.io/virtual-network-threat-detection/labs/).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+# Monitoring
+
+HOW TO SEE THE LOGS -> REFERENCE THE MONITORING SITE
+
+ADD THE LINK AND EXPLAIN HERE
 
 # License
 

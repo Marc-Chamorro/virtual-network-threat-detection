@@ -1,21 +1,82 @@
 name: virtual-env
 
 topology:
+
+  # /////////////////////////////////////////////////////////////////////////////////////////////
+  # Dependencies
+  # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  groups:
+
+    watcher:
+      healthcheck:
+        test:
+          - CMD-SHELL
+          - ip addr show dev eth1 | grep "$IP_ADDR"
+        start-period: 15
+        interval: 5
+        timeout: 3
+        retries: 20
+
+    switches:     # Also includes the firewall
+      stages:
+        create:
+          wait-for:
+            - node: logwatch
+              stage: healthy
+
+    routers:
+      stages:
+        create:
+          wait-for:
+            - node: firewall
+              stage: create-links
+
+    hosts:
+      stages:
+        create:
+          wait-for:
+            - node: router_enterprise
+              stage: create-links
+
   nodes:
+
+    # /////////////////////////////////////////////////////////////////////////////////////////////
+    # Templates - YAML Anchors
+    # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    pc_template: &user_pc
+      kind: linux
+      group: hosts
+      image: alpine_vntd:latest
+      env:
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
+
+    switch_template: &switch
+      kind: arista_ceos
+      group: switches
+      image: ceos_vntd:latest
+
+    router_template: &frr_router
+      kind: linux
+      group: routers
+      image: frr_vntd:latest
 
     # =============================================================================================
     # Internet - Simulates the ISP and public internet backbone
     # =============================================================================================
     
     router_internet:
-      kind: linux
-      image: frr_vntd:latest
+      <<: *frr_router
       binds:                                                    # Bind configuration files to make them persisten and editable
         - ./config/router/daemons:/etc/frr/daemons              
         - ./config/router/internet/frr.conf:/etc/frr/frr.conf
 
     internet_server:
       kind: linux
+      group: hosts
       image: server_vntd:latest
       env:                                                      # Environment variables to trigger specific service startups in entrypoint.sh
         WEB_SERVER: 1
@@ -50,14 +111,14 @@ topology:
     # =============================================================================================
     
     router_attacker:
-      kind: linux
-      image: frr_vntd:latest
+      <<: *frr_router
       binds:
         - ./config/router/daemons:/etc/frr/daemons
         - ./config/router/attacker/frr.conf:/etc/frr/frr.conf
     
     attacker:
       kind: linux
+      group: hosts
       image: kali_vntd:latest
       exec:
         - ip addr add 10.0.0.2/24 dev eth1
@@ -73,15 +134,17 @@ topology:
     # =============================================================================================
     
     router_benign:
-      kind: linux
-      image: frr_vntd:latest
+      <<: *frr_router
       binds:
         - ./config/router/daemons:/etc/frr/daemons
         - ./config/router/benign/frr.conf:/etc/frr/frr.conf
 
     benign:
       kind: linux
+      group: hosts
       image: alpine_vntd:latest
+      env:
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/mutt/internet/olivia:/root/.mutt/muttrc
       exec:
@@ -89,10 +152,6 @@ topology:
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 20.0.0.1
-        # Mail Agent (MUTT)
-        - mkdir -p /root/.mutt/cache/headers
-        - mkdir -p /root/.mutt/cache/bodies
-        - touch /root/.mutt/certificates
       dns:
         servers:
           - 172.16.100.100
@@ -105,6 +164,7 @@ topology:
     #----------------------------------------------------------------------------------------------
     router_enterprise:
       kind: linux
+      group: routers
       image: router_vntd:latest
       binds:                                                    # Mounts the startup script to handle NAT, IP assignment and FRR configuration
         - ./config/router/enterprise/startup.sh:/startup.sh
@@ -114,6 +174,7 @@ topology:
 
     firewall:
       kind: linux
+      group: switches
       image: firewall_vntd:latest
       env:
         DHCP_RELAY: 1
@@ -137,12 +198,12 @@ topology:
     # VLAN 10 - DMZ
     #----------------------------------------------------------------------------------------------
     switch_vlan10:
-      kind: arista_ceos
-      image: ceos_vntd:latest
+      <<: *switch
       startup-config: ./config/switch/enterprise/config_v10.cli # Arista switches use startup-config file for persistent settings
 
     dmz_server:
       kind: linux
+      group: hosts
       image: server_vntd:latest
       env: 
         WEB_SERVER: 1
@@ -173,41 +234,41 @@ topology:
     # VLAN 20 - Monitoring & IDS
     #----------------------------------------------------------------------------------------------
     switch_vlan20:
-      kind: arista_ceos
-      image: ceos_vntd:latest
+      <<: *switch
       startup-config: ./config/switch/enterprise/config_v20.cli
 
-    ids:
+    # ! Requires many resources to opperate !
+    logwatch:
       kind: linux
-      image: ids_vntd:latest
-      exec:
-        - ip addr add 192.168.20.10/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.20.1
-        - ip link set eth1 promisc on                           # Promiscuous mode to see traffic not addressed to it
-        - sysctl -w net.ipv4.ip_forward=0
-        - iptables -P FORWARD DROP                 # IDS should not forward any traffic, only analyze
-
-    monitoring_server:
-      kind: linux
-      image: monitoring_vntd:latest
-      exec:
-        - ip addr add 192.168.20.11/24 dev eth1
-        - ip link set eth1 up
-        - ip route del default
-        - ip route add default via 192.168.20.1
+      group: watcher
+      image: logwatch_vntd:latest
+      env:
+        IFACE: "eth1"
+        IP_ADDR: "192.168.20.10/24"
+        IP_GTWY: "192.168.20.1"
+        SURICATA_SERVICE: 1                         
+        ELASTIC_STACK: 1                                      # Filebeat + Elasticsearch + Kibana
+      binds:
+        - ./config/logwatch/suricata/suricata.yaml:/etc/suricata/suricata.yaml
+        - ./config/logwatch/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
+        - ./config/logwatch/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
+        - ./config/logwatch/elasticsearch/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
+        - ./config/logwatch/elasticsearch/heap.options:/etc/elasticsearch/jvm.options.d/heap.options
+        - ./config/logwatch/kibana/kibana.yml:/etc/kibana/kibana.yml
+        - ./config/logwatch/kibana/node.options:/etc/kibana/node.options
 
     # VLAN 30 - Administration
     #----------------------------------------------------------------------------------------------
     switch_vlan30:
-      kind: arista_ceos
-      image: ceos_vntd:latest
+      <<: *switch
       startup-config: ./config/switch/enterprise/config_v30.cli
 
     pc_admin:
       kind: linux
+      group: hosts
       image: alpine_vntd:latest
+      env:
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/mutt/enterprise/lois:/root/.mutt/muttrc
       exec:
@@ -215,10 +276,6 @@ topology:
         - ip link set eth1 up
         - ip route del default
         - ip route add default via 192.168.30.1
-        # For MUTT
-        - mkdir -p /root/.mutt/cache/headers
-        - mkdir -p /root/.mutt/cache/bodies
-        - touch /root/.mutt/certificates
       dns:
         servers:
           - 192.168.10.10
@@ -226,12 +283,12 @@ topology:
     # VLAN 40 - Internal services
     #----------------------------------------------------------------------------------------------
     switch_vlan40:
-      kind: arista_ceos
-      image: ceos_vntd:latest
+      <<: *switch
       startup-config: ./config/switch/enterprise/config_v40.cli
 
     internal_server:
       kind: linux
+      group: hosts
       image: server_vntd:latest
       runtime: docker
       env: 
@@ -256,68 +313,34 @@ topology:
     # VLAN 50 & 60 - User floor 1
     #----------------------------------------------------------------------------------------------
     switch_floor1:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
-      kind: arista_ceos
-      image: ceos_vntd:latest
-      startup-config: ./config/switch/enterprise/config_v50.cli
+      <<: *switch
+      startup-config: ./config/switch/enterprise/config_fl1.cli
 
     pc_vlan50_1:
-      kind: linux
-      image: alpine_vntd:latest
-      env: 
-        DHCP_CLIENT: 1
-        IFACE: "eth1"
-        MUTT_CLIENT: 1
+      <<: *user_pc
       binds:
-        - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
-      exec:
-        - sh /startup.sh
 
     pc_vlan60_1:
-      kind: linux
-      image: alpine_vntd:latest
-      env:
-        DHCP_CLIENT: 1
-        IFACE: "eth1"
-        MUTT_CLIENT: 1
+      <<: *user_pc
       binds:
-        - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/emma:/root/.mutt/muttrc
-      exec:
-        - sh /startup.sh
 
     # VLAN 50 & 60 - User floor 2
     #----------------------------------------------------------------------------------------------
     switch_floor2:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
-      kind: arista_ceos
-      image: ceos_vntd:latest
-      startup-config: ./config/switch/enterprise/config_v60.cli
+      <<: *switch
+      startup-config: ./config/switch/enterprise/config_fl2.cli
 
     pc_vlan50_2:
-      kind: linux
-      image: alpine_vntd:latest
-      env:
-        DHCP_CLIENT: 1
-        IFACE: "eth1"
-        MUTT_CLIENT: 1
+      <<: *user_pc
       binds:
-        - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/barry:/root/.mutt/muttrc
-      exec:
-        - sh /startup.sh
 
     pc_vlan60_2:
-      kind: linux
-      image: alpine_vntd:latest
-      env:
-        DHCP_CLIENT: 1
-        IFACE: "eth1"
-        MUTT_CLIENT: 1
+      <<: *user_pc
       binds:
-        - ./config/pc/startup.sh:/startup.sh
         - ./config/pc/mutt/enterprise/clark:/root/.mutt/muttrc
-      exec:
-        - sh /startup.sh
 
   # ===============================================================================================
   # Physical links between nodes
@@ -346,8 +369,7 @@ topology:
 
       # VLAN 20
     - endpoints: ["firewall:eth3", "switch_vlan20:eth1"]
-    - endpoints: ["switch_vlan20:eth2", "ids:eth1"]
-    - endpoints: ["switch_vlan20:eth3", "monitoring_server:eth1"]
+    - endpoints: ["switch_vlan20:eth2", "logwatch:eth1"]
 
       # VLAN 30
     - endpoints: ["firewall:eth4", "switch_vlan30:eth1"]

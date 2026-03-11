@@ -50,6 +50,26 @@ The collaboration between these technologies is structured as follows:
 
 ---
 
+## Additional Testing Topologies
+
+In addition to the primary enterprise topology, the project includes **simplified testing environments**.
+
+These topologies are located in the `labs/` directory:
+
+- `V1_Testing.clab.yml`
+- `V2_Testing.clab.yml`
+
+These environments are intentionally smaller and are used for:
+
+- Rapid testing of configuration changes.
+- Debugging services without deploying the full infrastructure.
+- Experimenting with simplified network scenarios
+
+!!! note "Smaller environments"
+    These testing topologies reuse the same images and configuration patterns used in the main environment but reduce the number of nodes to improve startup times.
+
+---
+
 ## Navigation
 
 - [**Image Catalog**](./images.md): Detailed breakdown of custom images available in the project.
