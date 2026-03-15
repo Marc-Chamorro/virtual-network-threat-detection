@@ -1,0 +1,369 @@
+name: virtual-env
+
+topology:
+
+  # /////////////////////////////////////////////////////////////////////////////////////////////
+  # Dependencies
+  # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  groups:
+
+    watcher:
+      healthcheck:
+        test:
+          - CMD-SHELL
+          - ip addr show dev eth1 | grep "$IP_ADDR"
+        start-period: 15
+        interval: 5
+        timeout: 3
+        retries: 20
+
+    switches:     # Also includes the firewall
+      stages:
+        create:
+          wait-for:
+            - node: logwatch
+              stage: healthy
+
+    routers:
+      stages:
+        create:
+          wait-for:
+            - node: firewall
+              stage: create-links
+
+    hosts:
+      stages:
+        create:
+          wait-for:
+            - node: router_enterprise
+              stage: create-links
+
+  nodes:
+
+    # /////////////////////////////////////////////////////////////////////////////////////////////
+    # Templates - YAML Anchors
+    # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    pc_template: &user_pc
+      kind: linux
+      group: hosts
+      image: alpine_vntd:latest
+      env:
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
+
+    switch_template: &switch
+      kind: arista_ceos
+      group: switches
+      image: ceos_vntd:latest
+
+    router_template: &frr_router
+      kind: linux
+      group: routers
+      image: frr_vntd:latest
+
+    # =============================================================================================
+    # Internet - Simulates the ISP and public internet backbone
+    # =============================================================================================
+    
+    router_internet:
+      <<: *frr_router
+      binds:                                                    # Bind configuration files to make them persisten and editable
+        - ./config/router/daemons:/etc/frr/daemons              
+        - ./config/router/internet/frr.conf:/etc/frr/frr.conf
+
+    internet_server:
+      kind: linux
+      group: hosts
+      image: server_vntd:latest
+      env:                                                      # Environment variables to trigger specific service startups in entrypoint.sh
+        WEB_SERVER: 1
+        SSH_SERVER: 1
+        DNS_SERVER: 1
+        MAIN_MAIL_SERVER: 1
+      binds:
+        #DNS
+        - ./config/server/dns/internet/dnsmasq.conf:/etc/dnsmasq.conf
+        #MAIL USERS
+        - ./config/pc/mutt:/mail-users:ro
+        #MAIL (SMTP)
+        - ./config/server/smtp/internet/main.cf:/etc/postfix/main.cf
+        - ./config/server/smtp/internet/transport:/etc/postfix/transport
+        - ./config/server/smtp/internet/relay_recipients:/etc/postfix/relay_recipients
+        #MAIL (IMAP)
+        - ./config/server/imap/internet/10-auth.conf:/etc/dovecot/conf.d/10-auth.conf
+        - ./config/server/imap/internet/10-mail.conf:/etc/dovecot/conf.d/10-mail.conf
+        - ./config/server/imap/internet/auth-system.conf.ext:/etc/dovecot/conf.d/auth-system.conf.ext
+        - ./config/server/imap/internet/dovecot.conf:/etc/dovecot/dovecot.conf
+      exec:                                                     # Commands to be executed inside the container after startup
+        - ip addr add 172.16.100.100/24 dev eth1                # Assign Public IP address
+        - ip link set eth1 up                                   # Enable interface
+        - ip route del default                                  # Remove Docker default gateway
+        - ip route add default via 172.16.100.1                 # Point to Internet Router as default gateway
+      dns:
+        servers:
+          - 127.0.0.1
+
+    # =============================================================================================
+    # Attacker network - Simulates a hostile external actor
+    # =============================================================================================
+    
+    router_attacker:
+      <<: *frr_router
+      binds:
+        - ./config/router/daemons:/etc/frr/daemons
+        - ./config/router/attacker/frr.conf:/etc/frr/frr.conf
+    
+    attacker:
+      kind: linux
+      group: hosts
+      image: kali_vntd:latest
+      exec:
+        - ip addr add 10.0.0.2/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 10.0.0.1                     # Gateway is the attacker router
+      dns:
+        servers:
+          - 172.16.100.100
+
+    # =============================================================================================
+    # Benign network - Simulates normal external traffic
+    # =============================================================================================
+    
+    router_benign:
+      <<: *frr_router
+      binds:
+        - ./config/router/daemons:/etc/frr/daemons
+        - ./config/router/benign/frr.conf:/etc/frr/frr.conf
+
+    benign:
+      kind: linux
+      group: hosts
+      image: alpine_vntd:latest
+      env:
+        MUTT_CLIENT: 1
+      binds:
+        - ./config/pc/mutt/internet/olivia:/root/.mutt/muttrc
+      exec:
+        - ip addr add 20.0.0.2/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 20.0.0.1
+      dns:
+        servers:
+          - 172.16.100.100
+
+    # =============================================================================================
+    # Enterprise network - Main simulation target environment
+    # =============================================================================================
+    
+    # Network core & security
+    #----------------------------------------------------------------------------------------------
+    router_enterprise:
+      kind: linux
+      group: routers
+      image: router_vntd:latest
+      binds:                                                    # Mounts the startup script to handle NAT, IP assignment and FRR configuration
+        - ./config/router/enterprise/startup.sh:/startup.sh
+        - ./config/router/enterprise/frr.conf:/etc/frr/frr.conf
+      exec:
+        - sh /startup.sh
+
+    firewall:
+      kind: linux
+      group: switches
+      image: firewall_vntd:latest
+      env:
+        DHCP_RELAY: 1
+      binds:                                                    # Mounts the iptables logic script
+        - ./config/firewall/enterprise/startup.sh:/startup.sh
+        - ./config/firewall/enterprise/isc-dhcp-relay.conf:/etc/default/isc-dhcp-relay # No format: https://www.fpgenred.es/DHCP/etcdefaultiscdhcprelay.html
+      exec:
+        - sh /startup.sh
+
+    # Additional network device
+    # multilayer_switch:
+    #   kind: linux
+    #   image: mls_vntd:latest
+    #   cpu: 2
+    #   memory: 4GB
+    #   binds:
+    #     - ./config/mls/enterprise/startup.sh:/startup.sh
+    #   exec:
+    #     - sh /startup.sh
+
+    # VLAN 10 - DMZ
+    #----------------------------------------------------------------------------------------------
+    switch_vlan10:
+      <<: *switch
+      startup-config: ./config/switch/enterprise/config_v10.cli # Arista switches use startup-config file for persistent settings
+
+    dmz_server:
+      kind: linux
+      group: hosts
+      image: server_vntd:latest
+      env: 
+        WEB_SERVER: 1
+        SSH_SERVER: 1
+        DNS_SERVER: 1
+        MAIL_SERVER: 1
+      binds:
+        # DNS
+        - ./config/server/dns/enterprise/dnsmasq.conf:/etc/dnsmasq.conf
+        #MAIL USERS
+        - ./config/pc/mutt:/mail-users:ro
+        # MAIL (SMTP)
+        - ./config/server/smtp/enterprise/main.cf:/etc/postfix/main.cf
+        # MAIL (IMAP)
+        - ./config/server/imap/enterprise/10-auth.conf:/etc/dovecot/conf.d/10-auth.conf
+        - ./config/server/imap/enterprise/10-mail.conf:/etc/dovecot/conf.d/10-mail.conf
+        - ./config/server/imap/enterprise/auth-system.conf.ext:/etc/dovecot/conf.d/auth-system.conf.ext
+        - ./config/server/imap/enterprise/dovecot.conf:/etc/dovecot/dovecot.conf 
+      exec:
+        - ip addr add 192.168.10.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 192.168.10.1                 # Gateway is Firewall
+      dns:
+        servers:
+          - 127.0.0.1
+
+    # VLAN 20 - Monitoring & IDS
+    #----------------------------------------------------------------------------------------------
+    switch_vlan20:
+      <<: *switch
+      startup-config: ./config/switch/enterprise/config_v20.cli
+
+    # ! Requires many resources to opperate !
+    logwatch:
+      kind: linux
+      group: watcher
+      image: logwatch_vntd:latest
+      env:
+        IFACE: "eth1"
+        IP_ADDR: "192.168.20.10/24"
+        IP_GTWY: "192.168.20.1"
+        SURICATA_SERVICE: 1                         
+        ELASTIC_STACK: 1                                      # Filebeat + Elasticsearch + Kibana
+      binds:
+        - ./config/logwatch/suricata/suricata.yaml:/etc/suricata/suricata.yaml
+        - ./config/logwatch/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
+        - ./config/logwatch/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
+        - ./config/logwatch/elasticsearch/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
+        - ./config/logwatch/elasticsearch/heap.options:/etc/elasticsearch/jvm.options.d/heap.options
+        - ./config/logwatch/kibana/kibana.yml:/etc/kibana/kibana.yml
+        - ./config/logwatch/kibana/node.options:/etc/kibana/node.options
+
+    # VLAN 30 - Administration
+    #----------------------------------------------------------------------------------------------
+    switch_vlan30:
+      <<: *switch
+      startup-config: ./config/switch/enterprise/config_v30.cli
+
+    pc_admin:
+      kind: linux
+      group: hosts
+      image: alpine_vntd:latest
+      env:
+        MUTT_CLIENT: 1
+      binds:
+        - ./config/pc/mutt/enterprise/lois:/root/.mutt/muttrc
+      exec:
+        - ip addr add 192.168.30.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 192.168.30.1
+      dns:
+        servers:
+          - 192.168.10.10
+
+    # VLAN 40 - Internal services
+    #----------------------------------------------------------------------------------------------
+    switch_vlan40:
+      <<: *switch
+      startup-config: ./config/switch/enterprise/config_v40.cli
+
+    internal_server:
+      kind: linux
+      group: hosts
+      image: server_vntd:latest
+      runtime: docker
+      env: 
+        SSH_SERVER: 1
+        DHCP_SERVER: 1
+        IFACE: "eth1"                                           # DHCP config required env variable
+        IP_ADDR: "192.168.40.10"                                # DHCP config required env variable
+        FTP_SERVER: 1
+      binds:
+        # DHCP
+        - ./config/server/dhcp/dhcpd.conf:/etc/dhcp/dhcpd.conf
+        - ./config/server/dhcp/isc-dhcp-server:/etc/default/isc-dhcp-server
+        # FTP
+        - ./config/server/ftp/vsftpd.conf:/etc/vsftpd.conf
+        - ./config/server/ftp/vsftpd.chroot_list:/etc/vsftpd.chroot_list
+      exec:
+        - ip addr add 192.168.40.10/24 dev eth1
+        - ip link set eth1 up
+        - ip route del default
+        - ip route add default via 192.168.40.1
+
+    # VLAN 50 & 60 - User floor 1
+    #----------------------------------------------------------------------------------------------
+    switch_floor1:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
+      <<: *switch
+      startup-config: ./config/switch/enterprise/config_fl1.cli
+
+    pc_vlan50_1:
+      <<: *user_pc
+      binds:
+        - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
+
+    pc_vlan60_1:
+      <<: *user_pc
+      binds:
+        - ./config/pc/mutt/enterprise/emma:/root/.mutt/muttrc
+
+  # ===============================================================================================
+  # Physical links between nodes
+  # ===============================================================================================
+
+  links:
+    # Internet
+    - endpoints: ["router_internet:eth4", "internet_server:eth1"]
+
+    # Attacker network
+    - endpoints: ["router_attacker:eth1", "router_internet:eth1"]
+    - endpoints: ["attacker:eth1", "router_attacker:eth2"]
+
+    # Benign network
+    - endpoints: ["router_benign:eth1", "router_internet:eth2"]
+    - endpoints: ["benign:eth1", "router_benign:eth2"]
+
+    # Enterprise network
+      # Network core
+    - endpoints: ["router_internet:eth3", "router_enterprise:eth1"]
+    - endpoints: ["router_enterprise:eth2", "firewall:eth1"]
+
+      # VLAN 10
+    - endpoints: ["firewall:eth2", "switch_vlan10:eth1"]
+    - endpoints: ["switch_vlan10:eth2", "dmz_server:eth1"]
+
+      # VLAN 20
+    - endpoints: ["firewall:eth3", "switch_vlan20:eth1"]
+    - endpoints: ["switch_vlan20:eth2", "logwatch:eth1"]
+
+      # VLAN 30
+    - endpoints: ["firewall:eth4", "switch_vlan30:eth1"]
+    - endpoints: ["switch_vlan30:eth2", "pc_admin:eth1"]
+
+      # VLAN 40
+    - endpoints: ["firewall:eth5", "switch_vlan40:eth1"]
+    - endpoints: ["switch_vlan40:eth2", "internal_server:eth1"]
+
+      # VLAN 50
+    - endpoints: ["firewall:eth6", "switch_floor1:eth1"]
+    - endpoints: ["switch_floor1:eth2", "pc_vlan50_1:eth1"]
+    - endpoints: ["switch_floor1:eth3", "pc_vlan60_1:eth1"]
