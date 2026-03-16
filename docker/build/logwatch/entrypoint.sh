@@ -197,6 +197,73 @@ if [ "$ELASTIC_STACK" == "1" ]; then
 
     echo "Kibana ready"
 
+    # Create detection engine index
+    curl -s -X POST "$KIBANA_HOST/api/detection_engine/index" \
+    -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    -H "kbn-xsrf: true"
+
+    # Install prebuilt rules
+    curl -s -X PUT "$KIBANA_HOST/api/detection_engine/rules/prepackaged" \
+    -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    -H "kbn-xsrf: true"
+
+
+
+    # Enable ONLY network-related rules (simple and targeted)
+    echo "Enabling network detection rules for: nmap, hping3, slowloris, ettercap, hydra..."
+    
+    #curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
+    #-u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #    "action": "enable",
+    #    "query": "alert.attributes.tags: \"Network\" OR alert.attributes.tags: \"network\""
+    #}'
+
+    curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
+    -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    -H "kbn-xsrf: true" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "action": "enable",
+        "query": "alert.attributes.tags: \"Network\" OR alert.attributes.name: *Scan* OR alert.attributes.name: *Port* OR alert.attributes.name: *Brute* OR alert.attributes.name: *SSH* OR alert.attributes.name: *DoS* OR alert.attributes.name: *DDoS* OR alert.attributes.name: *Flood* OR alert.attributes.name: *ARP* OR alert.attributes.name: *Spoof* OR alert.attributes.name: *Slow* OR alert.attributes.name: *Hydra* OR alert.attributes.name: *Nmap*"
+    }'
+
+    echo -e "\nNetwork rules enabled"
+
+    # Enable Suricata-specific rules if they exist
+    curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
+    -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    -H "kbn-xsrf: true" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "action": "enable",
+        "query": "alert.attributes.name: *Suricata*"
+    }'
+
+    echo -e "\nSuricata rules enabled"
+
+    #curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
+    #-u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #    "action": "enable",
+    #    "query": "event.category:network"
+    #}'
+
+    #curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
+    #-u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #    "action": "enable",
+    #    "query": "event.module:suricata"
+    #}'
+
+    echo "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[READY]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
+
 fi
 
 # =================================================================================================
@@ -245,6 +312,12 @@ if [ "$SURICATA_SERVICE" == "1" ] && [ "$ELASTIC_STACK" == "1" ]; then
     PIDS+=($!)
 
     echo "Filebeat started with PID $!"
+
+
+
+    curl -s -u $ELASTIC_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_cat/indices?v
+
+    echo "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[READY2]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
 
 fi
 

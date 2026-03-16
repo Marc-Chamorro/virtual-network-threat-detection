@@ -196,6 +196,17 @@ docker stats
 new token?
 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
 
+generate encrypotion keys:
+marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ openssl rand -hex 32
+030e45276c3281853828085982ad1a2bfb6135938eb75fbc565180bed971a3ff
+marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ openssl rand -hex 32
+ad421a81cf29bc36cf62900a8123657600732d2ddf0ed0b685975e9cba9ef366
+marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ openssl rand -hex 32
+b94ff7ec329b719a062f78feb7fd5b6d2259caa4e87718fd7a61002fa62973ea
+marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ 
+
+
+
 From suricata i'll need:
 Flow metadata
 Timing
