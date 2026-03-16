@@ -90,8 +90,8 @@ nav:
 theme:
   name: material
   language: en
-  #logo: assets/logo.png
-  #favicon: assets/favicon.png
+  #logo: assets/logo.svg
+  #favicon: assets/favicon.svg
 
   palette:
     - scheme: slate
@@ -138,6 +138,17 @@ theme:
 plugins:
   - search
   
+  - git-revision-date-localized
+
+  - with-pdf:
+      author: Marc Chamorro
+      cover_title: Virtual Network Threat Detection
+      cover_subtitle: Network Threat Detection Laboratory
+      toc_level: 3
+      ordered_chapter_level: 2
+      output_path: assets/pdf/vntd-docs.pdf
+      enabled_if_env: ENABLE_PDF_EXPORT
+  
   #- with-pdf:
   #    author: Marc Chamorro
   #    cover_subtitle: Virtual Network Threat Detection Lab
@@ -173,3 +184,6 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Marc-Chamorro
+
+extra_css:
+  - assets/stylesheets/pdf.css
