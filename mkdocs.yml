@@ -48,6 +48,7 @@ nav:
     #- Automation Workflows: scripts/automation-workflows.md
     - Images Management: scripts/images-management.md
     - Lab Management: scripts/lab-management.md
+    - Attack Simulations: attacks/index.md
 
   - Network Services:
     - Overview: network-services/index.md
@@ -78,8 +79,9 @@ nav:
     - Filebeat: monitoring/filebeat.md
     - Kibana: monitoring/kibana.md
 
-  - Attacks:
+  - Attack Simulations:
     - Overview: attacks/index.md
+    - Port Scanning: attacks/port_scanning.md
 
   - Operations & Troubleshooting: operations/commands.md
     # - Useful Commands: operations/commands.md

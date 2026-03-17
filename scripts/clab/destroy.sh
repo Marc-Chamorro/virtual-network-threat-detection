@@ -3,6 +3,7 @@
 set -e
 
 TOPOLOGY_DIR="$1"
+LOGWATCH_MACHINE="logwatch"
 
 # Check if there are actually labs to destroy
 check_running_topologies() {
@@ -42,6 +43,43 @@ list_topologies_to_destroy() {
     TOTAL_OPTIONS=$i
 }
 
+cleanup_isolation_rules() {
+    echo "Cleaning isolation rules..."
+
+    # Get the lab name from the topology YAML file (not the filename)
+    LAB_NAME=$(grep -E '^name:' "$selected_topo" | awk '{print $2}' | tr -d '"'\''')
+    LOGWATCH_CONTAINER="clab-${LAB_NAME}-${LOGWATCH_MACHINE}"
+
+    LOGWATCH_IP=""
+
+    # Only try to get IP if container is still running
+    if docker ps | grep -q "$LOGWATCH_CONTAINER"; then
+        echo "Device $LOGWATCH_CONTAINER found"
+
+        # Retrieve the container IP
+        LOGWATCH_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$LOGWATCH_CONTAINER" 2>/dev/null || true)
+    else
+        echo "Device $LOGWATCH_CONTAINER not found"
+    fi
+
+    # Remove Logwatch specific rules if we have the IP (maybe the device is not available on the topology)
+    if [ -n "$LOGWATCH_IP" ]; then
+        iptables -D FORWARD -s "$LOGWATCH_IP" ! -o br+ -j ACCEPT 2>/dev/null || true
+        iptables -D FORWARD -d "$LOGWATCH_IP" -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT 2>/dev/null || true
+        iptables -t nat -D POSTROUTING -s "$LOGWATCH_IP" ! -o br+ -j MASQUERADE 2>/dev/null || true
+
+        echo "Logwatch rules removed"
+    else
+        echo "Skipping logwatch-specific cleanup"
+    fi
+
+    # Remove general rules
+    iptables -D FORWARD -i br+ -o br+ -j ACCEPT 2>/dev/null || true
+    iptables -D FORWARD -i br+ ! -o br+ -j DROP 2>/dev/null || true
+
+    echo "Cleanup complete"
+}
+
 check_running_topologies
 while true; do
     list_topologies_to_destroy
@@ -64,6 +102,8 @@ done
 
 echo "Selected topology: $selected_topo"
 echo "Destroying topology..."
+
+cleanup_isolation_rules
 
 # Removes containers and virtual wires defined in the selected topology
 clab destroy -t "$selected_topo"

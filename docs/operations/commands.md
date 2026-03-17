@@ -205,6 +205,17 @@ marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threa
 b94ff7ec329b719a062f78feb7fd5b6d2259caa4e87718fd7a61002fa62973ea
 marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ 
 
+**Server check service when attacking**
+>netstat -ant | grep :80 | wc -l
+>htop -> not installed xd
+>ss -s   ?????
+
+**Check from client constantly (nice for DoS SYN flood)**
+while true; do curl -s enterprise.com; sleep 5; done
+
+
+
+
 
 
 From suricata i'll need:

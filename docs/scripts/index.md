@@ -42,11 +42,11 @@ The `run.sh` script, located at the project root, serves as the main entry point
 To launch the project management menu, execute:
 
 ```bash
-./run.sh
+sudo ./run.sh
 ```
 
 !!! note "Permissions"
-    Ensure the script is executable before the first run: chmod +x run.sh
+    Ensure the script is executable before the first run: `chmod +x run.sh`
 
 ---
 
@@ -56,3 +56,4 @@ The automation logic is divided into two modules:
 
 - [**Lab Management**](./lab-management.md): Orchestrates Containerlab deployments and monitors active topologies.
 - [**Image Management**](./images-management.md): Automates Docker build, import, and cleanup operations.
+- [**Attack Simulations**](attacks/index.md): Execute controlled attacks against the simulated network.

@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # nmap: Port scanning
 # openssh-client: For connecting to servers
 # iproute2/net-tools: Interface management
+# procps: process management
 RUN apt-get update && apt-get install -y \
     iproute2 \
     iputils-ping \
@@ -17,6 +18,9 @@ RUN apt-get update && apt-get install -y \
     tcpdump \
     nmap \
     openssh-client \
+    hping3 \
+    python3 \
+    procps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

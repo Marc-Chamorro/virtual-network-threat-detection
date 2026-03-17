@@ -2,7 +2,7 @@ name: Deploy Docs
 
 on:
   push:
-    branches: [ main, docs, restructure, services ]
+    branches: [ main, docs, restructure, services, attack ]
 
 permissions:
   contents: read

@@ -120,6 +120,8 @@ topology:
       kind: linux
       group: hosts
       image: kali_vntd:latest
+      binds:
+        - ./config/attacker/security:/security
       exec:
         - ip addr add 10.0.0.2/24 dev eth1
         - ip link set eth1 up

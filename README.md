@@ -169,7 +169,7 @@ chmod +x run.sh
 The project is managed via the `run.sh` interactive menu.
 
 ```bash
-./run.sh
+sudo ./run.sh
 ```
 
 *Use the interactive menu to firstly build images (Image Control) and then deploy the scenario (Topology Control).*
