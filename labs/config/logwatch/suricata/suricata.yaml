@@ -1225,10 +1225,10 @@ defrag:
 # "pass-packet", "reject" or "ignore" (which is the default).
 
 flow:
-  memcap: 128mb
+  memcap: 256mb
   #memcap-policy: ignore
-  hash-size: 65536
-  prealloc: 10000
+  hash-size: 131072
+  prealloc: 20000
   emergency-recovery: 30
   #managers: 1 # default to one flow manager
   #recyclers: 1 # default to one flow recycler thread

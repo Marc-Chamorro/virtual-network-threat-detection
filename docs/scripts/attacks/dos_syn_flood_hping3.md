@@ -66,6 +66,14 @@ flowchart LR
     Target -->|SYN-ACK (no future response)| Attacker
 ```
 
+---
+
+### Attacks
+
+The script performs two types of DoS attacks that differ in a single key aspect: the source of the messages. In one scenario, the messages are sent from random sources, while in the other, they originate from a fixed source. This distinction makes it easier to identify and visualize each attack pattern within the monitoring software.
+
+---
+
 ## Notes
 
 The process is killed automatically after a period of time. **Not recommended to use `Ctrl + C` to kill the process** as the running script will also exit.

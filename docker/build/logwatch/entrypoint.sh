@@ -207,8 +207,6 @@ if [ "$ELASTIC_STACK" == "1" ]; then
     -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
     -H "kbn-xsrf: true"
 
-
-
     # Enable ONLY network-related rules (simple and targeted)
     echo "Enabling network detection rules for: nmap, hping3, slowloris, ettercap, hydra..."
     
@@ -221,28 +219,28 @@ if [ "$ELASTIC_STACK" == "1" ]; then
     #    "query": "alert.attributes.tags: \"Network\" OR alert.attributes.tags: \"network\""
     #}'
 
-    curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
-    -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
-    -H "kbn-xsrf: true" \
-    -H "Content-Type: application/json" \
-    -d '{
-        "action": "enable",
-        "query": "alert.attributes.tags: \"Network\" OR alert.attributes.name: *Scan* OR alert.attributes.name: *Port* OR alert.attributes.name: *Brute* OR alert.attributes.name: *SSH* OR alert.attributes.name: *DoS* OR alert.attributes.name: *DDoS* OR alert.attributes.name: *Flood* OR alert.attributes.name: *ARP* OR alert.attributes.name: *Spoof* OR alert.attributes.name: *Slow* OR alert.attributes.name: *Hydra* OR alert.attributes.name: *Nmap*"
-    }'
+    #curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
+    #-u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #    "action": "enable",
+    #    "query": "alert.attributes.tags: \"Network\" OR alert.attributes.name: *Scan* OR alert.attributes.name: *Port* OR alert.attributes.name: *Brute* OR alert.attributes.name: *SSH* OR alert.attributes.name: *DoS* OR alert.attributes.name: *DDoS* OR alert.attributes.name: *Flood* OR alert.attributes.name: *ARP* OR alert.attributes.name: *Spoof* OR alert.attributes.name: *Slow* OR alert.attributes.name: *Hydra* OR alert.attributes.name: *Nmap*"
+    #}'
 
-    echo -e "\nNetwork rules enabled"
+    #echo -e "\nNetwork rules enabled"
 
     # Enable Suricata-specific rules if they exist
-    curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
-    -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
-    -H "kbn-xsrf: true" \
-    -H "Content-Type: application/json" \
-    -d '{
-        "action": "enable",
-        "query": "alert.attributes.name: *Suricata*"
-    }'
+    #curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
+    #-u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #    "action": "enable",
+    #    "query": "alert.attributes.name: *Suricata*"
+    #}'
 
-    echo -e "\nSuricata rules enabled"
+    #echo -e "\nSuricata rules enabled"
 
     #curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
     #-u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
@@ -260,6 +258,102 @@ if [ "$ELASTIC_STACK" == "1" ]; then
     #-d '{
     #    "action": "enable",
     #    "query": "event.module:suricata"
+    #}'
+
+    # First, create a custom rule that matches your Suricata data structure
+    curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
+    -H "kbn-xsrf: true" \
+    -H "Content-Type: application/json" \
+    -d '{
+    "rule_id": "suricata_nmap_detection",
+    "name": "Suricata Nmap Detection",
+    "description": "Detects Nmap scans from Suricata alerts",
+    "enabled": true,
+    "risk_score": 47,
+    "severity": "medium",
+    "type": "query",
+    "query": "suricata.eve.alert.signature: \"NMAP TCP Scan\"",
+    "index": ["filebeat-*"]
+    }'
+
+    # Create a rule for flood/DoS detection
+    curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
+    -H "kbn-xsrf: true" \
+    -H "Content-Type: application/json" \
+    -d '{
+    "rule_id": "suricata_flood_detection",
+    "name": "Suricata Flood Detection",
+    "description": "Detects potential flood/DoS attacks",
+    "enabled": true,
+    "risk_score": 73,
+    "severity": "high",
+    "type": "query",
+    "query": "suricata.eve.alert.signature: *Flood* OR suricata.eve.alert.signature: *DoS*",
+    "index": ["filebeat-*"]
+    }'
+
+    # Create threshold rule for DoS detection (high connection count)
+    echo "Creating DoS threshold detection rule..."
+    curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
+    -H "kbn-xsrf: true" \
+    -H "Content-Type: application/json" \
+    -d '{
+    "rule_id": "dos_flood_detection",
+    "name": "Potential DoS/Flood Attack Detection",
+    "description": "Detects potential DoS attacks by monitoring high volume of connections",
+    "enabled": true,
+    "risk_score": 73,
+    "severity": "high",
+    "type": "threshold",
+    "query": "destination.ip: 192.168.10.10",
+    "threshold": {
+        "field": ["source.ip"],
+        "value": 1000
+    },
+    "index": ["filebeat-*"],
+    "interval": "5m",
+    "from": "now-6m"
+    }'
+
+    # Create another threshold rule for port scan detection
+    # Fix the port scan threshold rule
+    echo "Creating port scan threshold detection..."
+    curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
+    -H "kbn-xsrf: true" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "rule_id": "port_scan_detection",
+        "name": "Potential Port Scan Detection",
+        "description": "Detects potential port scanning by monitoring connections to multiple ports",
+        "enabled": true,
+        "risk_score": 47,
+        "severity": "medium",
+        "type": "threshold",
+        "query": "destination.ip: 192.168.10.10",
+        "threshold": {
+            "field": "source.ip",
+            "value": 20,
+            "cardinality": [
+            {
+                "field": "destination.port",
+                "value": 5
+            }
+            ]
+        },
+        "index": ["filebeat-*"],
+        "interval": "5m",
+        "from": "now-6m"
+    }'
+
+    # Enable all Suricata alert rules
+    #echo "Enabling Suricata alert rules..."
+    #curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
+    #-u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #    "action": "enable",
+    #    "query": "alert.attributes.name: *Suricata* OR alert.attributes.query: *suricata.eve*"
     #}'
 
     echo "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[READY]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
@@ -315,9 +409,9 @@ if [ "$SURICATA_SERVICE" == "1" ] && [ "$ELASTIC_STACK" == "1" ]; then
 
 
 
-    curl -s -u $ELASTIC_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_cat/indices?v
+    #curl -s -u $ELASTIC_USER:$ELASTIC_PASSWORD "$ELASTIC_HOST"/_cat/indices?v
 
-    echo "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[READY2]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
+    #echo "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[READY2]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
 
 fi
 
