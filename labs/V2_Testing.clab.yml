@@ -11,23 +11,49 @@ topology:
       image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v20.cli
 
+    # logwatch:
+    #   kind: linux
+    #   image: logwatch_vntd:latest
+    #   env:
+    #     IFACE: "eth1"
+    #     IP_ADDR: "192.168.20.10/24"
+    #     IP_GTWY: "192.168.20.1"
+    #     SURICATA_SERVICE: 1                         
+    #     ELASTIC_STACK: 1                                        # Filebeat + Elasticsearch + Kibana
+    #   binds:
+    #     - ./config/logwatch/suricata/suricata.yaml:/etc/suricata/suricata.yaml
+    #     - ./config/logwatch/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
+    #     - ./config/logwatch/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
+    #     - ./config/logwatch/elasticsearch/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
+    #     - ./config/logwatch/elasticsearch/heap.options:/etc/elasticsearch/jvm.options.d/heap.options
+    #     - ./config/logwatch/kibana/kibana.yml:/etc/kibana/kibana.yml
+    #     - ./config/logwatch/kibana/node.options:/etc/kibana/node.options
+
     logwatch:
       kind: linux
-      image: logwatch_vntd:latest
+      image: logwatch_wazuh_vntd:latest
       env:
         IFACE: "eth1"
         IP_ADDR: "192.168.20.10/24"
         IP_GTWY: "192.168.20.1"
-        SURICATA_SERVICE: 1                         
-        ELASTIC_STACK: 1                                        # Filebeat + Elasticsearch + Kibana
+        SURICATA_SERVICE: 1
+        WAZUH_STACK: 1
       binds:
+        # Suricata
         - ./config/logwatch/suricata/suricata.yaml:/etc/suricata/suricata.yaml
-        - ./config/logwatch/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
-        - ./config/logwatch/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
-        - ./config/logwatch/elasticsearch/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
-        - ./config/logwatch/elasticsearch/heap.options:/etc/elasticsearch/jvm.options.d/heap.options
-        - ./config/logwatch/kibana/kibana.yml:/etc/kibana/kibana.yml
-        - ./config/logwatch/kibana/node.options:/etc/kibana/node.options
+        
+        # Wazuh Manager
+        - ./config/logwatch/wazuh-manager/ossec.conf:/var/ossec/etc/ossec.conf
+        - ./config/logwatch/wazuh-manager/local_rules.xml:/var/ossec/etc/rules/local_rules.xml
+        
+        # Filebeat
+        - ./config/logwatch/filebeat_wazuh/filebeat.yml:/etc/filebeat/filebeat.yml
+        
+        # Wazuh Indexer
+        - ./config/logwatch/wazuh-indexer/opensearch.yml:/etc/wazuh-indexer/opensearch.yml
+
+        # Wazuh Dashboards
+        - ./config/logwatch/wazuh-dashboard/opensearch_dashboards.yml:/etc/wazuh-dashboard/opensearch_dashboards.yml
 
     client:
       kind: linux

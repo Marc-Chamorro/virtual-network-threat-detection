@@ -1,0 +1,17 @@
+# Minimum configuration for Wazuh Indexer
+network.host: 0.0.0.0
+http.port: 9200
+transport.port: 9300
+discovery.type: single-node
+node.name: node-1
+cluster.name: wazuh-cluster
+path.data: /var/lib/wazuh-indexer
+path.logs: /var/log/wazuh-indexer
+
+# Completely disable security
+plugins.security.disabled: true
+
+# Performance settings
+indices.memory.index_buffer_size: 30%
+indices.fielddata.cache.size: 30%
+indices.queries.cache.size: 20%

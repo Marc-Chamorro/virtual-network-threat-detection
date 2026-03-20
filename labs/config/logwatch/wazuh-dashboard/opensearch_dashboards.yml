@@ -1,0 +1,11 @@
+server.host: 0.0.0.0
+server.port: 5601
+server.name: "wazuh-dashboard"
+server.ssl.enabled: false
+opensearch.hosts: ["http://localhost:9200"]
+opensearch.ssl.verificationMode: none
+opensearch_security.enabled: false
+# Add these:
+opensearch_security.multitenancy.enabled: false
+opensearch.username: ""
+opensearch.password: ""
