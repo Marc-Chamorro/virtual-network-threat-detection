@@ -40,11 +40,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN suricata-update
+# RUN suricata-update -o /etc/suricata/rules
 
-# Keep container running
-# CMD ["sleep", "infinity"]
-# CMD ["suricata", "-c", "/etc/suricata/suricata.yaml", "-i", "eth1"]
+RUN suricata-update enable-source et/open && \
+    suricata-update -o /etc/suricata/rules
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh

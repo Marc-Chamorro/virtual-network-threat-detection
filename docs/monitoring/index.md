@@ -85,3 +85,4 @@ The monitoring stack deployed in the `logwatch` node consists of four major comp
 - [**Elasticsearch**](./elasticsearch.md): Log storage and indexing.
 - [**Kibana**](./kibana.md): Visualization and data exploration.
 - [**Filebeat**](./filebeat.md): Log forwarding and parsing.
+- [**Alerts & Detection Rules**](./alerts.md): Processing the network data.

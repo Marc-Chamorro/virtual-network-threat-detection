@@ -252,7 +252,6 @@ topology:
         ELASTIC_STACK: 1                                      # Filebeat + Elasticsearch + Kibana
       binds:
         - ./config/logwatch/suricata/suricata.yaml:/etc/suricata/suricata.yaml
-        - ./config/logwatch/suricata/suricata.rules:/etc/suricata/rules/suricata.rules
         - ./config/logwatch/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
         - ./config/logwatch/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
         - ./config/logwatch/elasticsearch/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml

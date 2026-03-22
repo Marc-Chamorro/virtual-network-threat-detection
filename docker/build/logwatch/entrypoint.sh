@@ -197,12 +197,12 @@ if [ "$ELASTIC_STACK" == "1" ]; then
 
     echo "Kibana ready"
 
-    # Create detection engine index
+    # Initialize detection engine index
     curl -s -X POST "$KIBANA_HOST/api/detection_engine/index" \
     -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
     -H "kbn-xsrf: true"
 
-    # Install prebuilt rules
+    # Load ALL of Elastic's pre-built detection rules (includes Suricata, network, etc.)
     curl -s -X PUT "$KIBANA_HOST/api/detection_engine/rules/prepackaged" \
     -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
     -H "kbn-xsrf: true"
@@ -261,89 +261,89 @@ if [ "$ELASTIC_STACK" == "1" ]; then
     #}'
 
     # First, create a custom rule that matches your Suricata data structure
-    curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
-    -H "kbn-xsrf: true" \
-    -H "Content-Type: application/json" \
-    -d '{
-    "rule_id": "suricata_nmap_detection",
-    "name": "Suricata Nmap Detection",
-    "description": "Detects Nmap scans from Suricata alerts",
-    "enabled": true,
-    "risk_score": 47,
-    "severity": "medium",
-    "type": "query",
-    "query": "suricata.eve.alert.signature: \"NMAP TCP Scan\"",
-    "index": ["filebeat-*"]
-    }'
+    #curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #"rule_id": "suricata_nmap_detection",
+    #"name": "Suricata Nmap Detection",
+    #"description": "Detects Nmap scans from Suricata alerts",
+    #"enabled": true,
+    #"risk_score": 47,
+    #"severity": "medium",
+    #"type": "query",
+    #"query": "suricata.eve.alert.signature: \"NMAP TCP Scan\"",
+    #"index": ["filebeat-*"]
+    #}'
 
     # Create a rule for flood/DoS detection
-    curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
-    -H "kbn-xsrf: true" \
-    -H "Content-Type: application/json" \
-    -d '{
-    "rule_id": "suricata_flood_detection",
-    "name": "Suricata Flood Detection",
-    "description": "Detects potential flood/DoS attacks",
-    "enabled": true,
-    "risk_score": 73,
-    "severity": "high",
-    "type": "query",
-    "query": "suricata.eve.alert.signature: *Flood* OR suricata.eve.alert.signature: *DoS*",
-    "index": ["filebeat-*"]
-    }'
+    #curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #"rule_id": "suricata_flood_detection",
+    #"name": "Suricata Flood Detection",
+    #"description": "Detects potential flood/DoS attacks",
+    #"enabled": true,
+    #"risk_score": 73,
+    #"severity": "high",
+    #"type": "query",
+    #"query": "suricata.eve.alert.signature: *Flood* OR suricata.eve.alert.signature: *DoS*",
+    #"index": ["filebeat-*"]
+    #}'
 
     # Create threshold rule for DoS detection (high connection count)
-    echo "Creating DoS threshold detection rule..."
-    curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
-    -H "kbn-xsrf: true" \
-    -H "Content-Type: application/json" \
-    -d '{
-    "rule_id": "dos_flood_detection",
-    "name": "Potential DoS/Flood Attack Detection",
-    "description": "Detects potential DoS attacks by monitoring high volume of connections",
-    "enabled": true,
-    "risk_score": 73,
-    "severity": "high",
-    "type": "threshold",
-    "query": "destination.ip: 192.168.10.10",
-    "threshold": {
-        "field": ["source.ip"],
-        "value": 1000
-    },
-    "index": ["filebeat-*"],
-    "interval": "5m",
-    "from": "now-6m"
-    }'
+    #echo "Creating DoS threshold detection rule..."
+    #curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #"rule_id": "dos_flood_detection",
+    #"name": "Potential DoS/Flood Attack Detection",
+    #"description": "Detects potential DoS attacks by monitoring high volume of connections",
+    #"enabled": true,
+    #"risk_score": 73,
+    #"severity": "high",
+    #"type": "threshold",
+    #"query": "destination.ip: 192.168.10.10",
+    #"threshold": {
+    #    "field": ["source.ip"],
+    #    "value": 1000
+    #},
+    #"index": ["filebeat-*"],
+    #"interval": "5m",
+    #"from": "now-6m"
+    #}'
 
     # Create another threshold rule for port scan detection
     # Fix the port scan threshold rule
-    echo "Creating port scan threshold detection..."
-    curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
-    -H "kbn-xsrf: true" \
-    -H "Content-Type: application/json" \
-    -d '{
-        "rule_id": "port_scan_detection",
-        "name": "Potential Port Scan Detection",
-        "description": "Detects potential port scanning by monitoring connections to multiple ports",
-        "enabled": true,
-        "risk_score": 47,
-        "severity": "medium",
-        "type": "threshold",
-        "query": "destination.ip: 192.168.10.10",
-        "threshold": {
-            "field": "source.ip",
-            "value": 20,
-            "cardinality": [
-            {
-                "field": "destination.port",
-                "value": 5
-            }
-            ]
-        },
-        "index": ["filebeat-*"],
-        "interval": "5m",
-        "from": "now-6m"
-    }'
+    #echo "Creating port scan threshold detection..."
+    #curl -u $ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD -X POST "$KIBANA_HOST/api/detection_engine/rules" \
+    #-H "kbn-xsrf: true" \
+    #-H "Content-Type: application/json" \
+    #-d '{
+    #    "rule_id": "port_scan_detection",
+    #    "name": "Potential Port Scan Detection",
+    #    "description": "Detects potential port scanning by monitoring connections to multiple ports",
+    #    "enabled": true,
+    #    "risk_score": 47,
+    #    "severity": "medium",
+    #    "type": "threshold",
+    #    "query": "destination.ip: 192.168.10.10",
+    #    "threshold": {
+    #        "field": "source.ip",
+    #        "value": 20,
+    #        "cardinality": [
+    #        {
+    #            "field": "destination.port",
+    #            "value": 5
+    #        }
+    #        ]
+    #    },
+    #    "index": ["filebeat-*"],
+    #    "interval": "5m",
+    #    "from": "now-6m"
+    #}'
 
     # Enable all Suricata alert rules
     #echo "Enabling Suricata alert rules..."
@@ -356,7 +356,54 @@ if [ "$ELASTIC_STACK" == "1" ]; then
     #    "query": "alert.attributes.name: *Suricata* OR alert.attributes.query: *suricata.eve*"
     #}'
 
-    echo "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[READY]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
+    # Import Suricata alerts into elastic alerts
+    curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules" \
+    -u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \
+    -H "kbn-xsrf: true" \
+    -H "Content-Type: application/json" \
+    -d '{
+    "name": "Suricata Alerts (ALL)",
+    "description": "All Suricata alerts from eve.json",
+    "enabled": true,
+    "risk_score": 50,
+    "severity": "medium",
+    "type": "query",
+    "index": ["filebeat-*", ".ds-filebeat-*"],
+    "query": "event.module:suricata AND suricata.eve.event_type:alert",
+    "language": "kuery",
+    "interval": "1m",
+    "from": "now-5m",
+
+    "rule_name_override": "suricata.eve.alert.signature",
+    "timestamp_override": "@timestamp",
+
+    "severity_mapping": [
+        {
+        "field": "suricata.eve.alert.severity",
+        "operator": "equals",
+        "value": "1",
+        "severity": "critical"
+        },
+        {
+        "field": "suricata.eve.alert.severity",
+        "operator": "equals",
+        "value": "2",
+        "severity": "high"
+        },
+        {
+        "field": "suricata.eve.alert.severity",
+        "operator": "equals",
+        "value": "3",
+        "severity": "medium"
+        },
+        {
+        "field": "suricata.eve.alert.severity",
+        "operator": "equals",
+        "value": "4",
+        "severity": "low"
+        }
+    ]
+    }'
 
 fi
 

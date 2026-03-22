@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     iputils-ping \
     traceroute \
     net-tools \
+    iptables \
     curl \
     tcpdump \
     nmap \

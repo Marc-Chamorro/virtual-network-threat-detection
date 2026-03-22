@@ -25,7 +25,7 @@ Example usage:
 Specify target, port, and duration manually:
 
 ```bash
-./scripts/attacks/dos_syn_flood_hping3.sh clab-virtual-env-attacker 172.16.30.2 80 120
+./scripts/attacks/dos_syn_flood_hping3.sh clab-virtual-env-attacker 172.16.30.2 80 60
 ```
 
 | Parameter          | Description                                  |
@@ -35,23 +35,28 @@ Specify target, port, and duration manually:
 | port               | Target port (optional)                       |
 | timeout            | Duration of the attack in seconds (optional) |
 
-If no target is specified, the script attacks: `enterprise.com` on port: `80` during: `120` seconds.
+If no target is specified, the script attacks: `enterprise.com` on port: `80` during: `60` seconds.
 
 ---
 
 ## Attack Configuration
 
-The script executes a continuous SYN flood using `hping3`:
+The script executes two consecutive SYN flood attacks using `hping3`, sharing the same base options:
 
-| Option          | Purpose                          |
-|-----------------|----------------------------------|
-| -S              | Set TCP SYN flag                 |
-| -p              | Target port                      |
-| --flood         | Send packets as fast as possible |
-| --rand-source   | Randomize source IP addresses    |
-| --tcp-timestamp | Add TCP timestamp option         |
+| Option          | Purpose                                                 |
+|-----------------|---------------------------------------------------------|
+| -S              | Set TCP SYN flag (half-open, never completes handshake) |
+| -p              | Target port                                             |
+| --flood         | Send packets as fast as possible (no reply wait)        |
+| --tcp-timestamp | Add TCP timestamp option                                |
 
-The attack runs for a defined duration using a timeout mechanism and is then gracefully stopped.
+### Random Source
+
+Adds `--rand-source` to randomise the origin IP on every packet, making source-based filtering ineffective.
+
+### Same Source
+
+Omits `--rand-source`, sending all packets from the container's real IP. Easier to correlate and block, but useful for observing a single-source flood pattern in the monitoring software.
 
 ---
 
@@ -59,21 +64,18 @@ The attack runs for a defined duration using a timeout mechanism and is then gra
 
 The attack generates a massive volume of half-open TCP connections, which can make other clients unable to access or use the site at all.
 
+The process is sent to background and killed via its PID after the timeout elapses, allowing the parent to call `wait` and reap the child cleanly, avoiding zombie processes.
+
 ```mermaid
 flowchart LR
 
-    Attacker -->|SYN flood | Target
-    Target -->|SYN-ACK (no future response)| Attacker
+    Attacker -->|SYN flood random source| Target
+    Attacker -->|SYN flood same source| Target
+    Target -->|SYN-ACK no reply| Attacker
 ```
-
----
-
-### Attacks
-
-The script performs two types of DoS attacks that differ in a single key aspect: the source of the messages. In one scenario, the messages are sent from random sources, while in the other, they originate from a fixed source. This distinction makes it easier to identify and visualize each attack pattern within the monitoring software.
 
 ---
 
 ## Notes
 
-The process is killed automatically after a period of time. **Not recommended to use `Ctrl + C` to kill the process** as the running script will also exit.
+The process is killed automatically after the configured timeout. **Not recommended to use `Ctrl + C` to interrupt the script**, as doing so will also exit the calling shell before the child process is reaped.

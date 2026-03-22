@@ -78,6 +78,7 @@ nav:
     - Elasticsearch: monitoring/elasticsearch.md
     - Filebeat: monitoring/filebeat.md
     - Kibana: monitoring/kibana.md
+    - Alerts & Detection Rules (≈ SIEM): monitoring/alerts.md
 
   - Attack Simulations:
     - Overview: attacks/index.md
