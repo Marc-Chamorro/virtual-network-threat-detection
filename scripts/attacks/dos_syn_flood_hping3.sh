@@ -18,14 +18,16 @@ if [ -z "$1" ]; then
 fi
 
 ATTACKER_CONTAINER="$1"
-TARGET="${2:-enterprise.com}"
-PORT="${3:-80}"
-TIMEOUT="${4:-60}"
+TARGET="${2:-enterprise.com}"             # Default target URL
+PORT="${3:-80}"                           # Default to port 80
+TIMEOUT="${4:-60}"                        # Default to 60 seconds
 
+# https://www.kali.org/tools/hping3/
 echo "================================"
 echo "Attack: DoS TCP SYN flood (hping3)"
 echo "Target: $TARGET"
 echo "Port: $PORT"
+echo "Timeout: ${TIMEOUT}s"
 echo "Attacker container: $ATTACKER_CONTAINER"
 echo "================================"
 

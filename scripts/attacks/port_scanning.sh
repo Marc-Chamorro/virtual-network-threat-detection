@@ -18,8 +18,9 @@ if [ -z "$1" ]; then
 fi
 
 ATTACKER_CONTAINER="$1"
-TARGET="${2:-enterprise.com}"  # Default to enterprise.com if no target is given
+TARGET="${2:-enterprise.com}"             # Default to enterprise.com if no target is given
 
+# https://www.kali.org/tools/nmap/
 echo "================================"
 echo "Attack: Port scan (Nmap SYN & UDP scan)"
 echo "Target: $TARGET"
