@@ -7,7 +7,7 @@ set -e
 
 # If called with -n, return the menu name
 if [ "$1" = "-n" ]; then
-    echo "DoS | TCP SYN flood (hping3)"
+    echo "DoS TCP SYN flood | hping3"
     exit 0
 fi
 

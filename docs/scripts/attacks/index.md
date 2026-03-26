@@ -125,3 +125,4 @@ Currently available attacks:
 
 - [Port Scanning](port_scanning.md): Scan all available ports and services from a node.
 - [TCP SYN Flood (DoS)](dos_syn_flood_hping3.md): Send a high volume of SYN packages to a target to disrupt connections and exhaust resources.
+- [SSH Bruteforce](./ssh_bruteforce_hydra.md): Try to log in by guessing many username and password combinations until the correct one works.

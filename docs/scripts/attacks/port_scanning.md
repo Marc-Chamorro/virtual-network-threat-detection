@@ -7,7 +7,7 @@ icon: material/radar
 
 This scenario performs a **network reconnaissance scan** using `nmap` from an attacker container.
 
-The script executes two scans against a target host:
+The script runs two scans against a target host:
 
 1. **TCP SYN scan** across all ports.
 2. **UDP scan** on the most common UDP ports.
@@ -18,7 +18,6 @@ The script executes two scans against a target host:
 
 Location:
 > `scripts/attacks/port_scanning.sh`
-
 
 Example usage:
 
@@ -37,25 +36,27 @@ Specify a target manually:
 | attacker-container | Container executing the attack |
 | target             | Target host (optional)         |
 
-If no target is specified, the script scans: `enterprise.com`.
+!!! note "Default values"
+    If no target is specified, the script scans: `enterprise.com`.
 
 ---
 
 ## Scan Configuration
 
-The script executes two scans:
+The script runs two sequential scans using `nmap`.
 
 ### TCP Scan
 
-Full TCP port scan with service and OS detection.
+Full port scan with service and OS detection.
 
-Option	Purpose
--sS	TCP SYN scan
--sV	Service detection
--sC	Default NSE scripts
--O	OS detection
--p-	Scan all ports
--T4	Faster timing
+| Option | Purpose              |
+|--------|----------------------|
+| `-sS`  | TCP SYN scan         |
+| `-sV`  | Service detection    |
+| `-sC`  | Default NSE scripts  |
+| `-O`   | OS detection         |
+| `-p-`  | Scan all ports       |
+| `-T4`  | Faster timing        |
 
 ### UDP Scan
 
@@ -63,10 +64,10 @@ Common UDP service discovery.
 
 | Option          | Purpose               |
 |-----------------|-----------------------|
-| -sU             | UDP scan              |
-| -sV             | Service detection     |
-| --top-ports 100 | Scan common UDP ports |
-| -T4             | Faster timing         |
+| `-sU`           | UDP scan              |
+| `-sV`           | Service detection     |
+| `--top-ports 100` | Scan common UDP ports |
+| `-T4`           | Faster timing         |
 
 ---
 
@@ -76,7 +77,6 @@ The scan generates a high volume of connection attempts which are inspected by t
 
 ```mermaid
 flowchart LR
-
     Attacker -->|TCP SYN scan| Target
     Attacker -->|UDP probes| Target
 ```

@@ -38,8 +38,8 @@ echo "================================"
 # -v            -> Output progress (verbose)
 # --reason      -> Display the reason a port is in a particular state
 
-echo "[+] Running TCP scan..."
+echo "--- Running TCP scan ---"
 docker exec "$ATTACKER_CONTAINER" nmap -sS -sV -sC -O -p- -T4 -v --reason "$TARGET"
 
-echo "[+] Running UDP scan..."
+echo "--- Running UDP scan ---"
 docker exec "$ATTACKER_CONTAINER" nmap -sU -sV --top-ports 100 -T4 -v --reason "$TARGET"

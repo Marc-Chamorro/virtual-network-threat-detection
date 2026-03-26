@@ -208,7 +208,7 @@ if [ "$ELASTIC_STACK" == "1" ]; then
     -H "kbn-xsrf: true"
 
     # Enable ONLY network-related rules (simple and targeted)
-    echo "Enabling network detection rules for: nmap, hping3, slowloris, ettercap, hydra..."
+    echo "Enabling network detection rules"
     
     #curl -s -X POST "$KIBANA_HOST/api/detection_engine/rules/_bulk_action" \
     #-u "$ADMIN_LOGIN:$ADMIN_LOGIN_PASSWORD" \

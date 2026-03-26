@@ -83,6 +83,9 @@ nav:
   - Attack Simulations:
     - Overview: attacks/index.md
     - Port Scanning: attacks/port_scanning.md
+    - DoS SYN Flood: attacks/dos_syn_flood_hping3.md
+    - DoS Slow HTTP: attacks/dos_slow_http_slowloris.md
+    - SSH Bruteforce: attacks/ssh_bruteforce_hydra.md
 
   - Operations & Troubleshooting: operations/commands.md
     # - Useful Commands: operations/commands.md

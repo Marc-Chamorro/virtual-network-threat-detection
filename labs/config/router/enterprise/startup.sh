@@ -36,6 +36,14 @@ ip route add 192.168.60.0/24 via 192.168.0.2
 # NAT
 # =================================================================================================
 
+# Flush existing rules
+iptables -F
+iptables -t nat -F
+iptables -X
+
+# Allow all forwarding (not secure)
+iptables -P FORWARD ACCEPT
+
 # Allow internal private IPs to access the internet by hiding behind this router's IP
 iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 
@@ -44,6 +52,17 @@ iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 # =================================================================================================
 
 # Forward incoming HTTP requests to the Firewall (which later forwards to  the DMZ)
-iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to-destination 192.168.0.2
+#iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to-destination 192.168.0.2
+#iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 25 -j DNAT --to-destination 192.168.0.2
 
-iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 25 -j DNAT --to-destination 192.168.0.2
+#iptables -A FORWARD -i eth1 -p tcp --dport 80 -d 192.168.0.2 -j ACCEPT
+#iptables -A FORWARD -i eth1 -p tcp --dport 25 -d 192.168.0.2 -j ACCEPT
+
+# Forward everything from WAN (eth1) to the firewall machine
+iptables -t nat -A PREROUTING -i eth1 -j DNAT --to-destination 192.168.0.2
+
+# Allow forwarding of all traffic to the firewall machine
+iptables -A FORWARD -i eth1 -d 192.168.0.2 -j ACCEPT
+
+# Allow established/related return traffic back out
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
