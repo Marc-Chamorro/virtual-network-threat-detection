@@ -48,7 +48,7 @@ nav:
     #- Automation Workflows: scripts/automation-workflows.md
     - Images Management: scripts/images-management.md
     - Lab Management: scripts/lab-management.md
-    - Attack Simulations: attacks/index.md
+    - Attack Simulations: scripts/attacks/index.md
 
   - Network Services:
     - Overview: network-services/index.md
@@ -81,11 +81,11 @@ nav:
     - Alerts & Detection Rules (≈ SIEM): monitoring/alerts.md
 
   - Attack Simulations:
-    - Overview: attacks/index.md
-    - Port Scanning: attacks/port_scanning.md
-    - DoS SYN Flood: attacks/dos_syn_flood_hping3.md
-    - DoS Slow HTTP: attacks/dos_slow_http_slowloris.md
-    - SSH Bruteforce: attacks/ssh_bruteforce_hydra.md
+    - Overview: scripts/attacks/index.md
+    - Port Scanning: scripts/attacks/port_scanning.md
+    - DoS SYN Flood: scripts/attacks/dos_syn_flood_hping3.md
+    - DoS Slow HTTP: scripts/attacks/dos_slow_http_slowloris.md
+    - SSH Bruteforce: scripts/attacks/ssh_bruteforce_hydra.md
 
   - Operations & Troubleshooting: operations/commands.md
     # - Useful Commands: operations/commands.md
