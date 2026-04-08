@@ -23,8 +23,6 @@ topology:
     # Link definitions ...
 ```
 
----
-
 ### Nodes
 
 The `nodes` section defines every device in the network. Each entry specifies:
@@ -49,8 +47,6 @@ Additional sections definitions can be added to change the behavior and capabili
 - `cpu` [O]: Define a maximum number of CPU cores to be assigned to a specific node. (e.g., `2`)
 - `memory` [O]: Maximum amount of RAM available to a single node. (e.g., `4GB`)
 
----
-
 ### Example: Internet Router
 
 ```yaml
@@ -61,8 +57,6 @@ router_internet:
     - ./config/router/daemons:/etc/frr/daemons
     - ./config/router/internet/frr.conf:/etc/frr/frr.conf
 ```
-
----
 
 ### Example: Internet Server
 
@@ -83,8 +77,6 @@ internet_server:
     - ip route add default via 172.16.100.1
 ```
 
----
-
 ### Example: Attacker
 
 ```yml
@@ -101,12 +93,8 @@ attacker:
       - 172.16.100.100
 ```
 
----
-
 ### Links
 The `links` section defines the virtual cables connecting the nodes. Each link is defined by a pair of endpoints in the format `"node_name:interface_name"`.
-
----
 
 ### Example: Connecting Internet Router to Enterprise Router
 
@@ -140,8 +128,6 @@ Containerlab allows defining these dependencies using **groups**, **stages**, an
 
 This project uses this mechanism to guarantee that critical infrastructure components start in a specific order.
 
----
-
 ### Health Checks
 
 A **healthcheck** verifies that a container is operational before allowing other components to start.
@@ -167,8 +153,6 @@ This check ensures that the container:
 
 Only after this validation is successful the dependent nodes are allowed to continue with the startup process
 
----
-
 ### Startup Stages
 
 Startup stages define deployment dependencies between nodes.
@@ -192,8 +176,6 @@ This specific configuration ensures:
 3. Only then are switches and other infrastructure nodes created.
 
 This prevents scenarios where the network nodes are up before the monitoring node is ready.
-
----
 
 ### Startup Order in the VNTD Topology
 
@@ -294,8 +276,6 @@ Some nodes depend on components that must already be operational.
 In the provided enterprise topology, the monitoring system must be ready before traffic starts. Therefore, it must be the first node to be available, and the rest should start progressively.
 
 To handle these dependencies, the topology defines a **structured startup flow** using Containerlab orchestration configurations.
-
----
 
 ### Deployment
 

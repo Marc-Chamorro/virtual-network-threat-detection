@@ -28,11 +28,11 @@ With explicit parameters:
 ./scripts/attacks/ospf_route_hijack.sh clab-virtual-env-attacker 172.16.30.2/32 60
 ```
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `attacker-container` | Container executing the attack | required |
-| `target-prefix` | IP prefix to hijack (host route recommended) | `172.16.30.2/32` |
-| `restore-delay` | Seconds before restoring legitimate routing | `60` |
+| Parameter            | Description                                  | Default          |
+|----------------------|----------------------------------------------|------------------|
+| `attacker-container` | Container executing the attack               | required         |
+| `target-prefix`      | IP prefix to hijack (host route recommended) | `172.16.30.2/32` |
+| `restore-delay`      | Seconds before restoring legitimate routing  | `60`             |
 
 The attacker router container name is automatically derived from the attacker container name by replacing the `-attacker` suffix with `-router_attacker`.
 
@@ -56,15 +56,15 @@ flowchart TD
 
 The script executes the following sequence automatically:
 
-| Phase | Action |
-|-------|--------|
-| 1 | Start `tcpdump` on the attacker to capture intercepted traffic |
-| 2 | Enable IP forwarding and NAT on the attacker so packets are relayed to the real destination |
-| 3 | Start a malicious nginx web server serving a page to impersonate the enterprise site |
-| 4 | Inject a `/32` static route via FRR `vtysh` and redistribute it into OSPF |
-| 5 | After the timeout, stop the packet capture |
-| 6 | Remove the injected route and withdraw the OSPF redistribution |
-| 7 | Stop nginx and remove NAT rules |
+| Phase | Action                                                                                      |
+|-------|---------------------------------------------------------------------------------------------|
+| 1     | Start `tcpdump` on the attacker to capture intercepted traffic                              |
+| 2     | Enable IP forwarding and NAT on the attacker so packets are relayed to the real destination |
+| 3     | Start a malicious nginx web server serving a page to impersonate the enterprise site        |
+| 4     | Inject a `/32` static route via FRR `vtysh` and redistribute it into OSPF                   |
+| 5     | After the timeout, stop the packet capture                                                  |
+| 6     | Remove the injected route and withdraw the OSPF redistribution                              |
+| 7     | Stop nginx and remove NAT rules                                                             |
 
 ---
 

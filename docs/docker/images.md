@@ -46,8 +46,6 @@ A general-purpose Linux router. Unlike the official FRR image, this image is bui
     - **IP Forwarding:** Enabled at build time by setting `net.ipv4.ip_forward=1` in `/etc/sysctl.conf`.
     - **OSPF:** Enabled at build time by setting `ospfd=yes` in `/etc/frr/daemons`.
 
----
-
 ### FRR (`frr_vntd`)
 
 A direct import of the official FRRouting image.
@@ -57,8 +55,6 @@ A direct import of the official FRRouting image.
 
 !!! important
     This image does not support NAT; hence the creation of a dedicated router image.
-
----
 
 ### Firewall (`firewall_vntd`)
 
@@ -77,8 +73,6 @@ A dedicated node for simulating network security boundaries. Using a custom imag
 - **Environment Variables:**
     You can control this container using the following variables in your topology file:
     - `DHCP_RELAY=1`: Starts the DHCP relay service (configuration files are required to make this service work).
-
----
 
 ### MLS (`mls_vntd`)
 
@@ -130,8 +124,6 @@ A simulation of an attacker machine.
     - `nmap`: Port scanning.
     - `openssh-client`: Remote connectivity.
     - Standard network tools: `iproute2`, `net-tools`, `curl`.
-
----
 
 ### Logwatch (`logwatch_vntd`)
 

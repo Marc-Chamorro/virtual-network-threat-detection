@@ -7,6 +7,8 @@ icon: material/file-code-outline
 
 To minimize human errors and automate the workflow, the project includes a comprehensive set of automation scripts. These tools manage the entire lifecycle of the laboratory, from building custom Docker images to orchestrating complex network topologies with Containerlab
 
+---
+
 ## Core Philosophy
 
 The automation framework is built upon three fundamental principles:
@@ -32,6 +34,8 @@ The automation framework is built upon three fundamental principles:
     User-friendly interfaces that guide the operator through operations by removing the needing of memorize complex flags or instructions.
 
 </div>
+
+---
 
 ## Main Entry Point: `run.sh`
 

@@ -47,10 +47,10 @@ sequenceDiagram
     participant S as Web Server
 
     loop For each of 100,000 sockets
-        A->>S: GET / HTTP/1.1\r\nHost: target\r\n
+        A->>S: GET / HTTP/1.1 - Host: target
         Note over S: Connection held open, awaiting completion
         loop Every 10 seconds
-            A->>S: X-Keep-Alive: timeout=900\r\n
+            A->>S: X-Keep-Alive: timeout=900
             Note over S: Idle timer reset, thread still occupied
         end
     end

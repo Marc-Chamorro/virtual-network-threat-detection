@@ -39,8 +39,6 @@ The Firewall implements a **Default DROP** policy for all INPUT and FORWARD pack
 !!! note "Policies format"
     Policies are designed to be explicit rather than permissive.
 
----
-
 ### Inter-Zone Communication
 
 | Source          | Destination             | Permitted Traffic / Protocols                           |
@@ -75,6 +73,8 @@ iptables -t nat -A PREROUTING -i eth1 -p tcp -m multiport --dports 80,22,53,25 -
 iptables -t nat -A PREROUTING -i eth1 -p udp --dport 53 -j DNAT --to-destination 192.168.10.10
 ```
 
+---
+
 ## Outbound (SNAT)
 
 Outbound traffic from enterprise VLANs is masqueraded at the Enterprise Router:
@@ -85,8 +85,6 @@ iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 ```
 
 ---
-
-CONTINUE FROM HERE AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
 ## Firewall Configuration Files
 

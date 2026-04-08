@@ -50,6 +50,8 @@ binds:
 
 ---
 
+---
+
 ## DHCP Software
 
 The service is implemented using **`isc-dhcp-server`**. The server is to be explicitly bound to a single interface: `eth1`. This prevents the DHCP daemon from listening on unintended interfaces (even though in this scenario, all `internal_server` traffic is routed through the same interface).

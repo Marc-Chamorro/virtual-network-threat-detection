@@ -7,6 +7,8 @@ icon: material/file-code
 
 To maintain consistency across the laboratory environment, all custom images adhere to a strict set of guidelines. These standards ensure that images are lightweight, non-interactive during build, and persistent during runtime.
 
+---
+
 ## Design Considerations
 
 ### 1. Non-Interactive Environment

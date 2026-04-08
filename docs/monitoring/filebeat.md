@@ -89,8 +89,6 @@ binds:
 
 This allows modifying the Filebeat service behavior without rebuilding the container image.
 
----
-
 ### Configuration Permissions
 
 Configuration files required to run the Filebeat environment requires their permissions to be adjusted.
@@ -143,8 +141,6 @@ filebeat modules enable suricata
 ```
 
 This way, the configuration file needs no additional parameters.
-
----
 
 ### Log Suricata Sources
 

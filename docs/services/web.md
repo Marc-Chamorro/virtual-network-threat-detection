@@ -54,6 +54,8 @@ There are:
 - No authentication
 - No application logic
 
+---
+
 ## Web Behavior
 
 The web server is started using the system service manager:
@@ -69,6 +71,8 @@ Nginx runs in the background using default settings.
 
 !!! info
     Due to its simplicity, this service is ideal for testing HTTP-based detection, logging, and traffic classification.
+
+---
 
 ## How to use
 

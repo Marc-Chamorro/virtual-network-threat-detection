@@ -9,6 +9,8 @@ While the topology file defines the *structure* of the network, the behavior of 
 
 This document outlines how to configure the different types of nodes available in the environment, using the provided Docker images as a baseline.
 
+---
+
 ## 1. Linux Routers (FRRouting / Custom Image)
 
 Nodes using the `frr_vntd` or `router_vntd` images are powered by either **FRRouting (FRR)** or a custom image with routing services installed. Configuration is managed via file mounts rather than interacting with the shell manually.
@@ -35,22 +37,24 @@ Instead of hardcoding commands in the `exec` section of the topology file, we us
 
 === "Topology Definition"
 
-  ```yaml
-  firewall:
-    kind: linux
-    image: firewall_vntd:latest
-    binds:
-      - ./config/firewall/my-lab/startup.sh:/startup.sh
-    exec:
-      - sh /startup.sh
-  ```
+    ```yaml
+    firewall:
+      kind: linux
+      image: firewall_vntd:latest
+      binds:
+        - ./config/firewall/my-lab/startup.sh:/startup.sh
+      exec:
+        - sh /startup.sh
+    ```
 
 === "Script Content `startup.sh`"
 
-  - **IP Addressing:** `ip addr add ...`
-  - **Interface Management:** Creating bridges (`ip link add type bridge`) or VLAN sub-interfaces (`ip link add link eth0 name eth0.10 type vlan id 10`).
-  - **System Toggles:** Enabling IP forwarding (`sysctl -w net.ipv4.ip_forward=1`).
-  - **Security Rules:** Defining `iptables` or `nftables` policies.
+    - **IP Addressing:** `ip addr add ...`
+    - **Interface Management:** Creating bridges (`ip link add type bridge`) or VLAN sub-interfaces (`ip link add link eth0 name eth0.10 type vlan id 10`).
+    - **System Toggles:** Enabling IP forwarding (`sysctl -w net.ipv4.ip_forward=1`).
+    - **Security Rules:** Defining `iptables` or `nftables` policies.
+
+---
 
 ## 3. Arista cEOS Switches
 
@@ -87,6 +91,8 @@ interface Ethernet1
    switchport access vlan 10
 !
 ```
+
+---
 
 ## 4. Configuration Persistence Strategy
 

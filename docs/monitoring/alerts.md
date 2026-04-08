@@ -75,6 +75,8 @@ This ensures alerts reflect the original rule, for example:
 - >ET SCAN Suspicious inbound to MySQL port 3306
 - >ET SCAN Potential VNC Scan
 
+---
+
 ## Why Alerts May Not Appear
 
 !!! warning

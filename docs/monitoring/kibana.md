@@ -98,8 +98,6 @@ binds:
 
 This allows modifying the Kibana service behavior without rebuilding the container image.
 
----
-
 ### Heap Options
 
 Kibana consumes a significant amount of RAM. By default, it allocates around **4GB** of the memory to Kibana.

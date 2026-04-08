@@ -26,14 +26,14 @@ With explicit parameters:
 ./scripts/attacks/smtp_recon_abuse.sh clab-virtual-env-attacker enterprise.com 25 143
 ```
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `attacker-container` | Container executing the attack | required |
-| `target` | Target hostname or IP | `enterprise.com` |
-| `smtp-port` | SMTP port | `25` |
-| `imap-port` | IMAP port for the brute force phase | `143` |
-| `mail-to` | Recipient address for the spoofed mail | `alice@enterprise.com` |
-| `mail-from` | Spoofed sender address | `ceo@enterprise.com` |
+| Parameter            | Description                            | Default                |
+|----------------------|----------------------------------------|------------------------|
+| `attacker-container` | Container executing the attack         | required               |
+| `target`             | Target hostname or IP                  | `enterprise.com`       |
+| `smtp-port`          | SMTP port                              | `25`                   |
+| `imap-port`          | IMAP port for the brute force phase    | `143`                  |
+| `mail-to`            | Recipient address for the spoofed mail | `alice@enterprise.com` |
+| `mail-from`          | Spoofed sender address                 | `ceo@enterprise.com`   |
 
 ---
 
@@ -49,10 +49,10 @@ Tools: `smtp-commands`, `smtp-ntlm-info` NSE scripts.
 
 Three SMTP mechanisms are used to discover valid mailbox addresses on the server:
 
-| Method | Description |
-|--------|-------------|
-| `VRFY` | Directly asks the server to verify a mailbox address |
-| `EXPN` | Requests expansion of a mailing list alias |
+| Method    | Description                                                            |
+|-----------|------------------------------------------------------------------------|
+| `VRFY`    | Directly asks the server to verify a mailbox address                   |
+| `EXPN`    | Requests expansion of a mailing list alias                             |
 | `RCPT TO` | Attempts to address a test message; works even when `VRFY` is disabled |
 
 Valid usernames discovered here can be fed into Phase 5 or used in phishing campaigns.

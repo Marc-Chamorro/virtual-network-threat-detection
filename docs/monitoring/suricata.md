@@ -62,8 +62,6 @@ If the variable is not set Suricata does not start and therefore no traffic insp
 
 This mechanism allows the monitoring stack to be enabled or disabled easily depending on the lab scenario.
 
----
-
 ### Additional Environment Variables
 
 Additional environment variables are required to start the machine correctly.
@@ -126,8 +124,6 @@ binds:
 
 This allows modifying the Suricata service behavior without rebuilding the container image.
 
----
-
 ### Rules
 
 The rules define the logic used to identify / store network traffic to generate logs accordingly.
@@ -164,8 +160,6 @@ Other generated files:
 | `fast.log`     | Human readable alert logs                                                                            |
 | `suricata.log` | Engine diagnostic logs, useful to check if the service has started correctly and any possible errors |
 | `stats.log`    | Performance metrics, resource utilitzation, packet statistics, engine performance                    |
-
----
 
 ### Using Suricata
 

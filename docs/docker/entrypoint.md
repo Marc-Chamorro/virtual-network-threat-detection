@@ -68,7 +68,7 @@ graph TD
     CheckWeb -- No --> Persistence[Execute sleep infinity]
     StartSSH --> CheckWeb
     StartWeb --> Persistence
----
+```
 
 !!! example
 

@@ -65,6 +65,8 @@ INTERFACES="br-vlan50 br-vlan60 eth5" # 2
 1. The IP address of the central DHCP server in VLAN 40.
 2. The internal bridges for user floors and the interface connected to the services VLAN.
 
+---
+
 ## Security Policies
 
 The firewall must permit UDP traffic on ports 67 and 68 for the relay process to work. The `startup.sh` script includes rules to allow the firewall to process incoming petitions from user subnets and communicate with the server.

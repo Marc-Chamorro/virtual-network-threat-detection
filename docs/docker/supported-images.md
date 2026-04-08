@@ -7,6 +7,8 @@ icon: material/import
 
 While most images are built from source Dockerfiles, the environment supports the integration of vendor-provided images.
 
+---
+
 ## Import Directory
 
 The automation scripts automatically search for compressed image archives in the following directory:
@@ -15,6 +17,8 @@ The automation scripts automatically search for compressed image archives in the
 
 !!! warning "Directory Requirement"
     If the `import` directory does not exist, it must be created manually before running the build scripts.
+
+---
 
 ## Arista cEOS
 
