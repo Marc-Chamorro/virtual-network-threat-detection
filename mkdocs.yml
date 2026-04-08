@@ -83,9 +83,11 @@ nav:
   - Attack Simulations:
     - Overview: scripts/attacks/index.md
     - Port Scanning: scripts/attacks/port_scanning.md
-    - DoS SYN Flood: scripts/attacks/dos_syn_flood_hping3.md
-    - DoS Slow HTTP: scripts/attacks/dos_slow_http_slowloris.md
-    - SSH Bruteforce: scripts/attacks/ssh_bruteforce_hydra.md
+    - TCP SYN Flood: scripts/attacks/dos_syn_flood_hping3.md
+    - Slow HTTP DoS: scripts/attacks/dos_slow_http_slowloris.md
+    - SSH Brute Force: scripts/attacks/ssh_bruteforce_hydra.md
+    - OSPF Route Hijack: scripts/attacks/ospf_route_hijack.md
+    - SMTP Recon + Relay Abuse: scripts/attacks/smtp_recon_abuse.md
 
   - Operations & Troubleshooting: operations/commands.md
     # - Useful Commands: operations/commands.md

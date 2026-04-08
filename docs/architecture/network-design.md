@@ -168,10 +168,10 @@ Traffic is mirrored by the firewall using the **iptables TEE mechanism**, combin
 
 This node, called **logwatch**, acts as a centralized analysis system responsible for capturing, processing and visualizing network logs. Such is composed of four main components:
 
-- **Suricata** — Intrusion Detection System (IDS), inspects mirrored packets and generates registers.
-- **Filebeat** — Log shipper, collects Suricata logs and forwards them to Elasticsearch for processing.
-- **Elasticsearch** — Log storage and indexing, stores and indexes log data for efficient processing and analysis.
-- **Kibana** — Visualization interface, provides dashboards and visual analysis tools.
+- **Suricata** - Intrusion Detection System (IDS), inspects mirrored packets and generates registers.
+- **Filebeat** - Log shipper, collects Suricata logs and forwards them to Elasticsearch for processing.
+- **Elasticsearch** - Log storage and indexing, stores and indexes log data for efficient processing and analysis.
+- **Kibana** - Visualization interface, provides dashboards and visual analysis tools.
 
 Unlike traditional IDS where components are separated, this project integrates the entire monitoring components within a single container. This design simplifies deployment and reduces the number of containers used.
 

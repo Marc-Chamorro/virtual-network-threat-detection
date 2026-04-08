@@ -5,13 +5,14 @@ FROM debian:12-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install server daemons and system tools
-# openssh-server: Remote access
-# nginx: Web server
-# isc-dhcp-server: Dynamic host configuration
-# dnsmasq: DNS Service
-# vsftpd: FTP Service
-# postfix: email sender
-# dovecot: email destination tray (don't install POP3)
+# openssh-server - SSH daemon providing remote access
+# isc-dhcp-server - DHCP server that dynamically assigns IP addresses, gateways and DNS settings
+# nginx - basic web server
+# dnsmasq - DNS server providing hostname resolution
+# vsftpd - FTP server with individual user chroot isolation
+# postfix - SMTP mail transfer agent used both as enterprise relay server and central internet mail hub
+# dovecot-core - package providing the framework for the IMAP mail server
+# dovecot-imapd - daemon that allows mail clients (mutt) to retrieve messages from user Maildir directories
 RUN apt-get update && apt-get install -y \
     iproute2 \
     iputils-ping \

@@ -7,7 +7,7 @@ icon: material/sword
 
 The laboratory is designed not only to simulate enterprise infrastructure but also to **observe and analyze malicious activity** in a controlled environment.
 
-This section documents the different provided **attack simulations** that can be performed against the network.
+This section documents the **attack simulations** that can be performed against the network.
 
 ---
 
@@ -16,11 +16,11 @@ This section documents the different provided **attack simulations** that can be
 Attack scenarios serve several purposes:
 
 - Understanding common network attack techniques.
-- Observing attacker behavior in realistic environments.
+- Observing attacker behaviour in realistic environments.
 - Learning how monitoring systems detect malicious activity.
-- Practicing threat analysis using logging platforms.
+- Practising threat analysis using logging and visualization platforms.
 
-Because the laboratory environment integrates **Suricata**, **Filebeat**, **Elasticsearch**, and **Kibana**, every attack produces registers that can be analyzed.
+Because the laboratory integrates **Suricata**, **Filebeat**, **Elasticsearch**, and **Kibana**, every attack produces logs and alerts that can be analyzed after the fact.
 
 ---
 
@@ -30,25 +30,23 @@ All attacks must be executed inside the simulated network environment.
 
 !!! important "Controlled Environment"
     Attack simulations must always remain inside the laboratory environment.
-    These exercises and templates are intended only for educational and testing purposes.
+    These scripts are intended strictly for educational and research purposes.
 
 ---
 
 ## Adding New Attack Scenarios
 
-Attack simulations are implemented as **scripts** executed from the project entrypoint.
+All attack scripts must be placed inside:
 
-All attack scripts must be placed inside the directory:
+> `scripts/attacks/`
 
-> scripts/attacks/
-
-This directory acts as a storage for the **available attack simulations**. Each script added to this folder automatically becomes available through the main project execution entrypoint. This modular design allows new attacks to be added easily without modifying the automation framework.
+Every file added to this directory is automatically discovered by the main execution menu. Each script must implement the `-n` flag to return a short display name and accept the attacker container name as its first argument. See the [Script Requirements](#script-requirements) section below.
 
 ---
 
 ### Script Requirements
 
-Every attack script must follow a minimal structure so it can be properly integrated into the system.
+Every attack script must follow a minimal structure to integrate cleanly with the automation framework.
 
 <div class="grid cards" markdown>
 
@@ -56,55 +54,54 @@ Every attack script must follow a minimal structure so it can be properly integr
 
     ---
 
-    Scripts must include `set -e` to immediately stop execution if an error occurs.
+    Include `set -e` at the top so the script exits immediately on any unexpected error.
 
-    Although the comments are not strictly necessary, it is highly recommended. It helps users understand how to manually execute the script from the terminal and how the script is intended to be used.
-
-    ```sh
+```sh
     #!/bin/sh
     set -e
 
     # Example execution:
     # ./port_scanning.sh clab-virtual-env-attacker
-    # ./port_scanning.sh clab-virtual-env-attacker enterprise.com
     # ./port_scanning.sh clab-virtual-env-attacker 172.16.30.2
-    ```
+```
 
--   :material-menu:{ .lg .middle } **Menu Name Support**
+-   :material-menu:{ .lg .middle } **Menu Name**
 
     ---
 
-    Scripts must support the `-n` flag to return the name shown in the automation menu.
+    Support the `-n` flag to return the label shown in the interactive menu.
 
-    ```sh
+```sh
     if [ "$1" = "-n" ]; then
-        echo "Port scanning | nmap"
+        echo "Port Scanning | nmap"
         exit 0
     fi
-    ```
+```
 
--   :material-docker:{ .lg .middle } **Container Execution**
+-   :material-docker:{ .lg .middle } **Container Argument**
 
     ---
 
-    If attacks are to be executed using the `docker exec` tool, the script should make sure the container name is available.
+    Accept the attacker container name as `$1` and validate it is provided.
 
-    ```sh
+```sh
     if [ -z "$1" ]; then
-        echo "Usage: $0 <attacker-container>"
-        exit 1
+        echo "Usage: $0 <attacker-container> [target]"
+        exit 0
     fi
-    ```
 
--   :material-file-code:{ .lg .middle } **Self**
+    ATTACKER_CONTAINER="$1"
+```
+
+-   :material-file-code:{ .lg .middle } **Single Responsibility**
 
     ---
 
-    Each script should implement a single attack scenario and remain independent from others.
+    Each script implements one attack scenario and remains independent.
 
-    ```sh
-    docker exec "$ATTACKER_CONTAINER" <instruction>
-    ```
+```sh
+    docker exec "$ATTACKER_CONTAINER" <command>
+```
 
 </div>
 
@@ -112,17 +109,20 @@ Every attack script must follow a minimal structure so it can be properly integr
 
 ## Security Disclaimer
 
-The attack techniques described in this section are intended strictly for educational use inside the VNTD laboratory.
+The attack techniques described here are intended strictly for educational use inside the VNTD laboratory.
 
 !!! warning "Responsible Use"
-    These techniques ***must never be used against real systems*** without explicit authorization.
+    These techniques **must never be used against real systems** without explicit written authorisation.
 
 ---
 
-## Attack Scenarios
+## Available Attack Scenarios
 
-Currently available attacks:
-
-- [Port Scanning](port_scanning.md): Scan all available ports and services from a node.
-- [TCP SYN Flood (DoS)](dos_syn_flood_hping3.md): Send a high volume of SYN packages to a target to disrupt connections and exhaust resources.
-- [SSH Bruteforce](./ssh_bruteforce_hydra.md): Try to log in by guessing many username and password combinations until the correct one works.
+| Attack                                          | Tool                 | Purpose                                                                        |
+|-------------------------------------------------|----------------------|--------------------------------------------------------------------------------|
+| [Port Scanning](port_scanning.md)               | nmap                 | Enumerate open ports, services and OS on a target                              |
+| [TCP SYN Flood](dos_syn_flood_hping3.md)        | hping3               | Exhaust the server connection table with half-open TCP sessions                |
+| [Slow HTTP DoS](dos_slow_http_slowloris.md)     | Slowloris            | Exhaust web server threads with partial long-lived HTTP connections            |
+| [SSH Brute Force](ssh_bruteforce_hydra.md)      | hydra                | Discover valid SSH credentials through automated password guessing             |
+| [OSPF Route Hijack](ospf_route_hijack.md)       | FRR vtysh + nginx    | Redirect traffic by injecting a more-specific route into the OSPF domain       |
+| [SMTP Recon + Relay Abuse](smtp_recon_abuse.md) | nmap + swaks + hydra | Enumerate mail users, test open relay, send spoofed mail, and brute-force IMAP |

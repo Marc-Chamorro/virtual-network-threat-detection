@@ -14,7 +14,7 @@ fi
 # Ensure the name of the container is specified
 if [ -z "$1" ]; then
     echo "Usage: $0 <attacker-container> [target]"
-    exit 1
+    exit 0
 fi
 
 ATTACKER_CONTAINER="$1"
@@ -41,5 +41,5 @@ echo "================================"
 echo "--- Running TCP scan ---"
 docker exec "$ATTACKER_CONTAINER" nmap -sS -sV -sC -O -p- -T4 -v --reason "$TARGET"
 
-echo "--- Running UDP scan ---"
+echo "--- Running UDP scan (top 100 ports) ---"
 docker exec "$ATTACKER_CONTAINER" nmap -sU -sV --top-ports 100 -T4 -v --reason "$TARGET"

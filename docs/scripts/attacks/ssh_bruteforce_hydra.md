@@ -5,9 +5,7 @@ icon: material/key-alert
 
 # SSH Brute Force
 
-This scenario performs a **credential brute-force attack** over SSH using `hydra` from an attacker container.
-
-The script tries passwords from a wordlist against a target host until a valid combination is found.
+This scenario performs a **credential brute-force attack** against the SSH service using `hydra` from the attacker container. The script tries passwords from a wordlist against a target host until a valid combination is found.
 
 ---
 
@@ -16,85 +14,85 @@ The script tries passwords from a wordlist against a target host until a valid c
 Location:
 > `scripts/attacks/ssh_bruteforce_hydra.sh`
 
-Example usage:
+Basic usage:
 
 ```bash
 ./scripts/attacks/ssh_bruteforce_hydra.sh clab-virtual-env-attacker
 ```
 
-Specify target, port, and user manually:
+With explicit parameters:
 
 ```bash
 ./scripts/attacks/ssh_bruteforce_hydra.sh clab-virtual-env-attacker enterprise.com 22 vntd
 ```
 
-| Parameter          | Description                                                              |
-|--------------------|--------------------------------------------------------------------------|
-| attacker-container | Container executing the attack                                           |
-| target             | Target host (optional)                                                   |
-| port               | Target SSH port (optional)                                               |
-| user               | Username to attack, or `list` to use a username wordlist (optional)      |
-
-!!! note "Default values"
-    If no arguments are specified, the script targets: `enterprise.com` on port `22` with user `vntd`.
+| Parameter            | Description                                              | Default          |
+|----------------------|----------------------------------------------------------|------------------|
+| `attacker-container` | Container executing the attack                           | required         |
+| `target`             | Target hostname or IP                                    | `enterprise.com` |
+| `port`               | Target SSH port                                          | `22`             |
+| `user`               | Username to attack, or `list` to use a username wordlist | `vntd`           |
 
 ---
 
 ## Attack Configuration
 
-The script runs `hydra` with the following options:
+### hydra Flags
 
-| Option | Purpose                                            |
-|--------|----------------------------------------------------|
-| `-l`   | Single username to attempt                         |
-| `-L`   | Username list (used when `user` is set to `list`)  |
-| `-P`   | Password wordlist file                             |
-| `-s`   | Target port                                        |
-| `-t`   | Number of parallel tasks (threads)                 |
-| `-V`   | Verbose output, prints each attempt                |
-| `-f`   | Stop after the first valid credential is found     |
+| Option | Purpose                                               |
+|--------|-------------------------------------------------------|
+| `-l`   | Single username to attempt                            |
+| `-L`   | Username wordlist (used when `user` is set to `list`) |
+| `-P`   | Password wordlist file                                |
+| `-s`   | Target port                                           |
+| `-t`   | Number of parallel tasks (threads)                    |
+| `-V`   | Verbose: print each username/password attempt         |
+| `-f`   | Stop as soon as the first valid credential is found   |
 
-The attack runs with **64 parallel threads** (`-t 64`) for faster enumeration.
+The attack runs with **64 parallel threads** for fast enumeration.
 
 ### Username Mode
 
-Depending on the `user` parameter, `hydra` is invoked in one of two modes:
+Depending on the `user` parameter, hydra operates in one of two modes:
 
-#### Single User
-
-Uses `-l <user>` to target a specific username. The attack focuses only on password discovery.
-
-#### User List
-
-Uses `-L <userlist>` to iterate over common usernames alongside the password list. This increases coverage but also the total number of attempts.
+- **Single user** (`-l <user>`): focuses password discovery against one known account.
+- **User list** (`-L <userlist>`): iterates over a list of common usernames alongside the password list, increasing coverage at the cost of total attempts.
 
 ---
 
 ## Wordlist Preparation
 
-Before launching the attack, the script prepares the password list:
+Before launching the attack, the script writes a short custom wordlist (`ssh_wordlist.txt`) into the container that includes the real credential (`pswd`). This guarantees a successful login event always occurs, producing a visible alert in Suricata and Elasticsearch.
 
-1. A short custom wordlist (`ssh_wordlist.txt`) is written into the container, containing common weak passwords including the valid credential.
-2. The primary password list (`10k-most-common.txt`) is checked for the target password using an exact match (`grep -qx`).
-3. If the password is not found, the custom wordlist is appended to the primary list.
+The primary password list used can be changed by editing the `PASSLIST` variable in the script:
 
-!!! note "Guaranteed detection"
-    This ensures a successful login event always occurs, producing a visible alert in the IDS and Elastic stack.
+| List                                       | Size            | Notes                                        |
+|--------------------------------------------|-----------------|----------------------------------------------|
+| `ssh_wordlist.txt`                         | ~10 entries     | Default. Fast, reproducible, always succeeds |
+| `10k-most-common.txt`                      | 10,000 entries  | More realistic, takes longer                 |
+| `xato-net-10-million-passwords-100000.txt` | 100,000 entries | Comprehensive, takes significantly longer    |
 
-!!! tip "Speed"
-    By default, the file used in the script is `ssh_wordlist.txt`. For a more realistic test change the `PASSLIST` variable for another available file, although it takes a considerable ammount of time.
+If the real password is not already present in the chosen list, the custom wordlist is appended automatically.
 
 ---
 
 ## Execution Behaviour
 
-`hydra` tries every password in the list against the target SSH service and stops as soon as a valid pair is found (`-f`).
-
-The high number of parallel threads (`-t 64`) produces a clearly detectable list of failed authentication attempts in the IDS logs.
+Hydra tries every password in the list and stops as soon as a valid pair is found (`-f`). The high thread count (`-t 64`) produces a clearly detectable volume of failed authentication attempts in the IDS logs before the successful login appears.
 
 ```mermaid
 flowchart LR
-    Attacker -->|SSH auth attempts| Target
-    Target -->|Auth failure| Attacker
-    Target -->|Auth success - stop| Attacker
+    A[Attacker] -->|SSH auth attempts| T[Target]
+    T -->|Auth failure| A
+    T -->|Auth success - stop| A
 ```
+
+---
+
+## Observed Effects
+
+- **In Suricata / Kibana:** Failed SSH authentication attempts appear as `ET SCAN SSH Brute Force Tool` and similar alerts. The successful login is visible as a distinct flow event following the series of failures
+- **In eve.json:** SSH flow records show rapid repeated connections from the attacker IP to port 22, terminating with a longer-lived session once credentials are found
+
+!!! note "Default credential"
+    The SSH service on all `server_vntd` containers uses `vntd` / `pswd` as the default credential. See [SSH Service](../../services/ssh.md) for details.

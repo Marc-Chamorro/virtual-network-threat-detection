@@ -5,12 +5,9 @@ icon: material/radar
 
 # Port Scanning
 
-This scenario performs a **network reconnaissance scan** using `nmap` from an attacker container.
+This scenario performs a **network reconnaissance scan** using `nmap` from the attacker container. It is typically the first step in an attack chain, used to discover which services are running on a target before attempting exploitation.
 
-The script runs two scans against a target host:
-
-1. **TCP SYN scan** across all ports.
-2. **UDP scan** on the most common UDP ports.
+The script runs two sequential scans: a full TCP SYN scan across all ports, followed by a UDP scan of the most common service ports.
 
 ---
 
@@ -19,64 +16,68 @@ The script runs two scans against a target host:
 Location:
 > `scripts/attacks/port_scanning.sh`
 
-Example usage:
+Basic usage:
 
 ```bash
 ./scripts/attacks/port_scanning.sh clab-virtual-env-attacker
 ```
 
-Specify a target manually:
+With explicit target:
 
 ```bash
 ./scripts/attacks/port_scanning.sh clab-virtual-env-attacker 172.16.30.2
 ```
 
-| Parameter          | Description                    |
-|--------------------|--------------------------------|
-| attacker-container | Container executing the attack |
-| target             | Target host (optional)         |
-
-!!! note "Default values"
-    If no target is specified, the script scans: `enterprise.com`.
+| Parameter            | Description                    | Default          |
+|----------------------|--------------------------------|------------------|
+| `attacker-container` | Container executing the attack | required         |
+| `target`             | Target hostname or IP          | `enterprise.com` |
 
 ---
 
-## Scan Configuration
+## TCP Scan
 
-The script runs two sequential scans using `nmap`.
+A full SYN scan across all 65535 ports with service detection and OS fingerprinting.
 
-### TCP Scan
+| Option     | Purpose                                                            |
+|------------|--------------------------------------------------------------------|
+| `-sS`      | SYN scan: sends SYN, reads response, never completes the handshake |
+| `-sV`      | Service and version detection on open ports                        |
+| `-sC`      | Default NSE scripts: banner grabbing, basic checks                 |
+| `-O`       | OS fingerprinting based on TCP/IP stack behaviour                  |
+| `-p-`      | Scan all ports (1–65535)                                           |
+| `-T4`      | Aggressive timing: faster scan, more easily detected               |
+| `--reason` | Show the reason each port is in its reported state                 |
 
-Full port scan with service and OS detection.
+---
 
-| Option | Purpose              |
-|--------|----------------------|
-| `-sS`  | TCP SYN scan         |
-| `-sV`  | Service detection    |
-| `-sC`  | Default NSE scripts  |
-| `-O`   | OS detection         |
-| `-p-`  | Scan all ports       |
-| `-T4`  | Faster timing        |
+## UDP Scan
 
-### UDP Scan
+Common UDP service discovery against the 100 most frequently used UDP ports.
 
-Common UDP service discovery.
-
-| Option          | Purpose               |
-|-----------------|-----------------------|
-| `-sU`           | UDP scan              |
-| `-sV`           | Service detection     |
-| `--top-ports 100` | Scan common UDP ports |
-| `-T4`           | Faster timing         |
+| Option            | Purpose                                                              |
+|-------------------|----------------------------------------------------------------------|
+| `-sU`             | UDP scan: sends UDP probes and interprets ICMP unreachable responses |
+| `-sV`             | Service detection on discovered open UDP ports                       |
+| `--top-ports 100` | Limit to the 100 most common UDP ports for speed                     |
+| `-T4`             | Aggressive timing                                                    |
 
 ---
 
 ## Network Behaviour
 
-The scan generates a high volume of connection attempts which are inspected by the IDS.
+The scan generates a high volume of connection attempts across many ports in a short time, which is a strong indicator of reconnaissance activity.
 
 ```mermaid
 flowchart LR
-    Attacker -->|TCP SYN scan| Target
-    Attacker -->|UDP probes| Target
+    A[Attacker] -->|TCP SYN - all 65535 ports| T[Target]
+    A -->|UDP probes - top 100 ports| T
+    T -->|RST / SYN-ACK / ICMP unreachable| A
 ```
+
+---
+
+## Observed Effects
+
+- **In Suricata / Kibana:** The ruleset includes signatures specifically for nmap SYN scans. These will appear as medium-severity alerts in the Kibana Security dashboard
+- **In eve.json:** Flow records will show a large number of short-lived connections from the attacker IP to many different destination ports within a narrow time window

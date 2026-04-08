@@ -5,9 +5,9 @@ icon: material/alert-octagon
 
 # TCP SYN Flood (DoS)
 
-This scenario performs a **Denial-of-Service (DoS) attack** using a TCP SYN flood generated with `hping3` from an attacker container.
+This scenario performs a **Denial-of-Service (DoS) attack** using a TCP SYN flood generated with `hping3` from the attacker container.
 
-The script sends a large volume of SYN packets to a target host to exhaust server resources and disrupt normal connections.
+A SYN flood sends a large volume of TCP SYN packets without ever completing the three-way handshake. The server allocates a half-open connection entry for each packet, filling its connection table and preventing new legitimate sessions from being established.
 
 ---
 
@@ -16,61 +16,71 @@ The script sends a large volume of SYN packets to a target host to exhaust serve
 Location:
 > `scripts/attacks/dos_syn_flood_hping3.sh`
 
-Example usage:
+Basic usage:
 
 ```bash
 ./scripts/attacks/dos_syn_flood_hping3.sh clab-virtual-env-attacker
 ```
 
-Specify target, port, and duration manually:
+With explicit parameters:
 
 ```bash
 ./scripts/attacks/dos_syn_flood_hping3.sh clab-virtual-env-attacker 172.16.30.2 80 60
 ```
 
-| Parameter          | Description                                  |
-|--------------------|----------------------------------------------|
-| attacker-container | Container executing the attack               |
-| target             | Target host (optional)                       |
-| port               | Target port (optional)                       |
-| timeout            | Duration of the attack in seconds (optional) |
-
-!!! note "Default values"
-    If no arguments are specified, the script targets: `enterprise.com` on port `80` for `60` seconds.
+| Parameter            | Description                       | Default          |
+|----------------------|-----------------------------------|------------------|
+| `attacker-container` | Container executing the attack    | required         |
+| `target`             | Target hostname or IP             | `enterprise.com` |
+| `port`               | Target TCP port                   | `80`             |
+| `timeout`            | Duration of each phase in seconds | `60`             |
 
 ---
 
-## Attack Configuration
+## Attack Phases
 
-The script runs two consecutive SYN flood attacks using `hping3`, sharing the same base options:
+The script runs two consecutive phases, each lasting the configured timeout.
 
-| Option            | Purpose                                                  |
-|-------------------|----------------------------------------------------------|
-| `-S`              | Set TCP SYN flag (half-open, never completes handshake)  |
-| `-p`              | Target port                                              |
-| `--flood`         | Send packets as fast as possible (no reply wait)         |
-| `--tcp-timestamp` | Add TCP timestamp option                                 |
+### Phase 1 - Random Source IP
 
-### Random Source
+`--rand-source` randomises the origin IP address on every packet. Each SYN appears to come from a different host, which makes source-based filtering not effective and produces a distributed signature in Suricata logs.
 
-Adds `--rand-source` to randomise the origin IP on every packet. This makes source-based filtering ineffective, as each packet appears to come from a different address.
+### Phase 2 - Fixed Source IP
 
-### Same Source
+All packets originate from the container's real IP address. This is easier to correlate and block, but produces a clear single-source pattern in the Kibana dashboards that is useful for comparing.
 
-Omits `--rand-source`, sending all packets from the container's real IP. Easier to correlate and block, but useful for observing a single-source flood in the monitoring tools.
+---
+
+## hping3 Flags
+
+| Option            | Purpose                                                                   |
+|-------------------|---------------------------------------------------------------------------|
+| `-S`              | Set only the TCP SYN flag; initiates a handshake that is never completed |
+| `-p`              | Target port                                                               |
+| `--flood`         | Send packets as fast as possible without waiting for replies              |
+| `--rand-source`   | Randomise the source IP on every packet (Phase 1 only)                    |
+| `--tcp-timestamp` | Include the TCP timestamp option for more realistic-looking packets       |
 
 ---
 
 ## Execution Behaviour
 
-Each attack phase is launched in the background and killed via its PID after the timeout elapses. This allows the parent shell to call `wait` and reap the child process cleanly.
+Each phase is launched in the background and terminated via its PID after the timeout elapses. SIGINT (`-2`) is used rather than SIGTERM so hping3 can exit gracefully and print statistics. The parent shell calls `wait` to reap the child process cleanly.
 
 !!! warning "Do not interrupt manually"
-    Using `Ctrl + C` during execution will exit the calling shell before the child process is reaped, which may leave behind zombie processes.
+    Using `Ctrl+C` while the script is running exits the calling shell before the background child is reaped, which may leave a zombie hping3 process inside the container.
 
 ```mermaid
 flowchart LR
-    Attacker -->|SYN flood random source| Target
-    Attacker -->|SYN flood same source| Target
-    Target -->|SYN-ACK no reply| Attacker
+    A[Attacker] -->|SYN - random source| T[Target]
+    A -->|SYN - fixed source| T
+    T -->|SYN-ACK - no reply| A
+    T -->|Connection table full| T
 ```
+
+---
+
+## Observed Effects
+
+- **On the server:** `ss -s` will show a rapidly growing number of `SYN-RECV` sockets
+- **In Suricata / Kibana:** Suricata's ET ruleset includes signatures for SYN flood patterns. Both random and fixed source variants will produce alerts, but with different source IP distributions visible in the Kibana dashboards

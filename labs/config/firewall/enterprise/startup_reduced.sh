@@ -89,11 +89,11 @@ iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 iptables -A FORWARD -s 192.168.10.10 -o eth1 -p icmp -j ACCEPT
 
 # DNAT - From the Internet to the server (both tcp and udp from specific ports)
-iptables -t nat -A PREROUTING -i eth1 -p tcp -m multiport --dports 80,22,53,25 -j DNAT --to-destination 192.168.10.10
+iptables -t nat -A PREROUTING -i eth1 -p tcp -m multiport --dports 80,22,53,25,143 -j DNAT --to-destination 192.168.10.10
 iptables -t nat -A PREROUTING -i eth1 -p udp --dport 53 -j DNAT --to-destination 192.168.10.10
 
 # Allow connections to the server
-iptables -A FORWARD -d 192.168.10.10 -p tcp -m multiport --dports 80,22,53,25 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -d 192.168.10.10 -p tcp -m multiport --dports 80,22,53,25,143 -m conntrack --ctstate NEW -j ACCEPT
 iptables -A FORWARD -d 192.168.10.10 -p udp --dport 53 -m conntrack --ctstate NEW -j ACCEPT
 
 # Allow ICMP (ping) to the server from inside the LAN
@@ -123,7 +123,10 @@ iptables -A FORWARD -s 192.168.20.10 -j DROP
 # VLAN 30 - Administration
 #--------------------------------------------------------------------------------------------------
 
-# Unrestricted access to all other subnets
+# Explicitly prevent Admin from sending traffic into the Monitoring segment. (Monitoring should remain passive and unreachable from all zones)
+iptables -A FORWARD -s 192.168.30.0/24 -d 192.168.20.0/24 -j DROP
+
+# Unrestricted access to all other subnets and Internet
 iptables -A FORWARD -s 192.168.30.0/24 -j ACCEPT
 
 # VLAN 40 - Internal services

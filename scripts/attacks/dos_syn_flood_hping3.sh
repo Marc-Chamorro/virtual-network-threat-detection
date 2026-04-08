@@ -7,14 +7,14 @@ set -e
 
 # If called with -n, return the menu name
 if [ "$1" = "-n" ]; then
-    echo "DoS TCP SYN flood | hping3"
+    echo "DoS TCP SYN Flood | hping3"
     exit 0
 fi
 
 # Ensure the name of the container is specified
 if [ -z "$1" ]; then
     echo "Usage: $0 <attacker-container> [target] [port] [timeout]"
-    exit 1
+    exit 0
 fi
 
 ATTACKER_CONTAINER="$1"
@@ -25,10 +25,9 @@ TIMEOUT="${4:-60}"                        # Default to 60 seconds
 # https://www.kali.org/tools/hping3/
 echo "================================"
 echo "Attack: DoS TCP SYN flood (hping3)"
-echo "Target: $TARGET"
-echo "Port: $PORT"
-echo "Timeout: ${TIMEOUT}s"
-echo "Attacker container: $ATTACKER_CONTAINER"
+echo "Target: $TARGET:$PORT"
+echo "Duration: ${TIMEOUT}s per phase"
+echo "Attacker: $ATTACKER_CONTAINER"
 echo "================================"
 
 # -S              -> SYN flag

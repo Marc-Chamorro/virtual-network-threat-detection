@@ -5,10 +5,15 @@ FROM kalilinux/kali-rolling
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install networking tools
-# nmap: Port scanning
-# openssh-client: For connecting to servers
-# iproute2/net-tools: Interface management
-# procps: process management
+# nmap - port scanning and service/OS detection used in reconnaissance attacks
+# openssh-client - SSH client used for access in brute force scenarios
+# tini - minimal init process (PID 1) that correctly manages signals and removes zombie child processes; required because attack scripts spawn background processes that must be cleaned up
+# hping3 - TCP/IP packet tool used to generate SYN flood DoS attacks
+# hydra - network login cracker used for SSH brute force attacks
+# seclists - wordlist collection (passwords, usernames) used by hydra and other tools
+# nginx - web server for OSPF route hijacking scenario
+# swaks - used for mail reconnaissance, user enumeration and relay abuse
+
 RUN apt-get update && apt-get install -y \
     iproute2 \
     iputils-ping \
@@ -26,6 +31,9 @@ RUN apt-get update && apt-get install -y \
     procps \
     hydra \
     seclists \
+    tcpdump \
+    nginx \
+    swaks \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
