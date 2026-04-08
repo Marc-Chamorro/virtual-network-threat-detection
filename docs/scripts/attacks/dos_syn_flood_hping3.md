@@ -83,4 +83,4 @@ flowchart LR
 ## Observed Effects
 
 - **On the server:** `ss -s` will show a rapidly growing number of `SYN-RECV` sockets
-- **In Suricata / Kibana:** Suricata's ET ruleset includes signatures for SYN flood patterns. Both random and fixed source variants will produce alerts, but with different source IP distributions visible in the Kibana dashboards
+- **In Suricata / Kibana:** Suricata's ruleset includes signatures for SYN flood patterns. Both random and fixed source variants will produce alerts, but with different source IP visible in the Kibana dashboards

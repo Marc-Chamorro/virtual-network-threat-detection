@@ -15,10 +15,10 @@ This section documents the **attack simulations** that can be performed against 
 
 Attack scenarios serve several purposes:
 
-- Understanding common network attack techniques.
-- Observing attacker behaviour in realistic environments.
-- Learning how monitoring systems detect malicious activity.
-- Practising threat analysis using logging and visualization platforms.
+- Understanding common network attack techniques
+- Observing attacker behaviour in realistic environments
+- Learning how monitoring systems detect malicious activity
+- Practising threat analysis using logging and visualization platforms
 
 Because the laboratory integrates **Suricata**, **Filebeat**, **Elasticsearch**, and **Kibana**, every attack produces logs and alerts that can be analyzed after the fact.
 

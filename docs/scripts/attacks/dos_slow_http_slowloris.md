@@ -88,7 +88,7 @@ The container runs `tini` as PID 1, which provides additional orphan process cle
 ## Observed Effects
 
 - **On the server:** `netstat -ant | grep :80 | wc -l` will show a large number of `ESTABLISHED` or `SYN_RECV` connections from the attacker IP
-- **In Suricata / Kibana:** The high connection rate from a single source will trigger threshold-based alerts. Flow metadata in `eve.json` will show many long-duration flows with minimal bytes transferred; a characteristic Slowloris signature
+- **In Suricata / Kibana:** The high connection rate from a single source will trigger threshold alerts. Flow metadata in `eve.json` will show many long-duration flows with minimal bytes transferred
 
 !!! note "Low Bandwidth"
     Because Slowloris sends very little data, it will not appear as a traffic volume spike. Detection relies on connection count and flow duration anomalies rather than byte rate.

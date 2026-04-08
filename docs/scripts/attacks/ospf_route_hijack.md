@@ -95,8 +95,8 @@ router ospf
 ## Observed Effects
 
 - **Routing tables:** After Phase 4, running `ip route` on any router in the OSPF domain will show the attacker's address as the next hop for the hijacked prefix
-- **Web traffic:** HTTP requests to `enterprise.com` will be served by the attacker's nginx instance rather than the real DMZ server
-- **In Suricata / Kibana:** Traffic flows show unexpected source/destination patterns. Routing anomaly detection rules (if enabled) will trigger alerts
+- **Web traffic:** HTTP requests to `enterprise.com` will be served by the attacker's nginx node rather than the real DMZ server
+- **In Suricata / Kibana:** Traffic flows show unexpected source/destination patterns
 - **Capture file:** A pcap of all intercepted traffic is available at `/tmp/hijack_capture.pcap` inside the attacker container after the attack completes
 
 !!! warning "OSPF Authentication"

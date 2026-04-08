@@ -91,7 +91,7 @@ flowchart LR
 
 ## Observed Effects
 
-- **In Suricata / Kibana:** Failed SSH authentication attempts appear as `ET SCAN SSH Brute Force Tool` and similar alerts. The successful login is visible as a distinct flow event following the series of failures
+- **In Suricata / Kibana:** Failed SSH authentication attempts and similar alerts appear. The successful login is visible as a distinct flow event following the series of failures
 - **In eve.json:** SSH flow records show rapid repeated connections from the attacker IP to port 22, terminating with a longer-lived session once credentials are found
 
 !!! note "Default credential"
