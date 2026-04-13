@@ -1,6 +1,7 @@
 *.qcow2
 *.xz
 labs/*/
+ml/*.json
 !labs/config/
 dump_project.sh
 dump_project.txt
