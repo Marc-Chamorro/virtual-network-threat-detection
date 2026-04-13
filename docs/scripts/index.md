@@ -7,6 +7,8 @@ icon: material/file-code-outline
 
 To minimize human errors and automate the workflow, the project includes a comprehensive set of automation scripts. These tools manage the entire lifecycle of the laboratory, from building custom Docker images to orchestrating complex network topologies with Containerlab
 
+---
+
 ## Core Philosophy
 
 The automation framework is built upon three fundamental principles:
@@ -33,6 +35,8 @@ The automation framework is built upon three fundamental principles:
 
 </div>
 
+---
+
 ## Main Entry Point: `run.sh`
 
 The `run.sh` script, located at the project root, serves as the main entry point for interacting with the environment. It acts as a wrapper that delegates tasks to specialized scripts in the `scripts/` directory.
@@ -42,11 +46,11 @@ The `run.sh` script, located at the project root, serves as the main entry point
 To launch the project management menu, execute:
 
 ```bash
-./run.sh
+sudo ./run.sh
 ```
 
 !!! note "Permissions"
-    Ensure the script is executable before the first run: chmod +x run.sh
+    Ensure the script is executable before the first run: `chmod +x run.sh`
 
 ---
 
@@ -56,3 +60,4 @@ The automation logic is divided into two modules:
 
 - [**Lab Management**](./lab-management.md): Orchestrates Containerlab deployments and monitors active topologies.
 - [**Image Management**](./images-management.md): Automates Docker build, import, and cleanup operations.
+- [**Attack Simulations**](attacks/index.md): Execute controlled attacks against the simulated network.

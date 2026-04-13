@@ -62,8 +62,6 @@ The monitoring process follows several stages:
 4. **Indexing:** **Elasticsearch** stores and indexes events, making them searchable.
 5. **Visualization:** **Kibana** provides dashboards and search interfaces for analysts.
 
----
-
 ### Web Interfaces
 
 Some services expose web interfaces accessible from the host system.
@@ -85,3 +83,4 @@ The monitoring stack deployed in the `logwatch` node consists of four major comp
 - [**Elasticsearch**](./elasticsearch.md): Log storage and indexing.
 - [**Kibana**](./kibana.md): Visualization and data exploration.
 - [**Filebeat**](./filebeat.md): Log forwarding and parsing.
+- [**Alerts & Detection Rules**](./alerts.md): Processing the network data.

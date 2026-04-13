@@ -63,8 +63,6 @@ userAdmin
 - Lines starting with `#` are ignored
 - Each valid line represents one FTP user
 
----
-
 ### Default Credentials
 
 All FTP users share the same default password.

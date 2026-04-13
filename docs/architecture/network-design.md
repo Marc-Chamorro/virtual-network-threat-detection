@@ -80,8 +80,6 @@ This router uses FRRouting (FRR) to provide realistic routing behavior.
 
 Within the network, a server (`internet_server`) can be appreciated, simulating common internet services.
 
----
-
 ### Attacker Network
 
 The attacker network simulates a hostile external actor:
@@ -94,8 +92,6 @@ This network is intentionally separated to allow controlled attack generation.
 !!! warning
     Attack simulations should only be executed inside this isolated environment.
 
----
-
 ### Benign Network
 
 The benign network simulates legitimate external users:
@@ -104,8 +100,6 @@ The benign network simulates legitimate external users:
 - A lightweight client node.
 
 This allows differentiation between malicious and legitimate traffic.
-
----
 
 !!! info "Configuration Persistence"
     All configurations for routers and switches are decoupled from the images and mounted via bind in the topology definition file. Changes applied directly on the machines do not persist.
@@ -121,8 +115,6 @@ The `router_enterprise` node connects the enterprise network to the Internet. It
 - Routing between enterprise and external networks (`NAT`).
 - Forwarding traffic toward the firewall.
 - Acting as a clear limit between external and internal domains.
-
----
 
 ### Firewall
 
@@ -168,10 +160,10 @@ Traffic is mirrored by the firewall using the **iptables TEE mechanism**, combin
 
 This node, called **logwatch**, acts as a centralized analysis system responsible for capturing, processing and visualizing network logs. Such is composed of four main components:
 
-- **Suricata** — Intrusion Detection System (IDS), inspects mirrored packets and generates registers.
-- **Filebeat** — Log shipper, collects Suricata logs and forwards them to Elasticsearch for processing.
-- **Elasticsearch** — Log storage and indexing, stores and indexes log data for efficient processing and analysis.
-- **Kibana** — Visualization interface, provides dashboards and visual analysis tools.
+- **Suricata** - Intrusion Detection System (IDS), inspects mirrored packets and generates registers.
+- **Filebeat** - Log shipper, collects Suricata logs and forwards them to Elasticsearch for processing.
+- **Elasticsearch** - Log storage and indexing, stores and indexes log data for efficient processing and analysis.
+- **Kibana** - Visualization interface, provides dashboards and visual analysis tools.
 
 Unlike traditional IDS where components are separated, this project integrates the entire monitoring components within a single container. This design simplifies deployment and reduces the number of containers used.
 

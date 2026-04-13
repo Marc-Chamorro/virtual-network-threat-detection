@@ -101,8 +101,6 @@ binds:
 
 This allows modifying the Elasticsearch service behavior without rebuilding the container image.
 
----
-
 ### Heap Options
 
 Elasticsearch consumes a significant amount of RAM. By default, it allocates aroung **50%** of the total memory to Elasticsearch.
@@ -165,16 +163,12 @@ The password is random and cannot be specifically set.
 !!! note "Filebeat"
     The password is later used by Filebeat to set up its service.
 
----
-
 ### Kibana System User
 
 User:
 > kibana_system : pswd_vntd
 
 This user allows Kibana to communicate with Elasticsearch. This user is already provided by the Elasticsearch service and only needs to have a new password.
-
----
 
 ### Filebeat Internal User
 
@@ -205,8 +199,6 @@ Permissions included:
 | manage         | index   | Full index admin          |
 
 This ensures Filebeat can send logs and properly communicate with Elasticsearch.
-
----
 
 ### Administrator User
 

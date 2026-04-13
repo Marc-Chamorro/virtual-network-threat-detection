@@ -5,10 +5,9 @@ FROM debian:12-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install traffic analysis tools
-# procps -> sysctl
-# suricata -> analyze traffic
-# https://kifarunix.com/install-filebeat-8-on-debian/
-# sudo gnupg2 apt-transport-https curl vim -> filebeat
+# suricata - network DIS that inspects mirrored traffic and generates structured JSON event logs
+# apt-transport-https - allows apt to fetch packages over HTTPS, required for the Elastic repository
+# jq - JSON terminal processor used to read and print JSON log files for easier debugging
 RUN apt-get update && apt-get install -y \
     iptables \
     iproute2 \
@@ -40,11 +39,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN suricata-update
+# RUN suricata-update -o /etc/suricata/rules
 
-# Keep container running
-# CMD ["sleep", "infinity"]
-# CMD ["suricata", "-c", "/etc/suricata/suricata.yaml", "-i", "eth1"]
+RUN suricata-update enable-source et/open && \
+    suricata-update -o /etc/suricata/rules
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh

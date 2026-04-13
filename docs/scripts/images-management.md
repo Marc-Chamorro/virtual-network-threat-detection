@@ -7,6 +7,8 @@ icon: material/docker
 
 Located in `scripts/images/`, these scripts automate the **Docker** lifecycle build process of the custom Docker images required for the laboratory infrastructure. These are necessary to ensure all nodes in the topology run the correct customized software versions defined in the project.
 
+---
+
 ## Interactive Controller: `menu.sh`
 
 **Role:** The controller for all Docker operations.
@@ -37,8 +39,6 @@ Located in `scripts/images/`, these scripts automate the **Docker** lifecycle bu
 ./create.sh /path/to/project/dir/virtual-network-threat-detection
 ```
 
----
-
 ### Importing External Images (`import.sh`)
 
 **Role:** Imports vendor-supplied images (e.g., Arista cEOS).
@@ -54,8 +54,6 @@ Located in `scripts/images/`, these scripts automate the **Docker** lifecycle bu
 ./import.sh /path/to/project/dir/virtual-network-threat-detection
 ```
 
----
-
 ### Delete Images (`images/delete.sh`)
 
 **Role:** Cleans up the created Docker images.
@@ -68,8 +66,6 @@ Located in `scripts/images/`, these scripts automate the **Docker** lifecycle bu
 ```bash
 ./delete.sh
 ```
-
----
 
 ### Display Available Images (`images/display.sh`)
 

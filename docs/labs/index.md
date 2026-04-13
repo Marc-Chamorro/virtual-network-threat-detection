@@ -9,6 +9,8 @@ The **Labs** module represents the core of the project's network simulation. It 
 
 This section covers the logic behind topology definition, the orchestration process, and how individual nodes are transformed into functional network devices.
 
+---
+
 ## Key Concepts
 
 The laboratory environment is built upon three fundamental layers:

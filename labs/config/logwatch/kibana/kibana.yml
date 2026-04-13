@@ -38,6 +38,12 @@ server.publicBaseUrl: "http://localhost:5601"
 #server.ssl.certificate: /path/to/your/server.crt
 #server.ssl.key: /path/to/your/server.key
 
+xpack.securitySolution.enabled: true
+
+xpack.encryptedSavedObjects.encryptionKey: "030e45276c3281853828085982ad1a2bfb6135938eb75fbc565180bed971a3ff"
+xpack.reporting.encryptionKey: "ad421a81cf29bc36cf62900a8123657600732d2ddf0ed0b685975e9cba9ef366"
+xpack.security.encryptionKey: "b94ff7ec329b719a062f78feb7fd5b6d2259caa4e87718fd7a61002fa62973ea"
+
 # =================== System: Elasticsearch ===================
 # The URLs of the Elasticsearch instances to use for all your queries.
 elasticsearch.hosts: ["http://localhost:9200"]

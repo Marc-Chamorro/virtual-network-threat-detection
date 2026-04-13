@@ -179,7 +179,7 @@ topology:
       env:
         DHCP_RELAY: 1
       binds:                                                    # Mounts the iptables logic script
-        - ./config/firewall/enterprise/startup.sh:/startup.sh
+        - ./config/firewall/enterprise/startup_reduced.sh:/startup.sh
         - ./config/firewall/enterprise/isc-dhcp-relay.conf:/etc/default/isc-dhcp-relay # No format: https://www.fpgenred.es/DHCP/etcdefaultiscdhcprelay.html
       exec:
         - sh /startup.sh
@@ -363,7 +363,7 @@ topology:
     - endpoints: ["firewall:eth5", "switch_vlan40:eth1"]
     - endpoints: ["switch_vlan40:eth2", "internal_server:eth1"]
 
-      # VLAN 50
+      # Floor 1
     - endpoints: ["firewall:eth6", "switch_floor1:eth1"]
     - endpoints: ["switch_floor1:eth2", "pc_vlan50_1:eth1"]
     - endpoints: ["switch_floor1:eth3", "pc_vlan60_1:eth1"]

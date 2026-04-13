@@ -130,7 +130,10 @@ iptables -A FORWARD -s 192.168.20.10 -j DROP
 # VLAN 30 - Administration
 #--------------------------------------------------------------------------------------------------
 
-# Unrestricted access to all other subnets
+# Explicitly prevent Admin from sending traffic into the Monitoring segment. (Monitoring should remain passive and unreachable from all zones)
+iptables -A FORWARD -s 192.168.30.0/24 -d 192.168.20.0/24 -j DROP
+
+# Unrestricted access to all other subnets and Internet
 iptables -A FORWARD -s 192.168.30.0/24 -j ACCEPT
 
 # VLAN 40 - Internal services

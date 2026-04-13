@@ -52,6 +52,8 @@ exec:
     - sh /startup.sh
 ```
 
+---
+
 ## Automated Startup
 
 Each client workstation (e.g., `pc_vlan50_1`) executes the `startup.sh` script upon launch to automate the network configuration process.
@@ -94,6 +96,8 @@ Once the ip assignment process is complete, the client automatically receives an
     - Active DHCP server.
     - Allowed DHCP traffic in firewall policies.
     If any of these components fail, clients will not obtain network access.
+
+---
 
 ## Troubleshooting
 

@@ -74,4 +74,4 @@ The following tools are required for the installation process and environment ma
 
 ## Next Steps
 
-If you meet the requirements, move to the [Installation Guide](./installation.md) { .md-button }
+If you meet the requirements, move to the [Installation Guide](./installation.md)

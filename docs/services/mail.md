@@ -119,8 +119,6 @@ When `MAIN_MAIL_SERVER` is set, the entrypoint:
 
 Postfix is initialized automatically based on the chosen configuration.
 
----
-
 ### IMAP (Dovecot)
 
 Files:
@@ -143,8 +141,6 @@ Dovecot provides:
 
 !!! note "IMAP vs POP3"
     POP3 is intentionally not installed.
-
----
 
 ### Mail Users Directory
 

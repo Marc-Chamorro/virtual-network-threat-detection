@@ -14,7 +14,7 @@ The project is controlled primarily through a **centralized automation script**:
 To start the control menu, navigate to the project root and execute:
 
 ```bash
-./run.sh
+sudo ./run.sh
 ```
 
 !!! note "Execution"

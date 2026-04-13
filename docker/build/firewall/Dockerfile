@@ -5,9 +5,11 @@ FROM debian:12-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install necessary firewall and network tools
-# conntrack is included for stateful firewall capabilities
-# iptables is the core package filtering
-# isc-dhcp-relay allows assigning IP addresses to other networks or VLANs
+# iptables - the core package filtering
+# bridge-utils - provides brctl for creating Linux bridges used to merge VLAN trunk sub-interfaces into a single level 2 domain (e.g. br-vlan50 combining eth6.50 and eth7.50)
+# conntrack - enables stateful packet inspection so return traffic from valid connections is permitted without explicit rules
+# isc-dhcp-relay - DHCP relay agent that forwards client broadcast requests across VLAN boundaries to the centralized DHCP server
+
 RUN apt-get update && apt-get install -y \
     iptables \
     iproute2 \

@@ -39,8 +39,6 @@ The Firewall implements a **Default DROP** policy for all INPUT and FORWARD pack
 !!! note "Policies format"
     Policies are designed to be explicit rather than permissive.
 
----
-
 ### Inter-Zone Communication
 
 | Source          | Destination             | Permitted Traffic / Protocols                           |
@@ -60,26 +58,96 @@ The Firewall implements a **Default DROP** policy for all INPUT and FORWARD pack
 
 ### Inbound (DNAT)
 
-Accessing enterprise services from the Internet (DMZ Server) consists of a two-step process:
+All inbound traffic arriving on the Enterprise Router's WAN interface (`eth1`) is forwarded wholesale to the Firewall using a catch-all DNAT rule:
 
-1. **Router Enterprise:** Internet -> Firewall Link
 ```bash
-iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j DNAT --to-destination 192.168.0.2
-iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 25 -j DNAT --to-destination 192.168.0.2
+# router_enterprise startup.sh
+iptables -t nat -A PREROUTING -i eth1 -j DNAT --to-destination 192.168.0.2
 ```
 
-2. **Central Firewall:** Router Link -> DMZ Server
+The Firewall then applies its own per-port DNAT rules to direct traffic to the correct DMZ service:
+
 ```bash
+# firewall startup.sh
 iptables -t nat -A PREROUTING -i eth1 -p tcp -m multiport --dports 80,22,53,25 -j DNAT --to-destination 192.168.10.10
 iptables -t nat -A PREROUTING -i eth1 -p udp --dport 53 -j DNAT --to-destination 192.168.10.10
 ```
 
-### Outbound (SNAT)
+---
 
-Accessing the Internet from within the network consists of:
+## Outbound (SNAT)
 
-1. **Firewall:** Ensures communication policies are met, and if so, redirects traffic to the Router.
-2. **Router Enterprise:** Allows communication with the outside world through Masquerade.
+Outbound traffic from enterprise VLANs is masqueraded at the Enterprise Router:
+
+```bash
+# router_enterprise startup.sh
+iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+```
+
+---
+
+## Firewall Configuration Files
+
+The firewall behaviour is entirely defined by a startup script mounted at runtime. Three variants are provided, each suited to a different scenario.
+
+### Available Variants
+
+| File                  | Topology File               | Description                                                           |
+|-----------------------|-----------------------------|-----------------------------------------------------------------------|
+| `startup.sh`          | `topology.clab.yml`         | Full topology: two floor switches, VLANs 50 and 60 on separate floors |
+| `startup_reduced.sh`  | `topology_reduced.clab.yml` | Reduced topology: one floor switch only, lower resource consumption   |
+| `startup_hardened.sh` | (optional, see below)       | Adds rate limiting and logging rules for a more defended environment  |
+
+Both `startup.sh` and `startup_reduced.sh` are **intentionally permissive** with respect to attack traffic. Rules allow attacks to reach their targets so that Suricata can observe and log them. Neither file attempts to block the simulated attack scenarios.
+
+### Differences Between `startup.sh` and `startup_reduced.sh`
+
+The reduced variant handles one fewer physical interface (`eth7` is absent) and only configures VLAN bridges for Floor 1:
+
+```bash
+# startup.sh - two floors
+ip link add link eth6 name eth6.50 type vlan id 50
+ip link add link eth6 name eth6.60 type vlan id 60
+ip link add link eth7 name eth7.50 type vlan id 50   # Floor 2 only
+ip link add link eth7 name eth7.60 type vlan id 60   # Floor 2 only
+```
+
+```bash
+# startup_reduced.sh - one floor
+ip link add link eth6 name eth6.50 type vlan id 50
+ip link add link eth6 name eth6.60 type vlan id 60
+# eth7 is not present in the reduced topology
+```
+
+Use `startup_reduced.sh` with `topology_reduced.clab.yml` when available RAM is below 20 GB.
+
+### Optional: `startup_hardened.sh`
+
+For scenarios where you want the enterprise network to simulate a more defensive approach; while still allowing attacks to be observed by Suricata; a hardened variant can be created by adding the following rules to a copy of `startup.sh`, after the base policy block and before the VLAN-specific rules.
+
+These rules silently drop traffic that exceeds the configured thresholds. Suricata continues to see and alert on everything via the TEE mirror because mirroring happens before the DROP rules are evaluated.
+
+```bash
+# SSH rate limiting — drop connections exceeding 30 new sessions per minute per source
+iptables -A FORWARD -p tcp --dport 22 -m state --state NEW -m recent --set --name SSH_RATE
+iptables -A FORWARD -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 30 --name SSH_RATE -j DROP
+
+# ICMP rate limiting — allow up to 10 echo requests per second, drop the rest
+iptables -A FORWARD -p icmp --icmp-type echo-request -m limit --limit 10/sec --limit-burst 20 -j ACCEPT
+iptables -A FORWARD -p icmp --icmp-type echo-request -j DROP
+
+# SYN rate limiting — allow up to 200 new TCP connections per second, drop flood traffic
+iptables -A FORWARD -p tcp --syn -m limit --limit 200/sec --limit-burst 400 -j ACCEPT
+iptables -A FORWARD -p tcp --syn -j DROP
+```
+
+No changes are required on the topology file if the same startup script is updated.
+in place of `startup.sh` in the topology file:
+
+!!! note "Detection vs Prevention"
+    The hardened variant is designed for **detection research**, not production hardening. Traffic is dropped silently rather than logged, keeping the log clean while Suricata still captures the full attack details.
+
+---
 
 ## Infrastructure Service Flows
 

@@ -15,7 +15,7 @@ Every enterprise function is mapped to a dedicated VLAN and subnet, with the Fir
 
 | VLAN   | Name / Purpose          | Subnet              | Gateway           |
 |:-------|:------------------------|:--------------------|:------------------|
-| **-**  | Router - Router         | 172.16.x.0/30       | —                 |
+| **-**  | Router - Router         | 172.16.x.0/30       | -                 |
 |        |                         |                     |                   |
 | **-**  | Internet Core           | 172.16.100.0/24     | 172.16.100.1      |
 | **-**  | Attacker Network        | 10.0.0.0/24         | 10.0.0.1          |

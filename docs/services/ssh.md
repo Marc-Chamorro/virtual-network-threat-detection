@@ -13,8 +13,6 @@ The SSH service provides a mechanism for executing remote commands and simulate 
 
 The service is based on **OpenSSH Server** and is managed via environment variables in the container entrypoint file.
 
----
-
 ### Activation
 
 The SSH service is enabled only if the following environment variable is set:
@@ -29,8 +27,6 @@ If this variable is absent or has any other value different than 1, the Nginx pr
 !!! note
     This allows the same container image to be reused with or without SSH enabled.
 
----
-
 ### Deployment Status
 
 In the default provided topology, the SSH service is active *(on the containers using the `server_vntd` image)*:
@@ -38,8 +34,6 @@ In the default provided topology, the SSH service is active *(on the containers 
 - `dmz_server`: Internal organization website.
 - `internet_server`: External public website simulation.
 - `internal_server`: Interenal organization service provider.
-
----
 
 ### Default Credentials
 
@@ -85,6 +79,8 @@ SSH traffic:
 
 !!! tip "Security"
     Repeated failed SSH attempts are useful for simulating brute-force or credential abuse scenarios.
+
+---
 
 ## How to use
 

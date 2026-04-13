@@ -45,9 +45,17 @@ nav:
   - Scripts & Automation:
     # Information about any scripts or automation tools included in the project.
     - Overview: scripts/index.md
-    #- Automation Workflows: scripts/automation-workflows.md
     - Images Management: scripts/images-management.md
     - Lab Management: scripts/lab-management.md
+    - Attack Simulations:
+      - Overview: scripts/attacks/index.md
+      - Port Scanning: scripts/attacks/port_scanning.md
+      - TCP SYN Flood: scripts/attacks/dos_syn_flood_hping3.md
+      - Slow HTTP DoS: scripts/attacks/dos_slow_http_slowloris.md
+      - SSH Brute Force: scripts/attacks/ssh_bruteforce_hydra.md
+      - OSPF Route Hijack: scripts/attacks/ospf_route_hijack.md
+      - SMTP Recon + Relay Abuse: scripts/attacks/smtp_recon_abuse.md
+      - Dataset Generation: scripts/attacks/generate_traffic.md
 
   - Network Services:
     - Overview: network-services/index.md
@@ -77,9 +85,7 @@ nav:
     - Elasticsearch: monitoring/elasticsearch.md
     - Filebeat: monitoring/filebeat.md
     - Kibana: monitoring/kibana.md
-
-  - Attacks:
-    - Overview: attacks/index.md
+    - Alerts & Detection Rules (≈ SIEM): monitoring/alerts.md
 
   - Operations & Troubleshooting: operations/commands.md
     # - Useful Commands: operations/commands.md
