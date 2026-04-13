@@ -126,3 +126,4 @@ The attack techniques described here are intended strictly for educational use i
 | [SSH Brute Force](ssh_bruteforce_hydra.md)      | hydra                | Discover valid SSH credentials through automated password guessing             |
 | [OSPF Route Hijack](ospf_route_hijack.md)       | FRR vtysh + nginx    | Redirect traffic by injecting a more-specific route into the OSPF domain       |
 | [SMTP Recon + Relay Abuse](smtp_recon_abuse.md) | nmap + swaks + hydra | Enumerate mail users, test open relay, send spoofed mail, and brute-force IMAP |
+| [Dataset Generation](generate_traffic.md)       | multiple             | Generate a full labeled benign + attack register for ML training               |
