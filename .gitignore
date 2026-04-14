@@ -3,5 +3,6 @@
 ml/*.json
 labs/*/
 !labs/config/
+!labs/output/
 dump_project.sh
 dump_project.txt

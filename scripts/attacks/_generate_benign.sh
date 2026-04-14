@@ -1,12 +1,13 @@
 #!/bin/sh
 
-# generate_traffic.sh
-# Generates labeled benign traffic and attack sequences for Suricata EVE JSON dataset collection
+# generate_benign.sh
+# Generates BENIGN-ONLY traffic for Suricata EVE JSON dataset collection
+# Use this to produce clean normal traffic samples for AI model training
 # Compatible with both topology.clab.yml (full) and topology_reduced.clab.yml (reduced)
 
 # If called with -n, return the menu name (compatible with the attacks menu system)
 if [ "$1" = "-n" ]; then
-    echo "[X] Dataset generation | Traffic + Attacks"
+    echo "[+] Dataset generation | Benign traffic only"
     exit 0
 fi
 
@@ -151,18 +152,10 @@ docker exec "$PC_V50_1" sh -c \
 sleep 3
 
 # =============================================================================
-# PHASE 2 - Port scanning (nmap SYN + UDP)
+# PHASE 2 - Normal traffic (mid-session)
 # =============================================================================
 
-log "PHASE 2 - Port scanning (nmap)"
-sh "$ATTACKS_DIR/port_scanning.sh" "$ATTACKER"
-sleep 5
-
-# =============================================================================
-# PHASE 3 - Normal traffic (during/after scan)
-# =============================================================================
-
-log "PHASE 3 - Normal traffic"
+log "PHASE 2 - Normal traffic (mid-session)"
 docker exec "$PC_V50_1" wget -q -O /dev/null http://internet.com || true
 docker exec "$PC_V60_1" sh -c \
     'echo "Checking in mid-week, everything looking fine on my end." | mutt -s "Midweek note" olivia@internet.com' || true
@@ -176,35 +169,10 @@ fi
 sleep 3
 
 # =============================================================================
-# PHASE 4 - DoS SYN flood (hping3, 2 × 60 s phases)
+# PHASE 3 - Final normal traffic
 # =============================================================================
 
-log "PHASE 4 - DoS SYN flood (hping3)"
-sh "$ATTACKS_DIR/dos_syn_flood_hping3.sh" "$ATTACKER"
-sleep 5
-
-# =============================================================================
-# PHASE 5 - SSH brute force (hydra)
-# =============================================================================
-
-log "PHASE 5 - SSH brute force (hydra)"
-sh "$ATTACKS_DIR/ssh_bruteforce_hydra.sh" "$ATTACKER" enterprise.com 22 vntd
-sleep 5
-
-# =============================================================================
-# PHASE 6 - SMTP recon + IMAP brute force
-# =============================================================================
-
-log "PHASE 6 - SMTP recon + IMAP brute force"
-# Note: the filename has a space - quoting is required
-sh "$ATTACKS_DIR/smtp _recon_abuse.sh" "$ATTACKER" || true
-sleep 5
-
-# =============================================================================
-# PHASE 7 - Final normal traffic
-# =============================================================================
-
-log "PHASE 7 - Final normal traffic"
+log "PHASE 3 - Final normal traffic"
 docker exec "$PC_V60_1" curl -s -o /dev/null http://enterprise.com || true
 docker exec "$PC_V50_1" nslookup internet.com   || true
 docker exec "$PC_ADMIN" nslookup enterprise.com || true
@@ -223,11 +191,11 @@ sleep 3
 # DONE - Stats and extraction instructions
 # =============================================================================
 
-log "DONE - Dataset generation complete"
+log "DONE - Benign dataset generation complete"
 echo ""
 echo "--- To extract the log to the host ---"
 echo ""
-echo "  docker cp $LOGWATCH:$EVE_LOG ./ml/eve_\$(date +%Y%m%d_%H%M%S).json"
+echo "  docker cp $LOGWATCH:$EVE_LOG ./ml/eve_benign_\$(date +%Y%m%d_%H%M%S).json"
 echo ""
 echo "--- To clear the log before the next run ---"
 echo ""
