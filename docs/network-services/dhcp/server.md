@@ -7,7 +7,7 @@ icon: material/database-settings
 
 This document details the **configuration and behavior** of the provided DHCP server used in the VNTD lab.
 
-The DHCP server is hosted on the `internal_server` node within the **Internal Services (VLAN 40)** zone.
+The DHCP server is hosted on the `internal-server` node within the **Internal Services (VLAN 40)** zone.
 
 ---
 
@@ -54,7 +54,7 @@ binds:
 
 ## DHCP Software
 
-The service is implemented using **`isc-dhcp-server`**. The server is to be explicitly bound to a single interface: `eth1`. This prevents the DHCP daemon from listening on unintended interfaces (even though in this scenario, all `internal_server` traffic is routed through the same interface).
+The service is implemented using **`isc-dhcp-server`**. The server is to be explicitly bound to a single interface: `eth1`. This prevents the DHCP daemon from listening on unintended interfaces (even though in this scenario, all `internal-server` traffic is routed through the same interface).
 
 Configuration is defined in:
 

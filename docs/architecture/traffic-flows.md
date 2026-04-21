@@ -15,7 +15,7 @@ The environment uses a hybrid routing model to ensure internal isolation while m
 
 ### External Routing (OSPF)
 
-The **Enterprise Edge Router** (**router_enterprise**) uses OSPF to communicate with the Internet Core:
+The **Enterprise Edge Router** (**router-enterprise**) uses OSPF to communicate with the Internet Core:
 - **Advertisement:** It announces the public address (`172.16.30.2/30`).
 - **Static Internal Routing:** To ensure traffic reaches internal VLANs, the router has static routes pointing all `192.168.0.0/16` traffic to the **Firewall** (`192.168.0.2`).
 
@@ -61,7 +61,7 @@ The Firewall implements a **Default DROP** policy for all INPUT and FORWARD pack
 All inbound traffic arriving on the Enterprise Router's WAN interface (`eth1`) is forwarded wholesale to the Firewall using a catch-all DNAT rule:
 
 ```bash
-# router_enterprise startup.sh
+# router-enterprise startup.sh
 iptables -t nat -A PREROUTING -i eth1 -j DNAT --to-destination 192.168.0.2
 ```
 
@@ -80,7 +80,7 @@ iptables -t nat -A PREROUTING -i eth1 -p udp --dport 53 -j DNAT --to-destination
 Outbound traffic from enterprise VLANs is masqueraded at the Enterprise Router:
 
 ```bash
-# router_enterprise startup.sh
+# router-enterprise startup.sh
 iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 ```
 
@@ -166,8 +166,8 @@ in place of `startup.sh` in the topology file:
 
     Given the situation that an unknown address is received, the DNS forwards the request to the DNS located on the Internet Server:
 
-    - **Internal Query**: Clients query the `dmz_server` (`192.168.10.10`).
-    - **External Forwarding**: If the `dmz_server` cannot resolve the name, it forwards the request to the `internet_server` (`172.16.100.100`) at the Internet core.
+    - **Internal Query**: Clients query the `dmz-server` (`192.168.10.10`).
+    - **External Forwarding**: If the `dmz-server` cannot resolve the name, it forwards the request to the `internet-server` (`172.16.100.100`) at the Internet core.
 
 === "Mail Service (SMTP/IMAP)" 
 

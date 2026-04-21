@@ -27,13 +27,13 @@ At startup, all three scripts check which containers are currently running and p
   Required devices:
   [+] clab-virtual-env-attacker       (kali)
   [+] clab-virtual-env-benign         (olivia)
-  [+] clab-virtual-env-pc_vlan50_1    (alice)
-  [+] clab-virtual-env-pc_vlan60_1    (emma)
-  [+] clab-virtual-env-pc_admin       (lois)
+  [+] clab-virtual-env-pc-vlan50-1    (alice)
+  [+] clab-virtual-env-pc-vlan60-1    (emma)
+  [+] clab-virtual-env-pc-admin       (lois)
 
   Optional devices (full topology only):
-  [-] clab-virtual-env-pc_vlan50_2    (barry)  <-- not found, commands will be skipped
-  [-] clab-virtual-env-pc_vlan60_2    (clark)  <-- not found, commands will be skipped
+  [-] clab-virtual-env-pc-vlan50-2    (barry)  <-- not found, commands will be skipped
+  [-] clab-virtual-env-pc-vlan60-2    (clark)  <-- not found, commands will be skipped
 ```
 
 Commands for `barry` and `clark` are skipped when the reduced topology is active. No manual changes are needed.
@@ -135,13 +135,13 @@ At the end of every run, each script prints the commands to extract or clear the
  
 ```bash
 # generate_benign.sh
-docker cp clab-virtual-env-logwatch:/var/log/suricata/eve.json ./ml/eve_benign_$(date +%Y%m%d_%H%M%S).json
+docker cp clab-virtual-env-logwatch:/var/log/suricata/eve.json ./ml/data/eve_benign_$(date +%Y%m%d_%H%M%S).json
  
 # generate_attacks.sh
-docker cp clab-virtual-env-logwatch:/var/log/suricata/eve.json ./ml/eve_attacks_$(date +%Y%m%d_%H%M%S).json
+docker cp clab-virtual-env-logwatch:/var/log/suricata/eve.json ./ml/data/eve_attacks_$(date +%Y%m%d_%H%M%S).json
  
 # generate_traffic.sh
-docker cp clab-virtual-env-logwatch:/var/log/suricata/eve.json ./ml/eve_$(date +%Y%m%d_%H%M%S).json
+docker cp clab-virtual-env-logwatch:/var/log/suricata/eve.json ./ml/data/eve_$(date +%Y%m%d_%H%M%S).json
 ```
  
 Clear `eve.json` before each run to keep sessions cleanly separated:

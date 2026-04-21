@@ -50,7 +50,7 @@ Additional sections definitions can be added to change the behavior and capabili
 ### Example: Internet Router
 
 ```yaml
-router_internet:
+router-internet:
   kind: linux
   image: frr_vntd:latest
   binds:
@@ -61,7 +61,7 @@ router_internet:
 ### Example: Internet Server
 
 ```yaml
-internet_server:
+internet-server:
   kind: linux
   image: server_vntd:latest
   env:
@@ -100,7 +100,7 @@ The `links` section defines the virtual cables connecting the nodes. Each link i
 
 ```yaml
 links:
-  - endpoints: ["router_internet:eth3", "router_enterprise:eth1"]
+  - endpoints: ["router-internet:eth3", "router-enterprise:eth1"]
 ```
 
 ---
@@ -198,7 +198,7 @@ To reduce duplication in the topology definition file, the project uses YAML anc
 
 Example:
 ```yaml
-pc_template: &user_pc
+pc-template: &user_pc
   kind: linux
   group: hosts
   image: alpine_vntd:latest
@@ -208,7 +208,7 @@ pc_template: &user_pc
 
 Nodes can later inherit the configuration using:
 ```yaml
-pc_vlan50_1:
+pc-vlan50-1:
   <<: *user_pc
   binds:
     - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
@@ -243,7 +243,7 @@ Devices are assigned to a specific group:
 | **watcher**  | Threat detection and Logs   | `logwatch`                                           |
 | **switches** | Enterprise core devices     | `switch_*`, `firewall`                               |
 | **routers**  | All routers available       | `router_*`                                           |
-| **hosts**    | Servers and users connected | `*_server`, `attacker`, `benign`, `pc_admin`, `pc_*` |
+| **hosts**    | Servers and users connected | `*_server`, `attacker`, `benign`, `pc-admin`, `pc_*` |
 
 ### Kinds
 

@@ -88,7 +88,7 @@ Tool: `hydra` with `imap://` target protocol.
 ## Observed Effects
 
 - **Phase 1–3:** nmap scan traffic appears in Suricata and records as connections to port 25
-- **Phase 4:** The spoofed message is delivered to Alice's mailbox on the enterprise mail server and is visible when running `mutt` on `pc_vlan50_1`
+- **Phase 4:** The spoofed message is delivered to Alice's mailbox on the enterprise mail server and is visible when running `mutt` on `pc-vlan50-1`
 - **Phase 5:** Failed IMAP authentication attempts appear as repeated connection events to port 143 in the flow logs, with a successful authentication visible at the end if valid credentials are found
 
 !!! note "Mail service credentials"

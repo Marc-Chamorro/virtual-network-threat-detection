@@ -31,9 +31,9 @@ If this variable is absent or has any other value different than 1, the Nginx pr
 
 In the default provided topology, the SSH service is active *(on the containers using the `server_vntd` image)*:
 
-- `dmz_server`: Internal organization website.
-- `internet_server`: External public website simulation.
-- `internal_server`: Interenal organization service provider.
+- `dmz-server`: Internal organization website.
+- `internet-server`: External public website simulation.
+- `internal-server`: Interenal organization service provider.
 
 ### Default Credentials
 

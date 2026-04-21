@@ -138,7 +138,7 @@ The available hostnames are defined in the DNS configuration:
 - [DNS Names Assignment](../network-services/dns/config.md)
 
 !!! info
-    From the provided topology, the FTP service is available only on the `internal_server` using the `server_vntd` image.
+    From the provided topology, the FTP service is available only on the `internal-server` using the `server_vntd` image.
     By default, all servers have a DNS-resolvable hostname.
 
 ---

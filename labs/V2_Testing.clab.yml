@@ -6,7 +6,7 @@ topology:
   nodes:
     # VLAN 20 - Monitoring & IDS
     #----------------------------------------------------------------------------------------------
-    switch_vlan20:
+    switch-vlan20:
       kind: arista_ceos
       image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v20.cli
@@ -40,5 +40,5 @@ topology:
 
   links:
     # VLAN 20
-    - endpoints: ["switch_vlan20:eth2", "logwatch:eth1"]
-    - endpoints: ["switch_vlan20:eth3", "client:eth1"]
+    - endpoints: ["switch-vlan20:eth2", "logwatch:eth1"]
+    - endpoints: ["switch-vlan20:eth3", "client:eth1"]

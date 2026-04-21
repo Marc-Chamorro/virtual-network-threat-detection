@@ -2,14 +2,14 @@ name: virtual-env
 
 topology:
   nodes:
-    router_internet:
+    router-internet:
       kind: linux
       image: frr_vntd:latest
       binds:                                                    # Bind configuration files to make them persisten and editable
         - ./config/router/daemons:/etc/frr/daemons              
         - ./config/router/internet/frr.conf:/etc/frr/frr.conf
 
-    internet_server:
+    internet-server:
       kind: linux
       image: server_vntd:latest
       env:                                                      # Environment variables to trigger specific service startups in entrypoint.sh
@@ -24,7 +24,7 @@ topology:
         - ip route del default                                  # Remove Docker default gateway
         - ip route add default via 172.16.100.1                 # Point to Internet Router as default gateway
 
-    router_attacker:
+    router-attacker:
       kind: linux
       image: frr_vntd:latest
       binds:
@@ -43,7 +43,7 @@ topology:
         servers:
           - 172.16.100.100
 
-    router_benign:
+    router-benign:
       kind: linux
       image: frr_vntd:latest
       binds:
@@ -64,12 +64,12 @@ topology:
 
   links:
     # Internet
-    - endpoints: ["router_internet:eth4", "internet_server:eth1"]
+    - endpoints: ["router-internet:eth4", "internet-server:eth1"]
 
     # Attacker network
-    - endpoints: ["router_attacker:eth1", "router_internet:eth1"]
-    - endpoints: ["attacker:eth1", "router_attacker:eth2"]
+    - endpoints: ["router-attacker:eth1", "router-internet:eth1"]
+    - endpoints: ["attacker:eth1", "router-attacker:eth2"]
 
     # Benign network
-    - endpoints: ["router_benign:eth1", "router_internet:eth2"]
-    - endpoints: ["benign:eth1", "router_benign:eth2"]
+    - endpoints: ["router-benign:eth1", "router-internet:eth2"]
+    - endpoints: ["benign:eth1", "router-benign:eth2"]

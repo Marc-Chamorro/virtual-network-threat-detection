@@ -55,7 +55,7 @@ Internet Mail Server → Router (port 25 forward) → DMZ Mail Server
 Traffic whose destination is the user's same mail service provider does not get redirected.
 
 !!! note "Security rules"
-    From the Internet towards the Enterprise network, the router forwards **TCP port 25** traffic to the `dmz_server`.
+    From the Internet towards the Enterprise network, the router forwards **TCP port 25** traffic to the `dmz-server`.
 
 ---
 
@@ -207,7 +207,7 @@ TLS is **not** enabled. This allows clear:
 - IDS monitoring.
 - Clear-text credential observation.
 
-From the router, inbound port 25 traffic from Internet is forwarded to `dmz_server`.
+From the router, inbound port 25 traffic from Internet is forwarded to `dmz-server`.
 
 ---
 

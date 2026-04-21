@@ -15,12 +15,12 @@ These commands are executed from the **host machine** to control the virtual env
 
 - **View Device Logs:** Check the output and initialization errors for a specific node:
 ```sh
-docker logs clab-virtual-env-internal_server
+docker logs clab-virtual-env-internal-server
 ```
 
 - **Connect to a Device:** Open a terminal inside a running node:
 ```sh
-docker exec -it clab-virtual-env-pc_vlan50_1 bash
+docker exec -it clab-virtual-env-pc-vlan50-1 bash
 ```
 
 ---
@@ -163,6 +163,7 @@ suricata -T -c /etc/suricata/suricata.yaml
 
 To see the suricata logs perfectly:
 docker logs -f clab-virtual-env-ids
+docker logs -f clab-virtual-env-logwatch
 
 View the logs data as it grows
 docker exec -it clab-virtual-env-ids tail -f /var/log/suricata/eve.json

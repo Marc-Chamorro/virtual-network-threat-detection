@@ -61,7 +61,7 @@ The project employs a hybrid model for IP assignment to reflect realistic corpor
 
     Used for end-user workstations in VLANs 50 and 60:
     
-    - **Server:** Centrally managed by `internal_server` (VLAN 40).
+    - **Server:** Centrally managed by `internal-server` (VLAN 40).
     - **Relay:** The Firewall hosts the `isc-dhcp-relay` service to bridge requests across VLANs.
 
 ---
@@ -70,11 +70,11 @@ The project employs a hybrid model for IP assignment to reflect realistic corpor
 
 DNS servers are intentionally placed in different zones, which allows testing of internal vs external name resolution services.
 
-- Internal DMZ DNS: `dmz_server`
-- External DNS: `internet_server`
+- Internal DMZ DNS: `dmz-server`
+- External DNS: `internet-server`
 
 ## DNS Infrastructure
 
 DNS servers are intentionally placed in different zones, which allows testing of internal vs external name resolution services.
-- **Internal DNS (`dmz_server`):** Resolves local hostnames and forwards unknown requests to the internet server.
-- **External DNS (`internet_server`):** Simulates public DNS service.
+- **Internal DNS (`dmz-server`):** Resolves local hostnames and forwards unknown requests to the internet server.
+- **External DNS (`internet-server`):** Simulates public DNS service.

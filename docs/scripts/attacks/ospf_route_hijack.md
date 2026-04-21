@@ -34,7 +34,7 @@ With explicit parameters:
 | `target-prefix`      | IP prefix to hijack (host route recommended) | `172.16.30.2/32` |
 | `restore-delay`      | Seconds before restoring legitimate routing  | `60`             |
 
-The attacker router container name is automatically derived from the attacker container name by replacing the `-attacker` suffix with `-router_attacker`.
+The attacker router container name is automatically derived from the attacker container name by replacing the `-attacker` suffix with `-router-attacker`.
 
 ---
 

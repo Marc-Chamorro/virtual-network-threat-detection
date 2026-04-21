@@ -24,9 +24,9 @@ KALI_IP="${4:-10.0.0.2}"
 CAPTURE_FILE="/tmp/hijack_capture.pcap"
 
 # Generate the attacker router container name from the attacker container name.
-# Transformation: clab-<lab>-attacker -> clab-<lab>-router_attacker
+# Transformation: clab-<lab>-attacker -> clab-<lab>-router-attacker
 LAB_PREFIX=$(echo "$ATTACKER_CONTAINER" | sed 's/-attacker$//')
-ATTACKER_ROUTER_CONTAINER="${LAB_PREFIX}-router_attacker"
+ATTACKER_ROUTER_CONTAINER="${LAB_PREFIX}-router-attacker"
 
 echo "================================"
 echo "Attack: OSPF Route Hijack + Traffic Interception"

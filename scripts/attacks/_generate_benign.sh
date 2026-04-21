@@ -21,13 +21,13 @@ ATTACKER="$LAB-attacker"
 BENIGN="$LAB-benign"          # olivia
 
 # Always present (reduced + full topology)
-PC_V50_1="$LAB-pc_vlan50_1"   # alice
-PC_V60_1="$LAB-pc_vlan60_1"   # emma
-PC_ADMIN="$LAB-pc_admin"      # lois
+PC_V50_1="$LAB-pc-vlan50-1"   # alice
+PC_V60_1="$LAB-pc-vlan60-1"   # emma
+PC_ADMIN="$LAB-pc-admin"      # lois
 
 # Only present in the full topology
-PC_V50_2="$LAB-pc_vlan50_2"   # barry
-PC_V60_2="$LAB-pc_vlan60_2"   # clark
+PC_V50_2="$LAB-pc-vlan50-2"   # barry
+PC_V60_2="$LAB-pc-vlan60-2"   # clark
 
 LOGWATCH="$LAB-logwatch"
 EVE_LOG="/var/log/suricata/eve.json"
@@ -195,7 +195,7 @@ log "DONE - Benign dataset generation complete"
 echo ""
 echo "--- To extract the log to the host ---"
 echo ""
-echo "  docker cp $LOGWATCH:$EVE_LOG ./ml/eve_benign_\$(date +%Y%m%d_%H%M%S).json"
+echo "  docker cp $LOGWATCH:$EVE_LOG ./ml/data/eve_benign_\$(date +%Y%m%d_%H%M%S).json"
 echo ""
 echo "--- To clear the log before the next run ---"
 echo ""

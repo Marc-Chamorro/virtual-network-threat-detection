@@ -3,6 +3,6 @@ move into the project dir
 python3 -m venv venv
 source venv/bin/activate
 pip install jupyter pandas scikit-learn matplotlib
-touch output/eve.json
 source venv/bin/activate
 jupyter notebook ml/notebooks/
+deactivate

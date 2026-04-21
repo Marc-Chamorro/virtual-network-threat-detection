@@ -36,7 +36,7 @@ topology:
       stages:
         create:
           wait-for:
-            - node: router_enterprise
+            - node: router-enterprise
               stage: create-links
 
   nodes:
@@ -45,7 +45,7 @@ topology:
     # Templates - YAML Anchors
     # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-    pc_template: &user_pc
+    pc-template: &user_pc
       kind: linux
       group: hosts
       image: alpine_vntd:latest
@@ -54,12 +54,12 @@ topology:
         IFACE: "eth1"
         MUTT_CLIENT: 1
 
-    switch_template: &switch
+    switch-template: &switch
       kind: arista_ceos
       group: switches
       image: ceos_vntd:latest
 
-    router_template: &frr_router
+    router-template: &frr_router
       kind: linux
       group: routers
       image: frr_vntd:latest
@@ -68,13 +68,13 @@ topology:
     # Internet - Simulates the ISP and public internet backbone
     # =============================================================================================
     
-    router_internet:
+    router-internet:
       <<: *frr_router
       binds:                                                    # Bind configuration files to make them persisten and editable
         - ./config/router/daemons:/etc/frr/daemons              
         - ./config/router/internet/frr.conf:/etc/frr/frr.conf
 
-    internet_server:
+    internet-server:
       kind: linux
       group: hosts
       image: server_vntd:latest
@@ -110,7 +110,7 @@ topology:
     # Attacker network - Simulates a hostile external actor
     # =============================================================================================
     
-    router_attacker:
+    router-attacker:
       <<: *frr_router
       binds:
         - ./config/router/daemons:/etc/frr/daemons
@@ -133,7 +133,7 @@ topology:
     # Benign network - Simulates normal external traffic
     # =============================================================================================
     
-    router_benign:
+    router-benign:
       <<: *frr_router
       binds:
         - ./config/router/daemons:/etc/frr/daemons
@@ -162,7 +162,7 @@ topology:
     
     # Network core & security
     #----------------------------------------------------------------------------------------------
-    router_enterprise:
+    router-enterprise:
       kind: linux
       group: routers
       image: router_vntd:latest
@@ -197,11 +197,11 @@ topology:
 
     # VLAN 10 - DMZ
     #----------------------------------------------------------------------------------------------
-    switch_vlan10:
+    switch-vlan10:
       <<: *switch
       startup-config: ./config/switch/enterprise/config_v10.cli # Arista switches use startup-config file for persistent settings
 
-    dmz_server:
+    dmz-server:
       kind: linux
       group: hosts
       image: server_vntd:latest
@@ -233,7 +233,7 @@ topology:
 
     # VLAN 20 - Monitoring & IDS
     #----------------------------------------------------------------------------------------------
-    switch_vlan20:
+    switch-vlan20:
       <<: *switch
       startup-config: ./config/switch/enterprise/config_v20.cli
 
@@ -249,7 +249,6 @@ topology:
         SURICATA_SERVICE: 1                         
         ELASTIC_STACK: 1                                      # Filebeat + Elasticsearch + Kibana
       binds:
-        - ./output/eve.json:/var/log/suricata/eve.json        # Export the file
         - ./config/logwatch/suricata/suricata.yaml:/etc/suricata/suricata.yaml
         - ./config/logwatch/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml
         - ./config/logwatch/filebeat/suricata.yml:/etc/filebeat/modules.d/suricata.yml
@@ -260,11 +259,11 @@ topology:
 
     # VLAN 30 - Administration
     #----------------------------------------------------------------------------------------------
-    switch_vlan30:
+    switch-vlan30:
       <<: *switch
       startup-config: ./config/switch/enterprise/config_v30.cli
 
-    pc_admin:
+    pc-admin:
       kind: linux
       group: hosts
       image: alpine_vntd:latest
@@ -283,11 +282,11 @@ topology:
 
     # VLAN 40 - Internal services
     #----------------------------------------------------------------------------------------------
-    switch_vlan40:
+    switch-vlan40:
       <<: *switch
       startup-config: ./config/switch/enterprise/config_v40.cli
 
-    internal_server:
+    internal-server:
       kind: linux
       group: hosts
       image: server_vntd:latest
@@ -313,16 +312,16 @@ topology:
 
     # VLAN 50 & 60 - User floor 1
     #----------------------------------------------------------------------------------------------
-    switch_floor1:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
+    switch-floor1:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
       <<: *switch
       startup-config: ./config/switch/enterprise/config_fl1.cli
 
-    pc_vlan50_1:
+    pc-vlan50-1:
       <<: *user_pc
       binds:
         - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
 
-    pc_vlan60_1:
+    pc-vlan60-1:
       <<: *user_pc
       binds:
         - ./config/pc/mutt/enterprise/emma:/root/.mutt/muttrc
@@ -333,38 +332,38 @@ topology:
 
   links:
     # Internet
-    - endpoints: ["router_internet:eth4", "internet_server:eth1"]
+    - endpoints: ["router-internet:eth4", "internet-server:eth1"]
 
     # Attacker network
-    - endpoints: ["router_attacker:eth1", "router_internet:eth1"]
-    - endpoints: ["attacker:eth1", "router_attacker:eth2"]
+    - endpoints: ["router-attacker:eth1", "router-internet:eth1"]
+    - endpoints: ["attacker:eth1", "router-attacker:eth2"]
 
     # Benign network
-    - endpoints: ["router_benign:eth1", "router_internet:eth2"]
-    - endpoints: ["benign:eth1", "router_benign:eth2"]
+    - endpoints: ["router-benign:eth1", "router-internet:eth2"]
+    - endpoints: ["benign:eth1", "router-benign:eth2"]
 
     # Enterprise network
       # Network core
-    - endpoints: ["router_internet:eth3", "router_enterprise:eth1"]
-    - endpoints: ["router_enterprise:eth2", "firewall:eth1"]
+    - endpoints: ["router-internet:eth3", "router-enterprise:eth1"]
+    - endpoints: ["router-enterprise:eth2", "firewall:eth1"]
 
       # VLAN 10
-    - endpoints: ["firewall:eth2", "switch_vlan10:eth1"]
-    - endpoints: ["switch_vlan10:eth2", "dmz_server:eth1"]
+    - endpoints: ["firewall:eth2", "switch-vlan10:eth1"]
+    - endpoints: ["switch-vlan10:eth2", "dmz-server:eth1"]
 
       # VLAN 20
-    - endpoints: ["firewall:eth3", "switch_vlan20:eth1"]
-    - endpoints: ["switch_vlan20:eth2", "logwatch:eth1"]
+    - endpoints: ["firewall:eth3", "switch-vlan20:eth1"]
+    - endpoints: ["switch-vlan20:eth2", "logwatch:eth1"]
 
       # VLAN 30
-    - endpoints: ["firewall:eth4", "switch_vlan30:eth1"]
-    - endpoints: ["switch_vlan30:eth2", "pc_admin:eth1"]
+    - endpoints: ["firewall:eth4", "switch-vlan30:eth1"]
+    - endpoints: ["switch-vlan30:eth2", "pc-admin:eth1"]
 
       # VLAN 40
-    - endpoints: ["firewall:eth5", "switch_vlan40:eth1"]
-    - endpoints: ["switch_vlan40:eth2", "internal_server:eth1"]
+    - endpoints: ["firewall:eth5", "switch-vlan40:eth1"]
+    - endpoints: ["switch-vlan40:eth2", "internal-server:eth1"]
 
       # Floor 1
-    - endpoints: ["firewall:eth6", "switch_floor1:eth1"]
-    - endpoints: ["switch_floor1:eth2", "pc_vlan50_1:eth1"]
-    - endpoints: ["switch_floor1:eth3", "pc_vlan60_1:eth1"]
+    - endpoints: ["firewall:eth6", "switch-floor1:eth1"]
+    - endpoints: ["switch-floor1:eth2", "pc-vlan50-1:eth1"]
+    - endpoints: ["switch-floor1:eth3", "pc-vlan60-1:eth1"]

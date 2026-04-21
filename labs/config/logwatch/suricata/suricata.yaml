@@ -162,8 +162,8 @@ outputs:
             # payload-printable: yes   # enable dumping payload in printable (lossy) format
             packet: yes              # enable dumping of packet (without stream segments)
             metadata: yes             # enable inclusion of app layer metadata with alert. Default yes
-            # http-body: yes           # Requires metadata; enable dumping of HTTP body in Base64
-            # http-body-printable: yes # Requires metadata; enable dumping of HTTP body in printable format
+            http-body: yes           # Requires metadata; enable dumping of HTTP body in Base64
+            http-body-printable: yes # Requires metadata; enable dumping of HTTP body in printable format
 
             # Enable the logging of tagged packets for rules using the
             # "tag" keyword.
@@ -260,7 +260,7 @@ outputs:
         #    flows: all       # start or all: 'start' logs only a single drop
         #                     # per flow direction. All logs each dropped pkt.
         - smtp:
-            #extended: yes # enable this for extended logging information
+            extended: yes # enable this for extended logging information
             # this includes: bcc, message-id, subject, x_mailer, user-agent
             # custom fields logging from the list:
             #  reply-to, bcc, message-id, subject, x-mailer, user-agent, received,
@@ -463,7 +463,7 @@ outputs:
   # prune" command which can delete files over a certain age.
   - file-store:
       version: 2
-      enabled: no
+      enabled: yes
 
       # Set the directory for the filestore. Relative pathnames
       # are contained within the "default-log-dir".
@@ -472,10 +472,10 @@ outputs:
       # Write out a fileinfo record for each occurrence of a file.
       # Disabled by default as each occurrence is already logged
       # as a fileinfo record to the main eve-log.
-      #write-fileinfo: yes
+      write-fileinfo: yes
 
       # Force storing of all files. Default: no.
-      #force-filestore: yes
+      force-filestore: yes
 
       # Override the global stream-depth for sessions in which we want
       # to perform file extraction. Set to 0 for unlimited; otherwise,
@@ -533,7 +533,7 @@ outputs:
   #
   # Note: limited by the body limit settings
   - http-body-data:
-      enabled: no
+      enabled: yes
       type: file
       filename: http-data.log
 
@@ -824,14 +824,14 @@ app-layer:
         extract-urls: yes
         # Set to yes to compute the md5 of the mail body. You will then
         # be able to journalize it.
-        body-md5: no
+        body-md5: yes      # vntd - don't get the raw text technically, but usefull feature for ml
       # Configure inspected-tracker for file_data keyword
       inspected-tracker:
         content-limit: 100000
         content-inspect-min-size: 32768
         content-inspect-window: 4096
     imap:
-      enabled: detection-only
+      enabled: yes #detection-only
     smb:
       enabled: yes
       detection-ports:
