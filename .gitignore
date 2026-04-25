@@ -1,7 +1,5 @@
 *.qcow2
 *.xz
-ml/data/*.json
-ml/models/*.pkl
 labs/*/
 !labs/config/
 !labs/output/
