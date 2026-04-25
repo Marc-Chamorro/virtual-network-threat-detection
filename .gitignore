@@ -1,5 +1,6 @@
 *.qcow2
 *.xz
+ml/data/*.json
 labs/*/
 !labs/config/
 !labs/output/
