@@ -192,39 +192,7 @@ This ordering ensures that monitoring and infrastructure services are fully oper
 
 ---
 
-## YAML Anchors
-
-To reduce duplication in the topology definition file, the project uses YAML anchors. These allow defining reusable configuration templates that can later be referenced multiple times.
-
-Example:
-```yaml
-pc-template: &user_pc
-  kind: linux
-  group: hosts
-  image: alpine_vntd:latest
-  env:
-    DHCP_CLIENT: 1
-```
-
-Nodes can later inherit the configuration using:
-```yaml
-pc-vlan50-1:
-  <<: *user_pc
-  binds:
-    - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
-```
-
-!!! important "Anchor overwrite value"
-  When a node uses an anchor, its values / settings can be overwritten by simply setting a new value in the already defined parameter.
-
-This technique provides the benefits of:
-- Reduced duplicated configuration.
-- Simplified maintenance.
-- Consistency across multiple nodes.
-
----
-
-## Why Anchors Instead of Groups or Kinds 
+## Groups and Kinds
 
 Although Containerlab provides **groups** and **kinds** support, they serve different purposes and cannot be fully customized.
 
@@ -255,16 +223,8 @@ These are **hard-coded platform defined** and cannot easily be extended with com
 
 Therefore, they are not suitable for reusable topology templates.
 
-### YAML Anchors
-
-YAML anchors provide a **configuration reuse mechanism** independent from Containerlab.
-
-They allow:
-- Defining templates for common nodes
-- Keeping topology file compact
-- Avoiding inconsistencies between nodes
-
-Therefore, the project uses anchors for reusable cofigurations, groups for startup orchestration and stages for startup order definition.
+!!! note "Why anchors are not used"
+    Although YAML anchors can reduce duplication, they are not used in this project because they may lead to unexpected behavior in Containerlab (e.g., unintended container instantiation). For clarity and reliability, all nodes are defined explicitly.
 
 ---
 

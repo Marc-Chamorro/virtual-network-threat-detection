@@ -41,35 +41,14 @@ topology:
 
   nodes:
 
-    # /////////////////////////////////////////////////////////////////////////////////////////////
-    # Templates - YAML Anchors
-    # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-    pc-template: &user_pc
-      kind: linux
-      group: hosts
-      image: alpine_vntd:latest
-      env:
-        DHCP_CLIENT: 1
-        IFACE: "eth1"
-        MUTT_CLIENT: 1
-
-    switch-template: &switch
-      kind: arista_ceos
-      group: switches
-      image: ceos_vntd:latest
-
-    router-template: &frr_router
-      kind: linux
-      group: routers
-      image: frr_vntd:latest
-
     # =============================================================================================
     # Internet - Simulates the ISP and public internet backbone
     # =============================================================================================
     
     router-internet:
-      <<: *frr_router
+      kind: linux
+      group: routers
+      image: frr_vntd:latest
       binds:                                                    # Bind configuration files to make them persisten and editable
         - ./config/router/daemons:/etc/frr/daemons              
         - ./config/router/internet/frr.conf:/etc/frr/frr.conf
@@ -111,7 +90,9 @@ topology:
     # =============================================================================================
     
     router-attacker:
-      <<: *frr_router
+      kind: linux
+      group: routers
+      image: frr_vntd:latest
       binds:
         - ./config/router/daemons:/etc/frr/daemons
         - ./config/router/attacker/frr.conf:/etc/frr/frr.conf
@@ -134,7 +115,9 @@ topology:
     # =============================================================================================
     
     router-benign:
-      <<: *frr_router
+      kind: linux
+      group: routers
+      image: frr_vntd:latest
       binds:
         - ./config/router/daemons:/etc/frr/daemons
         - ./config/router/benign/frr.conf:/etc/frr/frr.conf
@@ -198,7 +181,9 @@ topology:
     # VLAN 10 - DMZ
     #----------------------------------------------------------------------------------------------
     switch-vlan10:
-      <<: *switch
+      kind: arista_ceos
+      group: switches
+      image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v10.cli # Arista switches use startup-config file for persistent settings
 
     dmz-server:
@@ -234,7 +219,9 @@ topology:
     # VLAN 20 - Monitoring & IDS
     #----------------------------------------------------------------------------------------------
     switch-vlan20:
-      <<: *switch
+      kind: arista_ceos
+      group: switches
+      image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v20.cli
 
     # ! Requires many resources to opperate !
@@ -260,7 +247,9 @@ topology:
     # VLAN 30 - Administration
     #----------------------------------------------------------------------------------------------
     switch-vlan30:
-      <<: *switch
+      kind: arista_ceos
+      group: switches
+      image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v30.cli
 
     pc-admin:
@@ -283,7 +272,9 @@ topology:
     # VLAN 40 - Internal services
     #----------------------------------------------------------------------------------------------
     switch-vlan40:
-      <<: *switch
+      kind: arista_ceos
+      group: switches
+      image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_v40.cli
 
     internal-server:
@@ -313,32 +304,60 @@ topology:
     # VLAN 50 & 60 - User floor 1
     #----------------------------------------------------------------------------------------------
     switch-floor1:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
-      <<: *switch
+      kind: arista_ceos
+      group: switches
+      image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_fl1.cli
 
     pc-vlan50-1:
-      <<: *user_pc
+      kind: linux
+      group: hosts
+      image: alpine_vntd:latest
+      env:
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
 
     pc-vlan60-1:
-      <<: *user_pc
+      kind: linux
+      group: hosts
+      image: alpine_vntd:latest
+      env:
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/mutt/enterprise/emma:/root/.mutt/muttrc
 
     # VLAN 50 & 60 - User floor 2
     #----------------------------------------------------------------------------------------------
     switch-floor2:                                              # This switchs handles trunking for multiple VLANs (50 & 60)
-      <<: *switch
+      kind: arista_ceos
+      group: switches
+      image: ceos_vntd:latest
       startup-config: ./config/switch/enterprise/config_fl2.cli
 
     pc-vlan50-2:
-      <<: *user_pc
+      kind: linux
+      group: hosts
+      image: alpine_vntd:latest
+      env:
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/mutt/enterprise/barry:/root/.mutt/muttrc
 
     pc-vlan60-2:
-      <<: *user_pc
+      kind: linux
+      group: hosts
+      image: alpine_vntd:latest
+      env:
+        DHCP_CLIENT: 1
+        IFACE: "eth1"
+        MUTT_CLIENT: 1
       binds:
         - ./config/pc/mutt/enterprise/clark:/root/.mutt/muttrc
 

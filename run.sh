@@ -11,6 +11,7 @@ SCRIPTS_DIR="$PRJ_DIR/scripts"
 S_MENU_IMAGES="$SCRIPTS_DIR/images/menu.sh"
 S_MENU_CLAB="$SCRIPTS_DIR/clab/menu.sh"
 S_MENU_ATTACKS="$SCRIPTS_DIR/attacks/menu.sh"
+S_MENU_ML="$SCRIPTS_DIR/ml/menu.sh"
 
 menu() {
     echo ""
@@ -18,7 +19,8 @@ menu() {
     echo "1) → Image control"
     echo "2) → Topology control"
     echo "3) → Simulate attacks"
-    echo "4) > Exit"
+    echo "4) → Anomaly detection (ML)"
+    echo "5) > Exit"
     echo "================================"
     printf "Choose an option: "
 }
@@ -28,7 +30,8 @@ handle_input() {
         1) sh "$S_MENU_IMAGES" "$PRJ_DIR" ;;
         2) sh "$S_MENU_CLAB" "$PRJ_DIR" ;;
         3) sh "$S_MENU_ATTACKS" "$PRJ_DIR" ;;
-        4) echo "Exiting."
+        4) sh "$S_MENU_ML" "$PRJ_DIR" ;;
+        5) echo "Exiting."
            exit 0 ;;
         *) echo "Invalid option." ;;
     esac
