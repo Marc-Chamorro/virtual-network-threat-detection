@@ -8,7 +8,7 @@ set -e
 PRJ_DIR="$1"
 
 # Python detection script
-DETECT_SCRIPT="$PRJ_DIR/ml/detect.py"
+DETECT_SCRIPT="$PRJ_DIR/ml/realtime/detect.py"
 
 # Directory where the trained model files are located
 MODELS_DIR="$PRJ_DIR/ml/models"
@@ -28,7 +28,10 @@ LOGWATCH_CONTAINER="clab-${LAB_NAME}-logwatch"
 EVE_LOG="/var/log/suricata/eve.json"
 
 # Number of events to accumulate before each model scoring
-WINDOW_SIZE=50
+BATCH=5000
+
+# Maximum time between processing a batch of files
+FLUSH_INTERVAL=30
 
 # === Check Python is available ===================================================================
 if ! command -v python3 >/dev/null 2>&1; then
@@ -135,8 +138,9 @@ sleep 1
 
 # --- Launch the detector ---
 "$PYTHON" "$DETECT_SCRIPT" \
-    --container "$LOGWATCH_CONTAINER" \
-    --models    "$MODELS_DIR" \
-    --window    "$WINDOW_SIZE" \
-    --eve-log   "$EVE_LOG" \
-    --threshold "$THRESHOLD_VALUE"
+    --container         "$LOGWATCH_CONTAINER" \
+    --models            "$MODELS_DIR" \
+    --flush-interval    "$FLUSH_INTERVAL" \
+    --batch             "$BATCH" \
+    --eve-log           "$EVE_LOG" \
+    --threshold         "$THRESHOLD_VALUE"

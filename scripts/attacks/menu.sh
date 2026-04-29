@@ -36,7 +36,7 @@ find_container_name() {
         echo "Topology is running but no attacker container was found."
         echo "Expected container pattern: clab-*-attacker"
         echo "E.g. 'clab-virtual-env-attacker'"
-        exit 1
+        exit 0
     fi
 
     echo "Detected attacker container: $CONTAINER_NAME"
@@ -74,7 +74,7 @@ list_scripts() {
 
     if [ "$i" = 0 ]; then
         echo "No attack scripts found."
-        exit 1
+        exit 0
     fi
 
     # Back option
