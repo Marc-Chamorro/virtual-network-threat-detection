@@ -195,6 +195,10 @@ Before selecting features, the distributions of several key columns are visualis
 
 The charts saved to `ml/models/` (see [Models](./models.md)) show where the two classes differ clearly. Features with large distribution gaps are the most valuable for the model.
 
+![feature_distributions](../assets/ml/feature_distributions.png)
+
+![time_window_distributions](../assets/ml/time_window_distributions.png)
+
 **Key observations visible in the charts:**
 
 - `flows_to_dest_port_wndw` - attack traffic shows extremely high counts (thousands) vs benign (single digits).
@@ -377,6 +381,8 @@ The anomaly scores for benign events and attack events are plotted as histograms
 
 The chart is saved to `ml/models/score_distribution.png`.
 
+![score_distribution](../assets/ml/score_distribution.png)
+
 With the current model the benign mean score is approximately **-0.491** and the attack mean is approximately **-0.579**, with the threshold at **-0.561**. The distributions partially overlap at the boundary, which explains the false positive and false negative rates seen in the following confusion matrix.
 
 ## Step 12b - Classification Report
@@ -444,6 +450,8 @@ Actual Attack        FN                  TP
 
 The confusion matrix is saved to `ml/models/confussion_matrix.png`.
 
+![confussion_matrix](../assets/ml/confussion_matrix.png)
+
 ### Metrics
 
 | Metric      | Description                                               |
@@ -458,5 +466,7 @@ The confusion matrix is saved to `ml/models/confussion_matrix.png`.
 The ROC curve plots the **True Positive Rate** (recall) against the **False Positive Rate** across all possible thresholds. The **AUC** (Area Under the Curve) provides a summary score independent of any particular threshold: `1.0` means perfect separation, `0.5` means no better than random.
 
 Saved to `ml/models/roc_curve.png`.
+
+![roc_curve](../assets/ml/roc_curve.png)
 
 With the current model the AUC is very high, which reflects the same conclusion from the classification report: the attack traffic is heavily dominated by a single, consistent DoS pattern that is easy to separate from benign traffic.
