@@ -47,7 +47,7 @@ Located in `scripts/images/`, these scripts automate the **Docker** lifecycle bu
 1. **Scanning:** Scans `docker/import/` for .tar.xz archives.
 2. **Tagging:** Extracts the base name before the first hyphen (`-`) and converts it to lowercase, and appends `_vntd` at the end.
     !!! example
-        `cEOS-lab-4.32.0F.tar.xz` → imported as `ceos_vntd`.
+        `cEOS-lab-4.32.0F.tar.xz` -> imported as `ceos_vntd`.
 3. **Import:** Executes `docker import <file> <image_name>`.
 **Command:**
 ```bash

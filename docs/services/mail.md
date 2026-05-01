@@ -49,7 +49,7 @@ Internal Client -> DMZ Mail Server -> Internet Mail Server -> Destination
 
 **Inbound traffic:**
 ```text
-Internet Mail Server → Router (port 25 forward) → DMZ Mail Server
+Internet Mail Server -> Router (port 25 forward) -> DMZ Mail Server
 ```
 
 Traffic whose destination is the user's same mail service provider does not get redirected.

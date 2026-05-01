@@ -125,4 +125,106 @@ git clone https://github.com/Marc-Chamorro/virtual-network-threat-detection
 cd virtual-network-threat-detection/
 ```
 
+!!! important "Git LFS"
+    This project uses **Git Large File Storage (LFS)** to manage large binary files (model files and training datasets). After cloning, ensure LFS objects are downloaded:
+
+    - If you already have Git LFS installed before cloning, the large files are downloaded automatically.
+    - If not, follow the steps below.
+
+    **Install Git LFS (Ubuntu/Debian):**
+    ```bash
+    sudo apt install git-lfs
+    ```
+
+    **Initialize Git LFS (one-time setup):**
+    ```bash
+    git lfs install
+    ```
+
+    **If you cloned the repository before installing Git LFS, run:**
+    ```bash
+    git lfs pull
+    ```
+
 You are now ready to [build the images and deploy the labs](./usage.md).
+
+---
+
+## 6. ML Environment {#ml-environment}
+
+The ML module requires an additional Python environment on the **host machine**. This is only needed if you intend to use the real-time anomaly detector or retrain the model.
+
+!!! note "Scope"
+    This section is independent from the Docker/Containerlab setup. The main lab (Docker containers) does not need Python on the host.
+
+### Install Python
+
+```bash
+sudo apt install -y python3 python3-pip python3-venv
+```
+
+Verify:
+
+```bash
+python3 --version
+```
+
+### Create the Virtual Environment
+
+A virtual environment isolates the ML dependencies from the system Python installation. Create it at the project root:
+
+```bash
+python3 -m venv venv
+```
+
+Activate it:
+
+```bash
+source venv/bin/activate
+```
+
+The terminal prompt will show `(venv)` when the environment is active.
+
+### Install Dependencies
+
+```bash
+pip install -r ml/requirements.txt
+```
+
+This installs the packages required for both the Jupyter notebook and the real-time detector:
+
+| Package        | Purpose                                         |
+|----------------|-------------------------------------------------|
+| `scikit-learn` | Isolation Forest model, StandardScaler, metrics |
+| `pandas`       | DataFrame loading and manipulation              |
+| `numpy`        | Numeric operations                              |
+| `joblib`       | Saving and loading trained model objects        |
+
+### Launch Jupyter (Training / Retraining)
+
+To open the notebook and retrain the model:
+
+```bash
+source venv/bin/activate
+jupyter notebook ml/notebooks/VNTD_ML.ipynb
+```
+
+The browser will open at `http://localhost:8888`. If running on a headless VM, see [ML Environment Setup - Remote Jupyter](./ml/setup.md#accessing-jupyter-from-another-machine).
+
+### Real-Time Detection
+
+To launch the anomaly detector without opening Jupyter, use the main menu:
+
+```bash
+sudo ./run.sh
+```
+
+The `ml_detect.sh` script handles virtual environment creation and dependency installation automatically.
+
+!!! info "Full ML documentation"
+    For a complete guide to the ML module, see:
+ 
+    - [ML Overview](./ml/index.md)
+    - [ML Environment Setup](./ml/setup.md)
+    - [ML Scripts](./scripts/ml.md)
+ 
