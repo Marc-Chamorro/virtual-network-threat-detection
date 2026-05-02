@@ -92,7 +92,7 @@ nav:
     - Overview: ml/index.md
     - Data: ml/data.md
     - Models: ml/models.md
-    - Noteook: l/notebook.md
+    - Noteook: ml/notebook.md
     - Setup: ml/setup.md
 
   - Operations & Troubleshooting: operations/commands.md
