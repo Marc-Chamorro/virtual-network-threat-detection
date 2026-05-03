@@ -94,6 +94,7 @@ nav:
     - Models: ml/models.md
     - Noteook: ml/notebook.md
     - Setup: ml/setup.md
+    - Realtime: ml/realtime.md
 
   - Operations & Troubleshooting: operations/commands.md
     # - Useful Commands: operations/commands.md
