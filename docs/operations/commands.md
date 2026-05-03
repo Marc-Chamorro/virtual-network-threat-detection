@@ -1,231 +1,328 @@
 ---
-title: Operational Commands Reference
-icon: material/code-braces
+title: Commands Reference
+icon: material/console
 ---
 
-# Operational Commands Reference
+# Commands Reference
 
-This document provides a repository of useful commands for managing, troubleshooting, and interacting with the nodes in the VNTD laboratory.
+Useful commands for managing, troubleshooting and interacting with the VNTD laboratory. All commands run from the **host machine** unless stated otherwise.
 
 ---
 
-## Container Management
+## Installation & Setup
 
-These commands are executed from the **host machine** to control the virtual environment.
+```bash
+# System update and essential tools
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y curl git ssh python3 python3-pip python3-venv
 
-- **View Device Logs:** Check the output and initialization errors for a specific node:
-```sh
-docker logs clab-virtual-env-internal-server
+# Git LFS (model and dataset files)
+sudo apt install git-lfs
+git lfs install
+git lfs pull
+
+# Docker (alternative if Containerlab script fails)
+curl -sSL https://get.docker.com/ | sudo sh
+sudo usermod -aG docker $USER
+
+# Containerlab
+curl -sL https://containerlab.dev/setup | sudo -E bash -s "all"
+sudo usermod -aG clab_admins $USER
+
+# Verify installs
+clab version
+docker run hello-world
 ```
 
-- **Connect to a Device:** Open a terminal inside a running node:
-```sh
+---
+
+## Containerlab
+
+```bash
+# Deploy a topology
+sudo clab deploy -t labs/topology.clab.yml
+
+# Destroy a topology
+sudo clab destroy -t labs/topology.clab.yml
+
+# Destroy and remove all volumes and configs
+sudo clab destroy -t labs/topology.clab.yml --cleanup
+
+# Inspect all running topologies
+sudo clab inspect --all
+
+# List only Containerlab-managed containers
+docker ps --filter "label=clab-node-name"
+```
+
+---
+
+## Docker
+
+### Containers
+
+```bash
+# List running containers
+docker ps
+
+# List all containers including stopped ones
+docker ps -a
+
+# Open a shell inside a container
 docker exec -it clab-virtual-env-pc-vlan50-1 bash
+
+# Open a shell as root
+docker exec -it -u root clab-virtual-env-logwatch bash
+
+# View startup logs of a container
+docker logs clab-virtual-env-internal-server
+
+# Follow logs in real time
+docker logs -f clab-virtual-env-logwatch
+
+# Filter logs by keyword
+docker logs -f clab-virtual-env-logwatch 2>&1 | grep -Ei 'elastic|filebeat|kibana'
+
+# Real-time CPU and memory usage of all containers
+docker stats
+```
+
+### Images
+
+```bash
+# List all local images
+docker images
+
+# Show disk usage per image
+docker system df -v
+
+# Remove a specific image
+docker rmi <image_name>
+
+# Remove all dangling (untagged) images
+docker image prune
+
+# Remove ALL unused images, containers, networks and build cache
+docker system prune -a
+```
+
+### File permissions
+
+```bash
+# Fix filebeat.yml permissions
+sudo chmod 644 labs/config/logwatch/filebeat/filebeat.yml ```
+---
+
+## Suricata
+
+```bash
+# Test configuration file for syntax errors
+suricata -T -c /etc/suricata/suricata.yaml
+
+# Follow eve.json as events arrive (inside the container)
+tail -f /var/log/suricata/eve.json
+
+# Same from the host
+docker exec clab-virtual-env-logwatch tail -f /var/log/suricata/eve.json
+
+# Follow Suricata's own log (rule loading, errors)
+tail -f /var/log/suricata/suricata.log
+
+# View last 100 events
+docker exec clab-virtual-env-logwatch tail -n 100 /var/log/suricata/eve.json
 ```
 
 ---
 
-## Services
+## Elasticsearch & Kibana
 
-To view the services running on a concrete device, use:
+```bash
+# Cluster health
+curl http://192.168.20.11:9200/_cluster/health?pretty
 
-```sh
-service --status-all
+# List all indices
+curl -X GET "http://192.168.20.11:9200/_cat/indices?v"
+
+# List shards
+curl -X GET "http://192.168.20.11:9200/_cat/shards?v"
+
+# List data streams
+curl http://192.168.20.11:9200/_data_stream?pretty
+
+# Filebeat internal stats (from inside logwatch)
+curl -s http://localhost:5066/stats
+
+# Generate a new Kibana enrollment token (inside logwatch)
+/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+
+# Generate an encryption key
+openssl rand -hex 32
 ```
 
-```sh
+---
+
+## Traffic Inspection
+
+```bash
+# All traffic on an interface
+tcpdump -i eth1 -nn
+
+# ICMP only
+tcpdump -i eth1 icmp -nn
+
+# DHCP traffic
+tcpdump -i <port> -f 'port 67 or port 68'
+
+# Count connections to port 80 (useful during a SYN flood)
+netstat -ant | grep :80 | wc -l
+
+# Socket summary by state
+ss -s
+```
+
+---
+
+## Services (inside a container)
+
+```bash
+# List all services and their state
+service --status-all
+
+# All running processes
 ps aux
 ```
 
 ---
 
-## Traffic Inspection Tools
+## Client / User Commands
 
-### tcpdump
+### Connectivity
 
-Use `tcpdump` to capture and analyze packets on a specific interface. This is critical for validating that the **DHCP Relay** or **Firewall** is forwarding traffic correctly.
+```bash
+# Test reachability
+ping enterprise.local
+ping 192.168.10.10
 
-- **Monitor DHCP Traffic:** In which `port` is the physical port to analyze. For this example, DHCP traffic can be viewed to detect any possible related issues given changes are made and the service is no longer working as intended.
-
-```sh
-tcpdump -i <port> -f 'port 67 or port 68'
-```
-
----
-
-## Connectivity and Web Verification
-
-Test if web services are reachable and serving content through the network policies.
-
-### Web Service Check
-
-```sh
-# Internal DMZ Website
+# Download or test a web response
+wget http://enterprise.local
 curl http://enterprise.local
-
-# External ISP Website
+curl http://enterprise.com
 curl http://internet.com
-```
-> *Expected output: "Hello from Nginx on the web server"*
 
----
-
-## DHCP Troubleshooting
-
-To request an IP address again from a client device with access to the DHCP server:
-
-```sh
-dhcpcd -4 -d eth1
+# Continuously poll a web server (useful during a DoS attack)
+while true; do curl -s enterprise.com; sleep 5; done
 ```
 
----
+### DNS
 
-## DNS Troubleshooting
-
-Tools to verify the name resolution service between the enterprise network and the internet.
-
-### DNS Infrastructure
-
-| Zone             | DNS Known IP Addresses       |
-|------------------|------------------------------|
-| **Internal DNS** | 192.168.10.10, 192.168.40.10 |
-| **External DNS** | 172.16.100.100, 172.16.30.2  |
-
-### Resolution Diagnostic Tools
-
-```sh
-# Which DNS to query
+```bash
+# Check which DNS server the node is using
 cat /etc/resolv.conf
-```
 
-```sh
-# Query DNS records for a specific name
+# Basic name resolution
 nslookup enterprise.local
 nslookup 192.168.10.10
-```
+nslookup internet.com
 
-```sh
-# More structured and detailed output
+# Detailed query output
 dig www.enterprise.local
 ```
 
-#### Example Output
+| Zone | Known IP addresses |
+|---|---|
+| Internal DNS | `192.168.10.10`, `192.168.40.10` |
+| External DNS | `172.16.100.100`, `172.16.30.2` |
 
+??? example "nslookup output examples"
+    ```
+    pc_enterprise:/# nslookup enterprise.local
+    Server:     192.168.10.10
+    Address:    192.168.10.10#53
+    Name:       enterprise.local
+    Address:    192.168.10.10
+    ```
+    ```
+    pc_enterprise:/# nslookup internet.com
+    Server:     192.168.10.10
+    Address:    192.168.10.10#53
+    Name:       internet.com
+    Address:    172.16.100.100
+    ```
+
+### DHCP
+
+```bash
+# Force a new IP address request from the DHCP server
+dhcpcd -4 -d eth1
 ```
-pc_enterprise:/# nslookup enterprise.local
-Server:		192.168.10.10
-Address:	192.168.10.10#53
 
-Name:	enterprise.local
-Address: 192.168.10.10
-```
+### Mail (Mutt)
 
-```
-pc_enterprise:/# nslookup enterprise.com
-Server:		192.168.10.10
-Address:	192.168.10.10#53
-
-Name:	enterprise.com
-Address: 192.168.10.10
-```
-
-```
-pc_enterprise:/# nslookup internet.com
-Server:		192.168.10.10
-Address:	192.168.10.10#53
-
-Name:	internet.com
-Address: 172.16.100.100
-```
-
----
-
-## Mutt
-
-End-user systems use the Mutt mail client for sending and retrieving emails.
-
-- **Launch:** Type in the terminal:
-```sh
+```bash
+# Launch the mail client
 mutt
 ```
-- **Editor Usage:** When setting up mail, use the built-in editor. To start writing use the `i` button. To save changes and exit the editor, use the command `:wq`.
-- **Note:** The client does not detect new emails in real-time. You must exit and restart the program to refresh the inbox.
+
+| Action | Key |
+|---|---|
+| Start writing | `i` |
+| Save and exit editor | `:wq` |
+
+!!! note
+    Mutt does not refresh the inbox automatically. Exit and reopen to see new emails.
 
 ---
 
+## ML - Python Environment
 
+```bash
+# Create the virtual environment
+python3 -m venv venv
 
-# WORKING ON THIS:
-tcpdump -i eth1 icmp -nn
+# Activate
+source venv/bin/activate
 
-Testing suricata configuration:
-suricata -T -c /etc/suricata/suricata.yaml
+# Install dependencies
+pip install -r ml/requirements.txt
+pip install jupyter
 
-To see the suricata logs perfectly:
-docker logs -f clab-virtual-env-ids
-docker logs -f clab-virtual-env-logwatch
+# Deactivate
+deactivate
+```
 
-View the logs data as it grows
-docker exec -it clab-virtual-env-ids tail -f /var/log/suricata/eve.json
-tail -f /var/log/suricata/eve.json
+---
 
-View the logs that only contain certain words:
-docker logs -f clab-virtual-env-ids 2>&1 | grep -Ei 'elastic|filebeat|elasticsearch|kibana'
+## ML - Jupyter Notebook
 
-Health:
-curl http://192.168.20.11:9200/_cluster/health?pretty
+```bash
+# Launch from the project root (venv must be active)
+jupyter notebook ml/notebooks/VNTD_ML.ipynb
 
-See machines usage cponsumption:
-docker stats
+# Headless VM - no browser (then forward port 8888 via SSH)
+jupyter notebook --no-browser ml/notebooks/VNTD_ML.ipynb
 
-curl -s http://localhost:5066/stats
+# SSH tunnel from local machine
+ssh -L 8888:localhost:8888 user@<vm-ip>
+```
 
-curl -s "http://192.168.20.11:9200/_cat/indices?v"
-curl -X GET "http://192.168.20.11:9200/_cat/indices?v"
-curl -X GET "http://192.168.20.11:9200/_cat/shards?v"
-curl 192.168.20.11:9200/_cat/indices?v
-curl 192.168.20.11:9200/_data_stream?pretty
+---
 
-All traffic:
-tcpdump -i eth1 -nn
+## ML - Real-Time Detector
 
-Suricata logs:
-tail -f /var/log/suricata/suricata.log
+```bash
+# Via the main menu (recommended)
+sudo ./run.sh
 
-docker stats
+# Directly via script
+sudo bash scripts/ml/ml_detect.sh "$(pwd)"
 
-new token?
-/usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
-
-generate encrypotion keys:
-marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ openssl rand -hex 32
-030e45276c3281853828085982ad1a2bfb6135938eb75fbc565180bed971a3ff
-marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ openssl rand -hex 32
-ad421a81cf29bc36cf62900a8123657600732d2ddf0ed0b685975e9cba9ef366
-marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ openssl rand -hex 32
-b94ff7ec329b719a062f78feb7fd5b6d2259caa4e87718fd7a61002fa62973ea
-marc@marc-VMware-Virtual-Platform:~/Documents/containerlab/virtual-network-threat-detection$ 
-
-**Server check service when attacking**
->netstat -ant | grep :80 | wc -l
->htop -> not installed xd
->ss -s   ?????
-
-**Check from client constantly (nice for DoS SYN flood)**
-while true; do curl -s enterprise.com; sleep 5; done
-
-
-
-
-
-
-From suricata i'll need:
-Flow metadata
-Timing
-Bytes
-Ports
-Protocol
-Flags
-DNS queries
-HTTP hostnames
-TLS fingerprints
+# Manually (venv must be active)
+cd ml/realtime
+python3 detect.py \
+    --container      clab-virtual-env-logwatch \
+    --models         ../models \
+    --batch          5000 \
+    --flush-interval 30 \
+    --eve-log        /var/log/suricata/eve.json \
+    --threshold      -0.5614
+```
