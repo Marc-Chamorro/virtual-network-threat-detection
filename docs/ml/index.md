@@ -85,6 +85,13 @@ ml/
     Step-by-step walkthrough of the full ML pipeline: data loading, feature engineering, training, and evaluation.
     [Explore Notebook](./notebook.md)
 
+-   :material-radar:{ .lg .middle } **Real-Time Detector**
+
+    ---
+
+    How the live detector works: main loop, threading, terminal UI, and the ML inference pipeline.
+    [Explore Detector](./realtime.md)
+
 </div>
 
 ---
