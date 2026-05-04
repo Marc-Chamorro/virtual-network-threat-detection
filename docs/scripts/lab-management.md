@@ -111,6 +111,5 @@ Located in `scripts/clab/`, these **Containerlab** scripts provide a text-based 
 | **Destroy** | `scripts/clab/destroy.sh` | `lab/`           |
 | **Display** | `scripts/clab/display.sh` | `lab/`           |
 
-
 !!! tip "Free Resources"
     After using the environment, stop it to ensure no unnecessary resources are consumed.

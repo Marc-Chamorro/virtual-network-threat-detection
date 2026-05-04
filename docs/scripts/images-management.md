@@ -37,8 +37,10 @@ Located in `scripts/images/`, these scripts automate the **Docker** lifecycle bu
 1. **Scanning:** Iterates through subdirectories in `docker/build/`.
 2. **Filter:** Skips any directory starting with an underscore (`_`). This allows for "draft" folders to exist without breaking or building unnecessary images.
 3. **Tagging:** Automatically tags the built image as `<directory_name>_vntd`.
+
     !!! example
         A folder named `kali` results in an image named `kali_vntd`.
+    
 4. **Build:** Executes `docker build -t <image_name> <directory>`.
 
 **Command:**
@@ -56,8 +58,10 @@ Located in `scripts/images/`, these scripts automate the **Docker** lifecycle bu
 
 1. **Scanning:** Scans `docker/import/` for .tar.xz archives.
 2. **Tagging:** Extracts the base name before the first hyphen (`-`) and converts it to lowercase, and appends `_vntd` at the end.
+
     !!! example
         `cEOS-lab-4.32.0F.tar.xz` -> imported as `ceos_vntd`.
+
 3. **Import:** Executes `docker import <file> <image_name>`.
 
 **Command:**
