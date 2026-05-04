@@ -59,8 +59,10 @@ The monitoring container `entrypoint` performs the followign operations:
     ```bash
     sysctl -w vm.max_map_count=262144
     ```
+
     !!! note "Memory Requirement"
         Although not necessary to set such parameter, Elastic official documentation suggests may help the service run smoother.
+        
 2. Start the Elasticsearch service.
 3. Wait for the API service to be up and running.
 4. Configures security users and roles.

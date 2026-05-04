@@ -50,6 +50,7 @@ This content is written directly to:
 ```
 
 There are:
+
 - No dynamic pages
 - No authentication
 - No application logic
@@ -90,4 +91,5 @@ curl <hostname>
 If the service is running correctly, the service will respond with a message.
 
 The available hostnames are defined in the DNS configuration:
+
 - [DNS Names Assignment](../network-services/dns/config.md)

@@ -47,6 +47,7 @@ graph LR
 ```
 
 Ass seen, the node is divided into two primary functional areas:
+
 - IDS that inspects mirrored traffic from the firewall and stores it into registers using the **Suricata** service.
 - Centralized logging platform consisting of **Filebeat**, **Elasticsearch** and **Kibana**.
 

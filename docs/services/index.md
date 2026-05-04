@@ -8,6 +8,7 @@ icon: material/application-settings
 This section documents **application-level services** deployed within the laboratory.
 
 Unlike core network services (DHCP, DNS), these services:
+
 - Operate at higher layers
 - Are workload-oriented
 - Primarily used to generate realistic traffic

@@ -76,5 +76,6 @@ DNS servers are intentionally placed in different zones, which allows testing of
 ## DNS Infrastructure
 
 DNS servers are intentionally placed in different zones, which allows testing of internal vs external name resolution services.
+
 - **Internal DNS (`dmz-server`):** Resolves local hostnames and forwards unknown requests to the internet server.
 - **External DNS (`internet-server`):** Simulates public DNS service.

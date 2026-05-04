@@ -8,11 +8,13 @@ icon: material/email-outline
 This document describes the **Mail service implementation** used in the laboratory.
 
 The mail infrastructure is composed of:
+
 - **Postfix:** SMTP server (mail transfer).
 - **Dovecot:** IMAP server (mail retrieval).
 - **Mutt:** Mail client (end-user interaction).
 
 The same `server_vntd` image is reused to implement:
+
 - The **Enterprise Mail Server (DMZ)**.
 - The **Main Internet Mail Server**.
 
@@ -21,6 +23,7 @@ The same `server_vntd` image is reused to implement:
 ## Architecture
 
 The mail architecture simulates a realistic **hub-and-spoke deployment**:
+
 - The **Enterprise Mail Server (DMZ)** handles internal users.
 - The **Internet Mail Server** acts as the public authority SMTP.
 - Enterprise SMTP forwards outbound mail to the Internet server.
@@ -74,6 +77,7 @@ env:
 | MAIN_MAIL_SERVER | Enables Internet main mail server (central hub) |
 
 If neither variable is set:
+
 - Postfix does not start.
 - Dovecot does not start.
 
@@ -92,6 +96,7 @@ File:
 ```
 
 Purpose:
+
 - Defines SMTP behavior for Enterprise domain.
 - Forwards outbound mail to the Internet server.
 - Defines relay host and domain policies.
@@ -111,6 +116,7 @@ Files:
 | `relay_recipients` | Specifies valid recipient addresses |
 
 When `MAIN_MAIL_SERVER` is set, the entrypoint:
+
 - Adjusts file permissions and ownership.
 - Runs `postmap` on transport and relay files.
 
@@ -130,12 +136,14 @@ dovecot.conf
 ```
 
 Purpose:
+
 - Authentication configuration.
 - Maildir storage definition.
 - System user authentication.
 - Global Dovecot behavior.
 
 Dovecot provides:
+
 - IMAP on port 143.
 - Maildir mailbox access.
 
@@ -164,6 +172,7 @@ Structure:
 Each file represents a user account.
 
 At startup:
+
 - The entrypoint scans the directory.
 - Creates system users.
 - Sets passwords equal to usernames (weak, but easy to manage).
@@ -185,6 +194,7 @@ useradd -m -s /sbin/nologin <user>
 ```
 
 For each user:
+
 - Home directory created.
 - Maildir initialized.
 - Password = username.
@@ -203,6 +213,7 @@ This ensures isolation between users and realistic mail behavior in a simplified
 | IMAP    | 143  | TCP      |
 
 TLS is **not** enabled. This allows clear:
+
 - Traffic inspection.
 - IDS monitoring.
 - Clear-text credential observation.
@@ -249,6 +260,7 @@ set ssl_force_tls = no
 Each PC can simulate a different user depending on which bind is used.
 
 This design allows:
+
 - Simulating multiple employees.
 - Credential exposure.
 - Clear and simple mail flow testing.
@@ -273,11 +285,13 @@ mutt
 ## Security considerations
 
 This setup is intentionally weak and uses on purpose:
+
 - Weak passwords.
 - No TLS.
 - Plain-text authentication.
 
 This is required for:
+
 - Clear and easy traffic inspection.
 - IDS pattern detection.
 

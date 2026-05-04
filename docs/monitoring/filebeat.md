@@ -215,6 +215,7 @@ Once configuration and setup are completed, Filebeat is started with:
 ```
 
 These parameters allow:
+
 - **`-e`:** Logs errors to stderr. This way, logs can be seen using the `docker logs -f <container>` command.
 - **`-c`:** Specified the configuration file to use.
 

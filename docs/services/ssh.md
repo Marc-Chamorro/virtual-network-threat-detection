@@ -74,6 +74,7 @@ service ssh start
 ```
 
 SSH traffic:
+
 - Uses TCP port 22.
 - Traverses firewall and routing policies.
 
@@ -101,4 +102,5 @@ pswd
 ```
 
 The available hostnames are defined in the DNS configuration:
+
 - [DNS Names Assignment](../network-services/dns/config.md)

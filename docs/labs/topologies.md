@@ -148,6 +148,7 @@ groups:
 ```
 
 This check ensures that the container:
+
 - Has started successfully.
 - Has assigned the expected IP address.
 
@@ -216,6 +217,7 @@ Devices are assigned to a specific group:
 ### Kinds
 
 Kinds represent predefined node types supported by Containerlab, such as:
+
 - `linux`
 - `arista_ceos`
 

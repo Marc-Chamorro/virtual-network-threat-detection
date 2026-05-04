@@ -16,6 +16,7 @@ The environment uses a hybrid routing model to ensure internal isolation while m
 ### External Routing (OSPF)
 
 The **Enterprise Edge Router** (**router-enterprise**) uses OSPF to communicate with the Internet Core:
+
 - **Advertisement:** It announces the public address (`172.16.30.2/30`).
 - **Static Internal Routing:** To ensure traffic reaches internal VLANs, the router has static routes pointing all `192.168.0.0/16` traffic to the **Firewall** (`192.168.0.2`).
 
