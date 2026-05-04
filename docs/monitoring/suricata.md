@@ -38,6 +38,7 @@ flowchart LR
 ## Passive Monitoring
 
 The IDS operates strictly in passive mode, this means:
+
 - No packet modification.
 - No packets forwarded by the IDS.
 
@@ -109,6 +110,7 @@ Primary configuration file:
 ```
 
 This file defines:
+
 - Capture interface configuration and capture settings.
 - Detection settings.
 - Logging outputs.
@@ -179,6 +181,7 @@ tail -f /var/log/suricata/eve.json
 ## Lab Security Warning
 
 The IDS configuration is designed for **educational and testing environments**. It prioritizes:
+
 - Simplicity.
 - Transparency.
 - Easy inspection of network traffic.

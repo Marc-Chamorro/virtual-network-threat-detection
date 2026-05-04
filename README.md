@@ -23,6 +23,8 @@
   </p>
 </div>
 
+---
+
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
@@ -77,6 +79,8 @@ This repository is designed to be reproducible and generate real security data t
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+---
+
 # Project Pillars
 
 ## Infrastructure Design
@@ -89,15 +93,15 @@ The environment uses **Containerlab** and **Docker** to simulate a realistic, se
   - Benign Network
   - Enterprise Infrastructure
 - **L2/L3 Segmentation:** Internal organization is managed with VLANs (DMZ, Monitoring, Admin, Services, and Users) using Arista cEOS switches and a central Linux-based firewall.
-- **Isolation:** The entire lab runs within an isolated Docker network to ensure simulations do not affect the host machine or ouside networks.
+- **Isolation:** The entire lab runs within an isolated Docker network to ensure simulations do not affect the host machine or outside networks.
 
 ## Real Service Implementation
 
 This lab implements real services to generate authentic network behaviour and realistic logs.
 
 - **Web & Management:** Nginx HTTP server and OpenSSH server.
-- **Infrastructure:** Centralized DHCP (ISC) and DNS (Dnsmasq) providing dynamic configuration to nodes.
-- **Enterprise Workloads:** A complete Mail stack (Postfix/Dovecot) for SMTP/IMAP simulations and an FTP server (vsftpd) with chroot isolation.
+- **Infrastructure:** Centralized DHCP (ISC) and DNS (Dnsmasq) providing dynamic configuration to all nodes.
+- **Enterprise Workloads:** A complete mail stack (Postfix/Dovecot) for SMTP/IMAP simulations and an FTP server (vsftpd) with chroot isolation.
 
 ## Network Monitoring
 
@@ -118,6 +122,8 @@ The final stage of the project processes security data using **Machine Learning*
 - **Jupyter Notebook:** A full training pipeline is provided in `ml/notebooks/VNTD_ML.ipynb` for experimentation and retraining.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
 
 # Project Structure
 
@@ -157,6 +163,8 @@ The final stage of the project processes security data using **Machine Learning*
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+---
+
 # Getting Started
 
 ## Prerequisites
@@ -177,10 +185,22 @@ For detailed requirements, see: [Docs - Getting Started](https://marc-chamorro.g
 
 ## Quick Installation
 
-**1. Install core tools** - follow the [Docs - Installation](https://marc-chamorro.github.io/virtual-network-threat-detection/installation/) to set up Docker and Containerlab.
+**1. Install Docker & Containerlab:**
+
+```bash
+curl -sL https://containerlab.dev/setup | sudo -E bash -s "all"
+```
+
+Then add your user to the `clab_admins` group and re-login:
+
+```bash
+sudo usermod -aG clab_admins $USER
+```
+
+For detailed requirements, alternatives or any possible Docker installation issue, see [Docs - Installation](https://marc-chamorro.github.io/virtual-network-threat-detection/installation/).
 
 **2. Clone the repository:**
- 
+
 ```bash
 git clone https://github.com/marc-chamorro/virtual-network-threat-detection.git
 cd virtual-network-threat-detection
@@ -188,7 +208,7 @@ chmod +x run.sh
 ```
 
 **3. Pull LFS files** (model and dataset files):
- 
+
 ```bash
 git lfs install
 git lfs pull
@@ -203,7 +223,7 @@ sudo ./run.sh
 ```
 
 Use the interactive menu to first build images (*Image Control*) and then deploy the scenario (*Topology Control*).
- 
+
 > **Mandatory import:** External vendor images must be imported for the lab to work correctly. Follow the steps at: [Docs - External Images](https://marc-chamorro.github.io/virtual-network-threat-detection/docker/supported-images/?h=arista#arista-ceos)
 
 ## Typical Workflow
@@ -222,10 +242,15 @@ Select `topology.clab.yml` from the *Topology Control* menu to bring up the full
 Once the network is up, traffic is automatically monitored by the IDS nodes. It may take a few minutes for the Elastic stack to fully boot. Logs are accessible via Kibana.
 
 **4. Detect Anomalies (ML)**  
-With the topology running, launch the real-time anomaly detector from the main menu.
+With the topology running, launch the real-time anomaly detector from the main menu:
+
+```bash
+sudo ./run.sh
+# > Anomaly detection (ML) → Start real-time detection
+```
 
 The detector reads live Suricata logs from the `logwatch` container and scores each event against the pre-trained Isolation Forest model. See [Docs - ML](https://marc-chamorro.github.io/virtual-network-threat-detection/ml/) for full details.
- 
+
 For a full walkthrough of all script options, see the [Docs - Usage Guide](https://marc-chamorro.github.io/virtual-network-threat-detection/usage/).
 
 ## Available Architecture
@@ -254,8 +279,10 @@ Additional topologies can be added following the guidelines in: [Docs - Labs Ove
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+---
+
 # Monitoring
- 
+
 The infrastructure includes a dedicated **Logwatch node** that centralizes network logs for analysis. It makes use of the following tools:
  
 | Tool              | Role          | Description                                                              |
@@ -266,8 +293,10 @@ The infrastructure includes a dedicated **Logwatch node** that centralizes netwo
 | **Kibana**        | Visualisation | Web interface to explore, analyse, and visualize data from Elasticsearch |
  
 Data can be accessed directly from the host machine using the address provided by Containerlab. For more information, see [Docs - Monitoring - Kibana](https://marc-chamorro.github.io/virtual-network-threat-detection/monitoring/kibana/).
- 
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
 
 # License
 
@@ -279,4 +308,4 @@ Distributed under the **GNU GPLv3 License**. This project is developed for acade
 
 ---
 
->**Author:** Marc Chamorro Mollon | **Tutor:** Pere Barberan Agut | **Year:** 2025–2026
+> **Author:** Marc Chamorro Mollon &nbsp;|&nbsp; **Tutor:** Pere Barberan Agut &nbsp;|&nbsp; **Year:** 2025–2026

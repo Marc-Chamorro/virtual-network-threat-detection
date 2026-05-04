@@ -10,6 +10,7 @@ Elasticsearch acts as the **central log storage and indexing engine** for the mo
 It receives structured events from **Filebeat**, stores them internally as documents and allows efficient querying and visualization through **Kibana**.
 
 Therefore, *Elasticsearch* is responsible for:
+
 - Central service for storing data.
 - Monitoring stack core service for communication between all services.
 - Indexing and analyzing data.
@@ -84,6 +85,7 @@ Elasticsearch primary configuration file:
 ```
 
 This file defines:
+
 - Service behaviour.
 - Security settings.
 - Node roles.
