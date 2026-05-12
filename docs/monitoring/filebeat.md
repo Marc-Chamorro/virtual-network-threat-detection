@@ -10,6 +10,7 @@ Filebeat acts as the **bridge between Suricata and Elasticsearch**.
 Its function is to recover all generated logs by **Suricata** and send them directly to **Elassticsearch** for later examination and processing.
 
 Therefore, *Filebeat* is responsible for:
+
 - Collecting Suricata logs.
 - Parsing structured events.
 - Sending data to Elasticsearch.
@@ -72,6 +73,7 @@ Filebeat configuration file:
 ```
 
 This file defines:
+
 - Log input paths.
 - Elasticsearch output.
 - Modules enabled. (In this scenario activated through commands)
@@ -213,6 +215,7 @@ Once configuration and setup are completed, Filebeat is started with:
 ```
 
 These parameters allow:
+
 - **`-e`:** Logs errors to stderr. This way, logs can be seen using the `docker logs -f <container>` command.
 - **`-c`:** Specified the configuration file to use.
 

@@ -5,7 +5,9 @@ icon: material/file-code-outline
 
 # Scripts & Automation Overview
 
-To minimize human errors and automate the workflow, the project includes a comprehensive set of automation scripts. These tools manage the entire lifecycle of the laboratory, from building custom Docker images to orchestrating complex network topologies with Containerlab
+To minimize human errors and automate the workflow, the project includes a comprehensive set of automation scripts. These tools manage the entire lifecycle of the laboratory, from building custom Docker images to orchestrating complex network topologies with Containerlab, and to launching the real-time ML anomaly detector.
+
+---
 
 ---
 
@@ -56,8 +58,9 @@ sudo ./run.sh
 
 ## Navigation
 
-The automation logic is divided into two modules:
+The automation logic is divided into the following modules:
 
 - [**Lab Management**](./lab-management.md): Orchestrates Containerlab deployments and monitors active topologies.
 - [**Image Management**](./images-management.md): Automates Docker build, import, and cleanup operations.
 - [**Attack Simulations**](attacks/index.md): Execute controlled attacks against the simulated network.
+- [**ML Anomaly Detection**](./ml.md): Launches the real-time Isolation Forest detector against live Suricata logs.

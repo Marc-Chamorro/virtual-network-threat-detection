@@ -47,6 +47,7 @@ nav:
     - Overview: scripts/index.md
     - Images Management: scripts/images-management.md
     - Lab Management: scripts/lab-management.md
+    - ML Scripts: scripts/ml.md
     - Attack Simulations:
       - Overview: scripts/attacks/index.md
       - Port Scanning: scripts/attacks/port_scanning.md
@@ -86,6 +87,14 @@ nav:
     - Filebeat: monitoring/filebeat.md
     - Kibana: monitoring/kibana.md
     - Alerts & Detection Rules (≈ SIEM): monitoring/alerts.md
+
+  - Machine Learning:
+    - Overview: ml/index.md
+    - Data: ml/data.md
+    - Models: ml/models.md
+    - Noteook: ml/notebook.md
+    - Setup: ml/setup.md
+    - Realtime: ml/realtime.md
 
   - Operations & Troubleshooting: operations/commands.md
     # - Useful Commands: operations/commands.md

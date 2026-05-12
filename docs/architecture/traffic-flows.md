@@ -15,7 +15,8 @@ The environment uses a hybrid routing model to ensure internal isolation while m
 
 ### External Routing (OSPF)
 
-The **Enterprise Edge Router** (**router_enterprise**) uses OSPF to communicate with the Internet Core:
+The **Enterprise Edge Router** (**router-enterprise**) uses OSPF to communicate with the Internet Core:
+
 - **Advertisement:** It announces the public address (`172.16.30.2/30`).
 - **Static Internal Routing:** To ensure traffic reaches internal VLANs, the router has static routes pointing all `192.168.0.0/16` traffic to the **Firewall** (`192.168.0.2`).
 
@@ -61,7 +62,7 @@ The Firewall implements a **Default DROP** policy for all INPUT and FORWARD pack
 All inbound traffic arriving on the Enterprise Router's WAN interface (`eth1`) is forwarded wholesale to the Firewall using a catch-all DNAT rule:
 
 ```bash
-# router_enterprise startup.sh
+# router-enterprise startup.sh
 iptables -t nat -A PREROUTING -i eth1 -j DNAT --to-destination 192.168.0.2
 ```
 
@@ -80,7 +81,7 @@ iptables -t nat -A PREROUTING -i eth1 -p udp --dport 53 -j DNAT --to-destination
 Outbound traffic from enterprise VLANs is masqueraded at the Enterprise Router:
 
 ```bash
-# router_enterprise startup.sh
+# router-enterprise startup.sh
 iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 ```
 
@@ -128,15 +129,15 @@ For scenarios where you want the enterprise network to simulate a more defensive
 These rules silently drop traffic that exceeds the configured thresholds. Suricata continues to see and alert on everything via the TEE mirror because mirroring happens before the DROP rules are evaluated.
 
 ```bash
-# SSH rate limiting — drop connections exceeding 30 new sessions per minute per source
+# SSH rate limiting - drop connections exceeding 30 new sessions per minute per source
 iptables -A FORWARD -p tcp --dport 22 -m state --state NEW -m recent --set --name SSH_RATE
 iptables -A FORWARD -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 30 --name SSH_RATE -j DROP
 
-# ICMP rate limiting — allow up to 10 echo requests per second, drop the rest
+# ICMP rate limiting - allow up to 10 echo requests per second, drop the rest
 iptables -A FORWARD -p icmp --icmp-type echo-request -m limit --limit 10/sec --limit-burst 20 -j ACCEPT
 iptables -A FORWARD -p icmp --icmp-type echo-request -j DROP
 
-# SYN rate limiting — allow up to 200 new TCP connections per second, drop flood traffic
+# SYN rate limiting - allow up to 200 new TCP connections per second, drop flood traffic
 iptables -A FORWARD -p tcp --syn -m limit --limit 200/sec --limit-burst 400 -j ACCEPT
 iptables -A FORWARD -p tcp --syn -j DROP
 ```
@@ -166,8 +167,8 @@ in place of `startup.sh` in the topology file:
 
     Given the situation that an unknown address is received, the DNS forwards the request to the DNS located on the Internet Server:
 
-    - **Internal Query**: Clients query the `dmz_server` (`192.168.10.10`).
-    - **External Forwarding**: If the `dmz_server` cannot resolve the name, it forwards the request to the `internet_server` (`172.16.100.100`) at the Internet core.
+    - **Internal Query**: Clients query the `dmz-server` (`192.168.10.10`).
+    - **External Forwarding**: If the `dmz-server` cannot resolve the name, it forwards the request to the `internet-server` (`172.16.100.100`) at the Internet core.
 
 === "Mail Service (SMTP/IMAP)" 
 

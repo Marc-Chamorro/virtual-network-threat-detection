@@ -48,8 +48,8 @@ DNS services are deployed in two distinct locations:
 
 | Resolver         | Node              | Zone          | Role                                   |
 |:-----------------|:------------------|:--------------|:---------------------------------------|
-| **Internal DNS** | `dmz_server`      | DMZ (VLAN 10) | Primary resolver for enterprise users. |
-| **External DNS** | `internet_server` | ISP Core      | Simulated public internet DNS.         |
+| **Internal DNS** | `dmz-server`      | DMZ (VLAN 10) | Primary resolver for enterprise users. |
+| **External DNS** | `internet-server` | ISP Core      | Simulated public internet DNS.         |
 
 
 This placement reflects a common enterprise pattern where:

@@ -10,6 +10,7 @@ Kibana provides the **browser-based interface** used to searching, viewing, and 
 It connects to **Elasticsearch** to visualize the data stored in it through dashboards and other graphical elements for easy analysis.
 
 Therefore, *Kibana* is responsible for:
+
 - Search network events.
 - Inspect IDS registers.
 - Visualize dashboards.
@@ -82,6 +83,7 @@ Kibana primary configuration file:
 ```
 
 This file defines:
+
 - Elasticsearch source definition and credentials.
 - Network service properties.
 - Addresses to provide service to.

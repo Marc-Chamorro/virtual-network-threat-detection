@@ -51,6 +51,7 @@ event.module:suricata AND suricata.eve.event_type:alert
 ```
 
 **Behavior:**
+
 - Matches all Suricata alerts
 - Works across:
     - filebeat-*
@@ -72,6 +73,7 @@ suricata.eve.alert.signature
 ```
 
 This ensures alerts reflect the original rule, for example:
+
 - >ET SCAN Suspicious inbound to MySQL port 3306
 - >ET SCAN Potential VNC Scan
 
@@ -83,6 +85,7 @@ This ensures alerts reflect the original rule, for example:
     Data can be processed correctly and still not generate alerts.
 
 Common causes:
+
 - No detection rule enabled.
 - Query does not match `event_type: alert`.
 - Incorrect index pattern.

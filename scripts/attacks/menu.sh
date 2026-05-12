@@ -21,14 +21,22 @@ check_running_topologies() {
 find_container_name() {
     # Find container named clab-*-attacker
     # | true -> required due to 'set -e' being set, if no result the process would exit
-    CONTAINER_NAME=$(docker ps --format '{{.Names}}' | grep '^clab-.*-attacker$' || true)
+    
+    # CONTAINER_NAME=$(docker ps --format '{{.Names}}' | grep '^clab-.*-attacker$' || true)
+
+    CONTAINER_NAME=$(docker ps --format '{{.Names}}' \
+        | grep '^clab-.*-attacker$' \
+        | grep -v 'router\|switch' \
+        | head -n 1)
+
+    echo "$CONTAINER_NAME"
 
     # Check if string is of 0 length
     if [ -z "$CONTAINER_NAME" ]; then
         echo "Topology is running but no attacker container was found."
         echo "Expected container pattern: clab-*-attacker"
         echo "E.g. 'clab-virtual-env-attacker'"
-        exit 1
+        exit 0
     fi
 
     echo "Detected attacker container: $CONTAINER_NAME"
@@ -66,7 +74,7 @@ list_scripts() {
 
     if [ "$i" = 0 ]; then
         echo "No attack scripts found."
-        exit 1
+        exit 0
     fi
 
     # Back option

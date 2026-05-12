@@ -1,5 +1,5 @@
 #!/bin/sh
- 
+
 # generate_traffic.sh
 # Generates labeled benign traffic and attack sequences for Suricata EVE JSON dataset collection
 # Compatible with both topology.clab.yml (full) and topology_reduced.clab.yml (reduced)
@@ -15,22 +15,22 @@ fi
 # =============================================================================
 
 LAB="clab-virtual-env"
- 
+
 ATTACKER="$LAB-attacker"
 BENIGN="$LAB-benign"          # olivia
- 
+
 # Always present (reduced + full topology)
-PC_V50_1="$LAB-pc_vlan50_1"   # alice
-PC_V60_1="$LAB-pc_vlan60_1"   # emma
-PC_ADMIN="$LAB-pc_admin"      # lois
- 
+PC_V50_1="$LAB-pc-vlan50-1"   # alice
+PC_V60_1="$LAB-pc-vlan60-1"   # emma
+PC_ADMIN="$LAB-pc-admin"      # lois
+
 # Only present in the full topology
-PC_V50_2="$LAB-pc_vlan50_2"   # barry
-PC_V60_2="$LAB-pc_vlan60_2"   # clark
- 
+PC_V50_2="$LAB-pc-vlan50-2"   # barry
+PC_V60_2="$LAB-pc-vlan60-2"   # clark
+
 LOGWATCH="$LAB-logwatch"
 EVE_LOG="/var/log/suricata/eve.json"
- 
+
 ATTACKS_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 
 # =============================================================================
@@ -40,17 +40,17 @@ ATTACKS_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 is_running() {
     docker ps --format "{{.Names}}" | grep -q "^$1$"
 }
- 
+
 HAS_PC_V50_2=0
 HAS_PC_V60_2=0
- 
+
 if is_running "$PC_V50_2"; then HAS_PC_V50_2=1; fi
 if is_running "$PC_V60_2"; then HAS_PC_V60_2=1; fi
 
 # =============================================================================
 # Helpers
 # =============================================================================
- 
+
 log() {
     echo ""
     echo "=========================================="
@@ -58,7 +58,7 @@ log() {
     echo "  $(date '+%Y-%m-%d %H:%M:%S')"
     echo "=========================================="
 }
- 
+
 status() {
     # status <container> <label>
     if is_running "$1"; then
@@ -71,9 +71,9 @@ status() {
 # =============================================================================
 # Environment summary
 # =============================================================================
- 
+
 log "ENVIRONMENT"
- 
+
 echo ""
 echo "  Required devices:"
 status "$ATTACKER"  "kali"
@@ -86,15 +86,15 @@ echo "  Optional devices (full topology only):"
 status "$PC_V50_2"  "barry"
 status "$PC_V60_2"  "clark"
 echo ""
- 
+
 sleep 2
 
 # =============================================================================
 # PHASE 1 - Normal baseline traffic
 # =============================================================================
- 
+
 log "PHASE 1 - Normal baseline traffic"
- 
+
 # 1.1 - DNS queries
 echo "--- 1.1 DNS queries ---"
 docker exec "$PC_V50_1" nslookup internet.com || true
@@ -103,7 +103,7 @@ docker exec "$PC_ADMIN" nslookup internet.com || true
 if [ "$HAS_PC_V50_2" = "1" ]; then docker exec "$PC_V50_2" nslookup internet.com || true; fi
 if [ "$HAS_PC_V60_2" = "1" ]; then docker exec "$PC_V60_2" nslookup internet.com || true; fi
 sleep 3
- 
+
 # 1.2 - Web browsing from inside (enterprise -> internet)
 echo "--- 1.2 Web browsing from inside ---"
 docker exec "$PC_V50_1" wget -q -O /dev/null http://internet.com || true
@@ -112,14 +112,14 @@ docker exec "$PC_ADMIN" curl -s -o /dev/null http://internet.com || true
 if [ "$HAS_PC_V50_2" = "1" ]; then docker exec "$PC_V50_2" wget -q -O /dev/null http://internet.com || true; fi
 if [ "$HAS_PC_V60_2" = "1" ]; then docker exec "$PC_V60_2" wget -q -O /dev/null http://internet.com || true; fi
 sleep 3
- 
+
 # 1.3 - Web browsing from outside (benign/attacker -> enterprise)
 echo "--- 1.3 Web browsing from outside ---"
 docker exec "$BENIGN"   wget -q -O /dev/null http://enterprise.com || true
 docker exec "$BENIGN"   curl -s -o /dev/null http://enterprise.com || true
 docker exec "$ATTACKER" curl -s -o /dev/null http://enterprise.com || true
 sleep 3
- 
+
 # 1.4 - Email from enterprise to internet (all available users -> olivia)
 echo "--- 1.4 Email enterprise to internet ---"
 docker exec "$PC_V50_1" sh -c \
@@ -137,13 +137,13 @@ if [ "$HAS_PC_V60_2" = "1" ]; then
         'echo "Forwarding the schedule for next week." | mutt -s "Updated schedule" olivia@internet.com' || true
 fi
 sleep 3
- 
+
 # 1.5 - Email from internet to enterprise (olivia -> alice)
 echo "--- 1.5 Email internet to enterprise ---"
 docker exec "$BENIGN" sh -c \
     'echo "Thanks Alice, received your message. Talk soon." | mutt -s "Re: Hello from enterprise" alice@enterprise.com' || true
 sleep 3
- 
+
 # 1.6 - Reply from enterprise (alice -> olivia)
 echo "--- 1.6 Reply enterprise -> internet ---"
 docker exec "$PC_V50_1" sh -c \
@@ -153,7 +153,7 @@ sleep 3
 # =============================================================================
 # PHASE 2 - Port scanning (nmap SYN + UDP)
 # =============================================================================
- 
+
 log "PHASE 2 - Port scanning (nmap)"
 sh "$ATTACKS_DIR/port_scanning.sh" "$ATTACKER"
 sleep 5
@@ -161,7 +161,7 @@ sleep 5
 # =============================================================================
 # PHASE 3 - Normal traffic (during/after scan)
 # =============================================================================
- 
+
 log "PHASE 3 - Normal traffic"
 docker exec "$PC_V50_1" wget -q -O /dev/null http://internet.com || true
 docker exec "$PC_V60_1" sh -c \
@@ -174,36 +174,36 @@ if [ "$HAS_PC_V60_2" = "1" ]; then
     docker exec "$PC_V60_2" curl -s -o /dev/null http://internet.com || true
 fi
 sleep 3
- 
+
 # =============================================================================
 # PHASE 4 - DoS SYN flood (hping3, 2 × 60 s phases)
 # =============================================================================
- 
+
 log "PHASE 4 - DoS SYN flood (hping3)"
 sh "$ATTACKS_DIR/dos_syn_flood_hping3.sh" "$ATTACKER"
 sleep 5
- 
+
 # =============================================================================
 # PHASE 5 - SSH brute force (hydra)
 # =============================================================================
- 
+
 log "PHASE 5 - SSH brute force (hydra)"
 sh "$ATTACKS_DIR/ssh_bruteforce_hydra.sh" "$ATTACKER" enterprise.com 22 vntd
 sleep 5
- 
+
 # =============================================================================
 # PHASE 6 - SMTP recon + IMAP brute force
 # =============================================================================
- 
+
 log "PHASE 6 - SMTP recon + IMAP brute force"
 # Note: the filename has a space - quoting is required
 sh "$ATTACKS_DIR/smtp _recon_abuse.sh" "$ATTACKER" || true
 sleep 5
- 
+
 # =============================================================================
 # PHASE 7 - Final normal traffic
 # =============================================================================
- 
+
 log "PHASE 7 - Final normal traffic"
 docker exec "$PC_V60_1" curl -s -o /dev/null http://enterprise.com || true
 docker exec "$PC_V50_1" nslookup internet.com   || true
@@ -222,12 +222,12 @@ sleep 3
 # =============================================================================
 # DONE - Stats and extraction instructions
 # =============================================================================
- 
+
 log "DONE - Dataset generation complete"
 echo ""
 echo "--- To extract the log to the host ---"
 echo ""
-echo "  docker cp $LOGWATCH:$EVE_LOG ./ml/eve_\$(date +%Y%m%d_%H%M%S).json"
+echo "  docker cp $LOGWATCH:$EVE_LOG ./ml/data/eve_\$(date +%Y%m%d_%H%M%S).json"
 echo ""
 echo "--- To clear the log before the next run ---"
 echo ""

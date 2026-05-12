@@ -41,11 +41,11 @@ binds:
 The DNS server runs on two specific devices:
 
 - **Internal Server**
-    - **Node:** `dmz_server`
+    - **Node:** `dmz-server`
     - **VLAN:** 10
     - **IP Address:** `192.168.10.10`
 - **Internet Server**
-    - **Node:** `internet_server`
+    - **Node:** `internet-server`
     - **VLAN:** Does not belong to any VLAN
     - **IP Address:** `172.16.100.100`
 
@@ -68,7 +68,7 @@ All DNS configuration files are stored under the project `config/` directory and
 
 ---
 
-## DNS Configuration (`internet_server`)
+## DNS Configuration (`internet-server`)
 
 **Names Defined:** Resolves names to addresses.
 
@@ -96,7 +96,7 @@ This configuration allows clients to communicate with the Internet Server and th
 
 ---
 
-## DNS Configuration (`dmz_server`)
+## DNS Configuration (`dmz-server`)
 
 **Names Defined:** Resolves names to addresses.
 

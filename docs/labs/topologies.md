@@ -50,7 +50,7 @@ Additional sections definitions can be added to change the behavior and capabili
 ### Example: Internet Router
 
 ```yaml
-router_internet:
+router-internet:
   kind: linux
   image: frr_vntd:latest
   binds:
@@ -61,7 +61,7 @@ router_internet:
 ### Example: Internet Server
 
 ```yaml
-internet_server:
+internet-server:
   kind: linux
   image: server_vntd:latest
   env:
@@ -100,7 +100,7 @@ The `links` section defines the virtual cables connecting the nodes. Each link i
 
 ```yaml
 links:
-  - endpoints: ["router_internet:eth3", "router_enterprise:eth1"]
+  - endpoints: ["router-internet:eth3", "router-enterprise:eth1"]
 ```
 
 ---
@@ -148,6 +148,7 @@ groups:
 ```
 
 This check ensures that the container:
+
 - Has started successfully.
 - Has assigned the expected IP address.
 
@@ -192,39 +193,7 @@ This ordering ensures that monitoring and infrastructure services are fully oper
 
 ---
 
-## YAML Anchors
-
-To reduce duplication in the topology definition file, the project uses YAML anchors. These allow defining reusable configuration templates that can later be referenced multiple times.
-
-Example:
-```yaml
-pc_template: &user_pc
-  kind: linux
-  group: hosts
-  image: alpine_vntd:latest
-  env:
-    DHCP_CLIENT: 1
-```
-
-Nodes can later inherit the configuration using:
-```yaml
-pc_vlan50_1:
-  <<: *user_pc
-  binds:
-    - ./config/pc/mutt/enterprise/alice:/root/.mutt/muttrc
-```
-
-!!! important "Anchor overwrite value"
-  When a node uses an anchor, its values / settings can be overwritten by simply setting a new value in the already defined parameter.
-
-This technique provides the benefits of:
-- Reduced duplicated configuration.
-- Simplified maintenance.
-- Consistency across multiple nodes.
-
----
-
-## Why Anchors Instead of Groups or Kinds 
+## Groups and Kinds
 
 Although Containerlab provides **groups** and **kinds** support, they serve different purposes and cannot be fully customized.
 
@@ -243,11 +212,12 @@ Devices are assigned to a specific group:
 | **watcher**  | Threat detection and Logs   | `logwatch`                                           |
 | **switches** | Enterprise core devices     | `switch_*`, `firewall`                               |
 | **routers**  | All routers available       | `router_*`                                           |
-| **hosts**    | Servers and users connected | `*_server`, `attacker`, `benign`, `pc_admin`, `pc_*` |
+| **hosts**    | Servers and users connected | `*_server`, `attacker`, `benign`, `pc-admin`, `pc_*` |
 
 ### Kinds
 
 Kinds represent predefined node types supported by Containerlab, such as:
+
 - `linux`
 - `arista_ceos`
 
@@ -255,16 +225,8 @@ These are **hard-coded platform defined** and cannot easily be extended with com
 
 Therefore, they are not suitable for reusable topology templates.
 
-### YAML Anchors
-
-YAML anchors provide a **configuration reuse mechanism** independent from Containerlab.
-
-They allow:
-- Defining templates for common nodes
-- Keeping topology file compact
-- Avoiding inconsistencies between nodes
-
-Therefore, the project uses anchors for reusable cofigurations, groups for startup orchestration and stages for startup order definition.
+!!! note "Why anchors are not used"
+    Although YAML anchors can reduce duplication, they are not used in this project because they may lead to unexpected behavior in Containerlab (e.g., unintended container instantiation). For clarity and reliability, all nodes are defined explicitly.
 
 ---
 

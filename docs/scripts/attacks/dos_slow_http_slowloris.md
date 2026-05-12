@@ -77,9 +77,9 @@ The high socket count ensures the server's connection limit is reached quickly. 
 
 The Slowloris process is started in the background and terminated after the configured duration using a two-step sequence:
 
-1. **SIGTERM** - requests a clean shutdown
-2. **SIGKILL** - forces termination if the process has not exited after 2 seconds
-3. **`wait`** - reaps the child process to prevent zombies
+1. **SIGTERM:** requests a clean shutdown
+2. **SIGKILL:** forces termination if the process has not exited after 2 seconds
+3. **`wait`:** reaps the child process to prevent zombies
 
 The container runs `tini` as PID 1, which provides additional orphan process cleanup if the shell-level steps above do not fully clear all children.
 

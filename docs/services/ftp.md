@@ -80,6 +80,7 @@ All FTP users share the same default password.
 ## Home Directories and Isolation
 
 For each FTP user:
+
 - A dedicated home directory is created:
     ```text
     /ftp/<username>
@@ -89,6 +90,7 @@ For each FTP user:
 - Shell access is disabled (`/sbin/nologin`)
 
 Permissions:
+
 - User has full control over their own directory
 - No access outside their chroot
 
@@ -106,6 +108,7 @@ service vsftpd start
 ```
 
 FTP traffic:
+
 - Uses TCP port 21
 - Traverses firewall and routing policies
 
@@ -135,10 +138,11 @@ pswd
 Once connected, the user is placed directly in their home directory.
 
 The available hostnames are defined in the DNS configuration:
+
 - [DNS Names Assignment](../network-services/dns/config.md)
 
 !!! info
-    From the provided topology, the FTP service is available only on the `internal_server` using the `server_vntd` image.
+    From the provided topology, the FTP service is available only on the `internal-server` using the `server_vntd` image.
     By default, all servers have a DNS-resolvable hostname.
 
 ---

@@ -56,7 +56,7 @@ exec:
 
 ## Automated Startup
 
-Each client workstation (e.g., `pc_vlan50_1`) executes the `startup.sh` script upon launch to automate the network configuration process.
+Each client workstation (e.g., `pc-vlan50-1`) executes the `startup.sh` script upon launch to automate the network configuration process.
 
 The script performs:
 
@@ -105,7 +105,7 @@ If a client fails to obtain an IP, verify:
 
 1. Connectivity between the clients and the server.
 2. The firewall node has `DHCP_RELAY` enabled.
-3. The `internal_server` is running and the DHCP service is active.
+3. The `internal-server` is running and the DHCP service is active.
 4. The L2 bridges on the firewall (`br-vlan50`, `br-vlan60`) are up and STP is disabled.
 
 !!! question "Check IP"

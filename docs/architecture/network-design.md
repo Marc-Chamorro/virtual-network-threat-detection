@@ -35,7 +35,7 @@ graph TD
     end
 
     subgraph Internet_Infrastructure
-        Router_Internet[Router Internet]
+        Router-Internet[Router Internet]
         Server_Internet[Internet Server]
     end
 
@@ -52,10 +52,10 @@ graph TD
         Users[VLAN 50/60 - User Floors]
     end
 
-    Attacker --- Router_Internet
-    Benign --- Router_Internet
-    Router_Internet --- Server_Internet
-    Router_Internet --- Router_Edge
+    Attacker --- Router-Internet
+    Benign --- Router-Internet
+    Router-Internet --- Server_Internet
+    Router-Internet --- Router_Edge
     Router_Edge --- Firewall
     Firewall --- DMZ
     Firewall --- Logwatch
@@ -70,7 +70,7 @@ graph TD
 
 ### Internet Core
 
-The router (`router_internet`) located at the center of the topology represents the public Internet core. It serves as the interconnection point for:
+The router (`Router-Internet`) located at the center of the topology represents the public Internet core. It serves as the interconnection point for:
 
 - External benign traffic.
 - External attacker traffic.
@@ -78,13 +78,13 @@ The router (`router_internet`) located at the center of the topology represents 
 
 This router uses FRRouting (FRR) to provide realistic routing behavior.
 
-Within the network, a server (`internet_server`) can be appreciated, simulating common internet services.
+Within the network, a server (`internet-server`) can be appreciated, simulating common internet services.
 
 ### Attacker Network
 
 The attacker network simulates a hostile external actor:
 
-- A dedicated router (`router_attacker`).
+- A dedicated router (`router-attacker`).
 - A Kali Linux-based attacker node.
 
 This network is intentionally separated to allow controlled attack generation.
@@ -96,7 +96,7 @@ This network is intentionally separated to allow controlled attack generation.
 
 The benign network simulates legitimate external users:
 
-- A dedicated router (`router_benign`).
+- A dedicated router (`router-benign`).
 - A lightweight client node.
 
 This allows differentiation between malicious and legitimate traffic.
@@ -110,7 +110,7 @@ This allows differentiation between malicious and legitimate traffic.
 
 ### Enterprise Edge Router
 
-The `router_enterprise` node connects the enterprise network to the Internet. Its responsibilities include:
+The `router-enterprise` node connects the enterprise network to the Internet. Its responsibilities include:
 
 - Routing between enterprise and external networks (`NAT`).
 - Forwarding traffic toward the firewall.
@@ -160,10 +160,10 @@ Traffic is mirrored by the firewall using the **iptables TEE mechanism**, combin
 
 This node, called **logwatch**, acts as a centralized analysis system responsible for capturing, processing and visualizing network logs. Such is composed of four main components:
 
-- **Suricata** - Intrusion Detection System (IDS), inspects mirrored packets and generates registers.
-- **Filebeat** - Log shipper, collects Suricata logs and forwards them to Elasticsearch for processing.
-- **Elasticsearch** - Log storage and indexing, stores and indexes log data for efficient processing and analysis.
-- **Kibana** - Visualization interface, provides dashboards and visual analysis tools.
+- **Suricata:** Intrusion Detection System (IDS), inspects mirrored packets and generates registers.
+- **Filebeat:** Log shipper, collects Suricata logs and forwards them to Elasticsearch for processing.
+- **Elasticsearch:** Log storage and indexing, stores and indexes log data for efficient processing and analysis.
+- **Kibana:** Visualization interface, provides dashboards and visual analysis tools.
 
 Unlike traditional IDS where components are separated, this project integrates the entire monitoring components within a single container. This design simplifies deployment and reduces the number of containers used.
 

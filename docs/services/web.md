@@ -31,8 +31,8 @@ If this variable is absent or has any other value different than 1, the Nginx pr
 
 In the default provided topology, the web service is active *(on the containers using the `server_vntd` image)*:
 
-- `dmz_server`: Internal organization website.
-- `internet_server`: External public website simulation.
+- `dmz-server`: Internal organization website.
+- `internet-server`: External public website simulation.
 
 ---
 
@@ -50,6 +50,7 @@ This content is written directly to:
 ```
 
 There are:
+
 - No dynamic pages
 - No authentication
 - No application logic
@@ -90,4 +91,5 @@ curl <hostname>
 If the service is running correctly, the service will respond with a message.
 
 The available hostnames are defined in the DNS configuration:
+
 - [DNS Names Assignment](../network-services/dns/config.md)

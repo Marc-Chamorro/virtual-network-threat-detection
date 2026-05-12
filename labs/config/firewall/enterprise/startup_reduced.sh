@@ -116,6 +116,7 @@ iptables -A FORWARD -s 192.168.10.10 -o eth1 -p tcp --dport 25 -m conntrack --ct
 # Clone all incoming traffic on eth1 (port with access to the outside world) and send a copy to the IDS device
 # The IDS must be in promiscuous mode to receive this traffic
 iptables -t mangle -A FORWARD -i eth1 -j TEE --gateway 192.168.20.10
+iptables -t mangle -A FORWARD -o eth1 -j TEE --gateway 192.168.20.10
 
 # Prevent the IDS from returning the traffic
 iptables -A FORWARD -s 192.168.20.10 -j DROP
