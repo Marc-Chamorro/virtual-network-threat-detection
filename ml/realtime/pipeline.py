@@ -176,7 +176,7 @@ def convert_str(value, default="?"):
 def append_lines(line_list, text, max_lines=500):
     """
     Adds text to a list, splitting it into separate lines first.
-    Trims the list to max_lines so it doesn't grow infinitely.
+    Trims the list to max_lines.
     Split the text as if the content is an error message, the content may not fit in a single line 
     and cause text overlapping on displaying.
     """
@@ -522,10 +522,7 @@ def score_batch(events_in_queue, scaler, model, threshold, event_log_lines, aler
             dst_port   = convert_int(event.get("dest_port"))
 
             # Store the alert for later displaying
-            append_lines(alert_lines,
-                f"[{time_str}] ANOMALY score={score:.3f}  "
-                f"{event_type} {protocol}  {src_ip}:{src_port} -> {dst_ip}:{dst_port}",
-                max_lines=200)
+            append_lines(alert_lines, f"[{time_str}] ANOMALY score={score:.3f}  {event_type} {protocol}  {src_ip}:{src_port} -> {dst_ip}:{dst_port}", max_lines=200)
 
             # Try to hint what kind of attack this might be, based on the time-window features computed previously
             flows_to_dest  = convert_int(event.get("flows_to_dest_port_wndw"))
@@ -552,9 +549,7 @@ def score_batch(events_in_queue, scaler, model, threshold, event_log_lines, aler
 
     except Exception as err:
         # Show the error in the live events panel. Use append_lines so that multiline messages don't break the display.
-        append_lines(event_log_lines,
-                     f"[SCORING ERROR] {type(err).__name__}: {err}",
-                     max_lines=500)
+        append_lines(event_log_lines, f"[SCORING ERROR] {type(err).__name__}: {err}", max_lines=500)
         anomalies_found = 0
 
     finally:
