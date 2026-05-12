@@ -9,6 +9,8 @@ To minimize human errors and automate the workflow, the project includes a compr
 
 ---
 
+---
+
 ## Core Philosophy
 
 The automation framework is built upon three fundamental principles:
