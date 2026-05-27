@@ -22,7 +22,7 @@ Before installing the core tools, ensure your system is up to date and essential
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
-
+ 
 ### Install Essential Utilities
 
 Install curl for downloading scripts and ssh for managing connectivity to the virtual nodes.
