@@ -172,6 +172,7 @@ The final stage of the project processes security data using **Machine Learning*
 | Requirement      | Minimum       | Notes                                                                                                |
 |------------------|---------------|------------------------------------------------------------------------------------------------------|
 | **OS**           | Ubuntu 22.04+ | Linux required                                                                                       |
+| **iptables**     | Latest        | Required on the host for environment isolation                                                       |
 | **RAM**          | 12 GB         | 20 GB for full ELK stack                                                                             |
 | **CPU**          | 8 cores       | 12 cores recommended with monitoring                                                                 |
 | **Docker**       | Latest        | Installed via Containerlab setup script                                                              |

@@ -30,10 +30,14 @@ Install curl for downloading scripts and ssh for managing connectivity to the vi
 ```bash
 sudo apt install -y curl git
 sudo apt install -y ssh
+sudo apt install -y iptables
 ```
 
 !!! note "SSH Installation"
     Installing SSH independently is recommended as it is later utilized by Containerlab to manage virtual devices.
+
+!!! note "Environment Isolation"
+    The laboratory uses Linux iptables rules to help isolate the virtual environment from external networks and prevent simulated traffic from escaping the host system.
 
 ---
 
