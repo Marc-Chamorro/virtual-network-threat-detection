@@ -4,6 +4,11 @@ FROM debian:12-slim
 # Prevent interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Add the Debian Bookworm backports repository to install Suricata,
+# since the stable repository no longer provides the package we need
+RUN echo "deb http://deb.debian.org/debian bookworm-backports main" \
+    > /etc/apt/sources.list.d/backports.list
+
 # Install traffic analysis tools
 # suricata - network DIS that inspects mirrored traffic and generates structured JSON event logs
 # apt-transport-https - allows apt to fetch packages over HTTPS, required for the Elastic repository
@@ -15,7 +20,6 @@ RUN apt-get update && apt-get install -y \
     net-tools \
     iputils-ping \
     procps \
-    suricata \
     sudo \
     gnupg2 \
     apt-transport-https \
@@ -23,6 +27,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     vim \
     jq \
+    && apt-get install -y -t bookworm-backports suricata \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
